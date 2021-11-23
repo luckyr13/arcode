@@ -22,9 +22,13 @@ body {
 .text-left {
 	text-align: left;
 }
-.arcode-main-toolbar {
+.arcode-main-toolbar .menu  {
 	background-color: var(--app-toolbar-bgcolor);
 	color: var(--app-toolbar-color);
+}
+.arcode-main-toolbar .container  {
+	background-color: var(--app-toolbar-panel-bgcolor);
+	color: var(--app-toolbar-panel-color);
 }
 .arcode-notification-container {
 	background-color: var(--app-notification-bgcolor);

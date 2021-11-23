@@ -9,7 +9,6 @@
         <Workspace :class="theme"/>
       </div>
     </div>
-    
     <StatusBar/>
   </div>
 </template>
@@ -32,6 +31,7 @@ export default defineComponent({
     StatusBar
   },
   setup() {
+    const version = '0.1';
     const us: UserSettings = new UserSettings();
     const settings = us.settings;
     const theme = settings.theme;
@@ -39,39 +39,39 @@ export default defineComponent({
     body.className = theme;
 
     return {
-      theme
+      theme,
+      version
     };
   }
 });
 </script>
 
 <style lang="scss">
+
 #app {
   font-family: 'Open Sans', sans-serif;
   width: 100%;
   height: 100%;
   margin: 0px;
   padding: 0px;
-
 }
-
 .main-container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-
 .toolbar-and-workspace {
   height: 100%;
-
+  display: flex;
+  flex-direction: row;
 }
-
 .toolbar-container {
-  width: 20%;
-  float: left;
+  height: 100%;
+        flex-shrink: 0;
 }
 .workspace-container {
-  width: 80%;
-  float: left;
+  height: 100%;
+  flex-basis: 0;
+        flex-grow: 1;
 }
 </style>

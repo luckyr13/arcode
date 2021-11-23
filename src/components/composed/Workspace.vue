@@ -18,6 +18,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .logo {
-  width: 200px;
+  width: 20%;
 }
 </style>
