@@ -1,8 +1,15 @@
 import { Settings } from './interfaces/Settings';
 
+interface ThemeColor {
+	primary: string,
+	secondary: string,
+	tertiary: string,
+	textColor: string
+}
+
 export class UserSettings {
-	private _settings: Settings = { lang: 'en', theme: 'dark-blue'};
-	private _menuThemes: any = {
+	private _settings: Settings = { lang: 'en', theme: 'theme-dark'};
+	private _menuThemes: Record<string, ThemeColor> = {
 		'': {
       primary: '#FEFEFF',
       secondary: '#F1F0F1',
@@ -29,7 +36,7 @@ export class UserSettings {
 	public set settings(v : Settings) {
 		this._settings = v;
 	}
-	public get menuTheme() {
+	public get menuTheme(): ThemeColor {
 		return this._menuThemes[this._settings.theme];
 	}
 	
