@@ -1,11 +1,11 @@
 <template>
-  <div class="text-center">
+  <div class="arcode-workspace text-center">
     <img class="logo" alt="arCode" src="@/assets/logo.png">
-    
+    <h4 class="text-center">
+      arCode IDE
+    </h4>
   </div>
-  <h2 class="text-center">
-    arCode 
-  </h2>
+  
 </template>
 
 <script lang="ts">
@@ -19,5 +19,13 @@ export default defineComponent({
 <style scoped lang="scss">
 .logo {
   width: 20%;
+}
+
+.arcode-workspace {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 </style>

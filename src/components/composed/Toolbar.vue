@@ -2,7 +2,7 @@
 	<div class="arcode-main-toolbar">
 		<div class="menu">
 		</div>
-		<div class="container">
+		<div class="container" v-if="false">
 		</div>
 	</div>
 </template>

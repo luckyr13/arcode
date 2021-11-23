@@ -38,3 +38,9 @@ body {
 	background-color: var(--app-statusbar-bgcolor);
 	color: var(--app-statusbar-color);
 }
+
+
+.arcode-workspace .logo {
+ -webkit-filter: Invert(var(--app-invert-img));
+  filter: Invert(var(--app-invert-img));
+}
