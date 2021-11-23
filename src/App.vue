@@ -1,26 +1,32 @@
 <template>
-  <Workspace/>
+  <AppNotifications/>
+  <Toolbar/><Workspace/>
+  <StatusBar/>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Workspace from '@/components/composed/Workspace.vue';
+import Toolbar from '@/components/composed/Toolbar.vue';
+import AppNotifications from '@/components/composed/AppNotifications.vue';
+import StatusBar from '@/components/composed/StatusBar.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    Workspace
+    Workspace,
+    Toolbar,
+    AppNotifications,
+    StatusBar
+  },
+  setup() {
+    console.log('done')
   }
 });
 </script>
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  font-family: 'Open Sans', sans-serif;
 }
 </style>
