@@ -1,14 +1,17 @@
 <template>
-  <AppNotifications :class="theme" />
   <div class="main-container">
-    <div class="toolbar-container">
-      <Toolbar :class="theme" />
+    <AppNotifications :class="theme" />
+    <div class="toolbar-and-workspace">
+      <div class="toolbar-container">
+        <Toolbar :class="theme" />
+      </div>
+      <div class="workspace-container">
+        <Workspace :class="theme"/>
+      </div>
     </div>
-    <div class="workspace-container">
-      <Workspace :class="theme"/>
-    </div>
+    
+    <StatusBar/>
   </div>
-  <StatusBar/>
 </template>
 
 <script lang="ts">
@@ -19,7 +22,6 @@ import AppNotifications from '@/components/composed/AppNotifications.vue';
 import StatusBar from '@/components/composed/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 
-declare const body: any;
 
 export default defineComponent({
   name: 'App',
@@ -46,10 +48,30 @@ export default defineComponent({
 <style lang="scss">
 #app {
   font-family: 'Open Sans', sans-serif;
-}
-.main-container {
   width: 100%;
   height: 100%;
+  margin: 0px;
+  padding: 0px;
 
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toolbar-and-workspace {
+  height: 100%;
+
+}
+
+.toolbar-container {
+  width: 20%;
+  float: left;
+}
+.workspace-container {
+  width: 80%;
+  float: left;
 }
 </style>

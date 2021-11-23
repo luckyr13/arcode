@@ -1,5 +1,7 @@
 <template>
-Status
+	<div class="arcode-status-bar">
+		Status
+	</div>
 </template>
 
 <script lang="ts">
@@ -13,5 +15,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-
+	.arcode-status-bar {
+		height: 24px;
+		width: 100%;
+	}
 </style>
