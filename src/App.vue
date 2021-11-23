@@ -1,6 +1,6 @@
 <template>
+  <MenuBar :class="theme" :menu-theme="menuTheme" />
   <div class="main-container">
-    <AppNotifications :class="theme" />
     <div class="toolbar-and-workspace">
       <div class="toolbar-container">
         <Toolbar :class="theme" />
@@ -17,8 +17,8 @@
 import { defineComponent } from 'vue';
 import Workspace from '@/components/composed/Workspace.vue';
 import Toolbar from '@/components/composed/Toolbar.vue';
-import AppNotifications from '@/components/composed/AppNotifications.vue';
-import StatusBar from '@/components/composed/StatusBar.vue';
+import MenuBar from '@/components/atomic/MenuBar.vue';
+import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 
 
@@ -27,8 +27,8 @@ export default defineComponent({
   components: {
     Workspace,
     Toolbar,
-    AppNotifications,
-    StatusBar
+    StatusBar,
+    MenuBar
   },
   setup() {
     const version = '0.1';
@@ -37,10 +37,12 @@ export default defineComponent({
     const theme = settings.theme;
     const body = document.getElementsByTagName('body')[0];
     body.className = theme;
+    const menuTheme = us.menuTheme;
 
     return {
       theme,
-      version
+      version,
+      menuTheme
     };
   }
 });
@@ -59,6 +61,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-top: 2rem;
 }
 .toolbar-and-workspace {
   height: 100%;
