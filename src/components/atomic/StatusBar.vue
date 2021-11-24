@@ -16,7 +16,9 @@ export default defineComponent({
 
 <style scoped lang="scss">
 	.arcode-status-bar {
-		height: 24px;
+		height: 22px;
+		font-size: 12px;
+		line-height: 22px;
 		width: 100%;
 	}
 </style>

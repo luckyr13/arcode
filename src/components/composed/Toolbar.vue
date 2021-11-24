@@ -5,7 +5,8 @@
 				<li v-for="option in options" :key="option.id">
 					<a tabindex="0" 
 						:class="{ active: option.active }"
-						@click="select(option.id, $event)">
+						@click="select(option.id, $event)"
+						@keyup.enter="select(option.id, $event)">
 							<Icon :icon="option.icon" />
 					</a>
 				</li>
@@ -16,8 +17,11 @@
 				<li><a tabindex="0"><Icon icon="codicon:gear" /></a></li>
 			</ul>
 		</div>
-		<div class="side-container" v-if="showPanel">
+		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
 			hi
+			
+		</div>
+		<div class="side-resize" v-if="showPanel" @mousedown="resize($event)" @mouseup="stopResize($event)">
 		</div>
 	</div>
 </template>
@@ -52,6 +56,8 @@ export default defineComponent({
 				active: false
 			}
 		});
+		const initialContainerWidth = 220;
+		const sideContainerWidth = ref(initialContainerWidth);
 
 		const select = (optionId: string, event: Event) => {
 			let target: HTMLAnchorElement = event.currentTarget as HTMLAnchorElement;
@@ -61,16 +67,31 @@ export default defineComponent({
 				options[selectedOption.value].active = false;
 			}
 
-			if (showPanel.value && target.className === 'active') {
+			if (showPanel.value && 
+					(target.className === 'active' || target.className === 'active focus-visible')) {
 				showPanel.value = false;
 				target.className = '';
 			} else {
 				showPanel.value = true;
 				target.className = 'active';
+				sideContainerWidth.value = initialContainerWidth;
 			}
 
 			options[optionId].active = true;
 			selectedOption.value = optionId;
+		};
+		const resize = (event: MouseEvent) => {
+				document.documentElement.addEventListener('mousemove', doResize, false);
+				document.documentElement.addEventListener('mouseup', stopResize, false);
+		};
+
+		const doResize = (event: MouseEvent) => {
+				sideContainerWidth.value = event.clientX - 48;
+		};
+
+		const stopResize = () => {
+			document.documentElement.removeEventListener('mousemove', doResize, false);
+			document.documentElement.removeEventListener('mouseup', stopResize, false);
 		};
 
 		
@@ -79,7 +100,9 @@ export default defineComponent({
 			select,
 			showPanel,
 			options,
-			selectedOption
+			selectedOption,
+			sideContainerWidth,
+			resize
 		};
 	}
 });
@@ -170,6 +193,20 @@ $toolbar-container-width: 180px;
 	width: $toolbar-container-width;
 	height: 100%;
 	float: left;
+	overflow-x: hidden;
+}
+
+.side-resize {
+	width: 2px;
+	height: 100%;
+	float: left;
+	background-color: var(--app-toolbar-bgcolor);
+}
+
+.side-resize:hover {
+	width: 3px;
+	background-color: var(--app-toolbar-panel-resize-bgcolor);
+	cursor: col-resize;
 }
 
 </style>

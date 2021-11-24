@@ -3,13 +3,14 @@
 	--app-background-color: #000000;
 	--app-toolbar-bgcolor: #333333;
 	--app-toolbar-color: #FFFFFF;
-	--app-toolbar-panel-bgcolor: #FFFFFF;
+	--app-toolbar-panel-bgcolor: #F1F0F1;
 	--app-toolbar-panel-color: #000000;
 	--app-notification-bgcolor: #094771;
 	--app-notification-color: #FFFFFF;
-	--app-statusbar-bgcolor: #0099FF;
+	--app-statusbar-bgcolor: #017ACD;
 	--app-statusbar-color: #FFFFFF;
 	--app-invert-img: 0;
+	--app-toolbar-panel-resize-bgcolor: #0099FF;
 }
 
 .theme-dark {
@@ -21,9 +22,10 @@
 	--app-toolbar-panel-color: #FFFFFF;
 	--app-notification-bgcolor: #094771;
 	--app-notification-color: #FFFFFF;
-	--app-statusbar-bgcolor: #0099FF;
+	--app-statusbar-bgcolor: #017ACD;
 	--app-statusbar-color: #FFFFFF;
 	--app-invert-img: 1;
+	--app-toolbar-panel-resize-bgcolor: #0099FF;
 }
 
 .dark-blue {
@@ -35,7 +37,8 @@
 	--app-toolbar-panel-color: #FFFFFF;
 	--app-notification-bgcolor: #094771;
 	--app-notification-color: #FFFFFF;
-	--app-statusbar-bgcolor: #0099FF;
+	--app-statusbar-bgcolor: #017ACD;
 	--app-statusbar-color: #FFFFFF;
 	--app-invert-img: 1;
+	--app-toolbar-panel-resize-bgcolor: #0099FF;
 }
