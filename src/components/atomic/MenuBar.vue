@@ -1,7 +1,7 @@
 <template>
   <DockMenu 
     :items="items" 
-    draggable="false" 
+    :draggable="false" 
     :on-selected="selected"
     :theme="theme">
   </DockMenu>
@@ -24,7 +24,14 @@ export default defineComponent({
 		const items = [
       {
         name: "File",
-        menu: [{ name: "Open"}, {name: "New Window"}, {name: "Exit"}]
+        menu: [
+          { name: "New File"},
+          {name: "Open File..."},
+          { isDivider: true },
+          {name: "New Window"},
+          { isDivider: true },
+          {name: "Exit"}
+        ]
       },
       {
         name: "Edit",
