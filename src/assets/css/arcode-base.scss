@@ -22,11 +22,11 @@ body {
 .text-left {
 	text-align: left;
 }
-.arcode-main-toolbar .menu  {
+.arcode-main-toolbar .menu-container  {
 	background-color: var(--app-toolbar-bgcolor);
 	color: var(--app-toolbar-color);
 }
-.arcode-main-toolbar .container  {
+.arcode-main-toolbar .side-container  {
 	background-color: var(--app-toolbar-panel-bgcolor);
 	color: var(--app-toolbar-panel-color);
 }
