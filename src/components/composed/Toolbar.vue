@@ -2,19 +2,25 @@
 	<div class="arcode-main-toolbar">
 		<div class="menu-container">
 			<ul class="top-menu">
-				<li v-for="option in options" :key="option.id">
+				<li v-for="option in options['primary']" :key="option.id">
 					<a tabindex="0" 
 						:class="{ active: option.active }"
-						@click="select(option.id, $event)"
-						@keyup.enter="select(option.id, $event)">
+						@click="select(option.id, 'primary', $event)"
+						@keyup.enter="select(option.id, 'primary', $event)">
 							<Icon :icon="option.icon" />
 					</a>
 				</li>
 			</ul>
 			
 			<ul class="bottom-menu">
-				<li><a tabindex="0"><Icon icon="codicon:account" /></a></li>
-				<li><a tabindex="0"><Icon icon="codicon:gear" /></a></li>
+				<li v-for="optionSec in options['secondary']" :key="optionSec.id">
+					<a tabindex="0" 
+						:class="{ active: optionSec.active }"
+						@click="select(optionSec.id, 'secondary', $event)"
+						@keyup.enter="select(optionSec.id, 'secondary', $event)">
+							<Icon :icon="optionSec.icon" />
+					</a>
+				</li>
 			</ul>
 		</div>
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
@@ -44,29 +50,53 @@ export default defineComponent({
 	setup() {
 		const showPanel = ref(false);
 		const selectedOption = ref('');
-		const options = reactive<Record<string, ToolbarOption>>({
-			'file-explorer': {
-				id: 'file-explorer',
-				icon: 'codicon:files',
-				active: false
-			}, 
-			'compile': {
-				id: 'compile',
-				icon: 'codicon:debug-alt',
-				active: false
+		const options = reactive<Record<string, Record<string, ToolbarOption>>>({
+			'primary': {
+				'file-explorer': {
+					id: 'file-explorer',
+					icon: 'codicon:files',
+					active: false
+				}, 
+				'compile': {
+					id: 'compile',
+					icon: 'codicon:debug-alt',
+					active: false
+				}
+			},
+			'secondary': {
+				'account': {
+					id: 'account',
+					icon: 'codicon:account',
+					active: false
+				}, 
+				'settings': {
+					id: 'settings',
+					icon: 'codicon:gear',
+					active: false
+				}
 			}
+			
 		});
+		
 		const initialContainerWidth = 220;
 		const sideContainerWidth = ref(initialContainerWidth);
 
-		const select = (optionId: string, event: Event) => {
+		const select = (optionId: string, optionType: string, event: Event) => {
 			let target: HTMLAnchorElement = event.currentTarget as HTMLAnchorElement;
 
 			// Clear previous selected option
-			if (selectedOption.value) {
-				options[selectedOption.value].active = false;
+			if (selectedOption.value && 
+					options['primary'][selectedOption.value] && 
+					options['primary'][selectedOption.value].active) {
+				options['primary'][selectedOption.value].active = false;
+			}
+			else if (selectedOption.value && 
+							options['secondary'][selectedOption.value] &&
+							options['secondary'][selectedOption.value].active) {
+				options['secondary'][selectedOption.value].active = false;
 			}
 
+			// Show/hide panel
 			if (showPanel.value && 
 					(target.className === 'active' || target.className === 'active focus-visible')) {
 				showPanel.value = false;
@@ -76,12 +106,13 @@ export default defineComponent({
 				target.className = 'active';
 				sideContainerWidth.value = initialContainerWidth;
 			}
+			options[optionType][optionId].active = true;
 
-			options[optionId].active = true;
+			// Save selected option
 			selectedOption.value = optionId;
 		};
 		
-		const resize = (event: MouseEvent) => {
+		const resize = () => {
 			const doResize = (event: MouseEvent) => {
 					sideContainerWidth.value = event.clientX - 48;
 			};
