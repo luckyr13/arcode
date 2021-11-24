@@ -21,15 +21,12 @@ export class Workspace {
 			this._extensions.push(highlightActiveLine());
 		}
 
-
 		this._extensions.push(
 			javascript(),
 			lineNumbers(),
 			gutter({class: 'cm-arcode-gutter'}),
 			EditorView.lineWrapping,
 		);
-
-		console.log(this._extensions)
 
 	}
 
