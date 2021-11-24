@@ -9,7 +9,10 @@
   },
   "dependencies": {
     "@codemirror/commands": "^0.19.5",
+    "@codemirror/gutter": "^0.19.5",
+    "@codemirror/highlight": "^0.19.6",
     "@codemirror/lang-javascript": "^0.19.3",
+    "@codemirror/matchbrackets": "^0.19.3",
     "@codemirror/state": "^0.19.6",
     "@codemirror/view": "^0.19.20",
     "core-js": "^3.6.5",
