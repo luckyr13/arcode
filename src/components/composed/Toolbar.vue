@@ -21,7 +21,7 @@
 			hi
 			
 		</div>
-		<div class="side-resize" v-if="showPanel" @mousedown="resize($event)" @mouseup="stopResize($event)">
+		<div class="side-resize" v-if="showPanel" @mousedown="resize($event)">
 		</div>
 	</div>
 </template>
@@ -80,19 +80,21 @@ export default defineComponent({
 			options[optionId].active = true;
 			selectedOption.value = optionId;
 		};
+		
 		const resize = (event: MouseEvent) => {
-				document.documentElement.addEventListener('mousemove', doResize, false);
-				document.documentElement.addEventListener('mouseup', stopResize, false);
+			const doResize = (event: MouseEvent) => {
+					sideContainerWidth.value = event.clientX - 48;
+			};
+
+			const stopResize = () => {
+				document.documentElement.removeEventListener('mousemove', doResize, false);
+				document.documentElement.removeEventListener('mouseup', stopResize, false);
+			};
+			document.documentElement.addEventListener('mouseup', stopResize, false);
+			document.documentElement.addEventListener('mousemove', doResize, false);
 		};
 
-		const doResize = (event: MouseEvent) => {
-				sideContainerWidth.value = event.clientX - 48;
-		};
-
-		const stopResize = () => {
-			document.documentElement.removeEventListener('mousemove', doResize, false);
-			document.documentElement.removeEventListener('mouseup', stopResize, false);
-		};
+		
 
 		
 
