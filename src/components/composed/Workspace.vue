@@ -8,17 +8,46 @@
     </div>
     <div class="workspace">
       <div class="tabs"></div>
-      <div class="editor"></div>
+      <div id="arcode-code-editor" class="editor"></div>
     </div>
   </div>
   
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted} from 'vue';
+import {EditorState} from "@codemirror/state";
+import {EditorView, keymap} from "@codemirror/view";
+import {defaultKeymap} from "@codemirror/commands";
+import {javascript} from "@codemirror/lang-javascript";
 
 export default defineComponent({
-  name: 'Workspace'
+  name: 'Workspace',
+  setup() {
+    let startState = EditorState.create({
+      doc: "Hello World",
+      extensions: [keymap.of(defaultKeymap), javascript()]
+    })
+
+    let view = new EditorView({
+      state: startState
+    })
+
+    
+    onMounted(() => {
+      const editor = view.dom;
+      const editorContainer = document.getElementById('arcode-code-editor');
+      if (editorContainer !== null) {
+        editorContainer.append(editor);
+      }
+    })
+    
+
+    return {
+      view,
+      startState
+    }
+  }
 });
 </script>
 
@@ -58,5 +87,6 @@ $workspace-tabs-height: 35px;
 
 .workspace .editor{
   height: calc(100% - $workspace-tabs-height);
+  overflow-y: auto;
 }
 </style>

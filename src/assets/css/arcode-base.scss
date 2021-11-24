@@ -50,5 +50,10 @@ body {
 }
 
 .arcode-workspace .workspace .editor {
-	
+	background-color: var(--app-background-bgcolor);
+	color: var(--app-background-color);
+}
+
+.arcode-workspace .workspace .editor .ͼ2 .cm-content {
+  caret-color: var(--app-background-color);
 }
