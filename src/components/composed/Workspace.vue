@@ -16,49 +16,28 @@
 
 <script lang="ts">
 import { defineComponent, onMounted} from 'vue';
-import {EditorState} from "@codemirror/state";
-import {EditorView, keymap} from "@codemirror/view";
-import {defaultKeymap} from "@codemirror/commands";
-import { defaultHighlightStyle } from "@codemirror/highlight";
-import { bracketMatching } from "@codemirror/matchbrackets";
-import {javascript} from "@codemirror/lang-javascript";
-import { lineNumbers } from "@codemirror/gutter";
+import { Workspace } from '@/core/Workspace';
 
 export default defineComponent({
   name: 'Workspace',
-  setup() {
-
-    let startState = EditorState.create({
-      doc: "Hello World",
-      extensions: [
-        keymap.of(defaultKeymap),
-        bracketMatching(),
-        defaultHighlightStyle.fallback,
-        javascript(),
-        lineNumbers(),
-        EditorView.lineWrapping,
-        EditorView.theme({}, { dark: true })
-      ]
-    })
-
-    let view = new EditorView({
-      state: startState
-    })
-
+  props: {
+    theme: String
+  },
+  setup(props) {
+    const workspace = new Workspace(props.theme);
+    const view = workspace.createEditor();
     
     onMounted(() => {
+      
       const editor = view.dom;
       const editorContainer = document.getElementById('arcode-code-editor');
       if (editorContainer !== null) {
         editorContainer.append(editor);
       }
+      
     })
-    
 
-    return {
-      view,
-      startState
-    }
+    return {};
   }
 });
 </script>
@@ -101,4 +80,5 @@ $workspace-tabs-height: 35px;
   height: calc(100% - $workspace-tabs-height);
   overflow-y: auto;
 }
+
 </style>
