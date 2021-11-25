@@ -6,5 +6,6 @@ module.exports = {
       	args[0].title = 'arCode IDE: Arweave development tools';
         return args;
       })
-  }
+  },
+  publicPath: './'
 }
