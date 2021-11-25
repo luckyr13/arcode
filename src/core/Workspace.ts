@@ -81,4 +81,8 @@ export class Workspace {
 			throw Error(`Error on mounting editor with id ${editorId}`);
 		}
 	}
+
+	public focusEditor(editorId: number) {
+		this.getEditor(editorId).focus();
+	}
 }

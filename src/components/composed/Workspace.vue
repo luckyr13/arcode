@@ -15,8 +15,8 @@
             v-for="editor in editors"
             :key="editor.id"
             :class="{ active: editor.active }"> 
-            {{ editor.name }} 
-            <button class="button" type="button" >x</button>
+            <div class="tab-button-label">{{ editor.name }}</div>
+            <button class="button tab-button-close" type="button" >x</button>
           </div>
         </div>
         <div class="tabs-menu">
@@ -34,6 +34,7 @@
       <div class="editor" 
         v-for="editor in editors" 
         :key="editor.id"
+        :class="{ active: editor.active }"
         :ref="el => { if (el) { divs[editor.id] = el; } }"></div>
     </div>
   </div>
@@ -82,13 +83,13 @@ export default defineComponent({
       }
       editors[editorId].active = true;
       currentEditorId.value = editorId;
+      workspace.focusEditor(editorId);
     };
-    const scrollEditor = (direction: string) => {
+    const scrollEditor = (direction: string, translate = 120) => {
       const tabsContainer = document.getElementById('arcode-editor-tabs-container');
       if (!tabsContainer) {
         throw Error('Tabs container undefined!');
       }
-      const translate = 100;
 
       if (direction === 'left') {
         tabsContainer.scrollLeft  -= translate;
@@ -187,9 +188,19 @@ $workspace-tabs-height: 35px;
   white-space: nowrap;
   line-height: $workspace-tabs-height;
   font-size: 12px;
+  min-width: 120px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+}
+
+.workspace .tabs .tabs-container .tab-button-label {
+  flex-basis: 0;
+  flex-grow: 1;
   padding-left: 10px;
-  padding-right: 10px;
-  min-width: 110px;
+}
+.workspace .tabs .tabs-container .tab-button-close {
 }
 
 .workspace .tabs .tabs-menu{
@@ -214,6 +225,10 @@ $workspace-tabs-height: 35px;
   width: 100%;
   position: absolute;
   z-index: 0;
+}
+
+.workspace .editor.active{
+  z-index: 100;
 }
 
 </style>
