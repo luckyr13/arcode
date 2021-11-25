@@ -16,8 +16,13 @@ export interface EditorMetadata {
 	active: boolean
 }
 
+export interface EditorViewMetadata {
+	id: number,
+	view: EditorView
+}
+
 export class Workspace {
-	private _editors: EditorView[] = [];
+	private _editors: EditorViewMetadata[] = [];
 	private _extensions: Extension[] = [];
 
 	constructor(theme = '') {
@@ -57,25 +62,29 @@ export class Workspace {
     const view = new EditorView({
       state: startState
     })
-    const editorId = this._editors.push(view) - 1;
+    const editorId = this._editors[this._editors.length - 1] ? 
+      this._editors[this._editors.length - 1].id + 1 : 0;
+    this._editors.push({id: editorId, view});
 
     return editorId;
 	}
 
 	public destroyEditor(editorId: number): void {
-		const removed: EditorView = this._editors[editorId];
+		const i = this._editors.findIndex(ed => ed.id == editorId);
+		const removed: EditorView = this._editors[i].view;
 		removed.destroy();
-		this._editors.splice(editorId);
+		this._editors.splice(i, 1);
 	}
 
 	public getEditor(editorId: number): EditorView {
-		return this._editors[editorId];
+		const i = this._editors.findIndex(ed => ed.id == editorId);
+		return this._editors[i].view;
 	}
 
 	public mountEditor(editorId: number, container: HTMLElement|null): void {
 		const editor = this.getEditor(editorId);
 		if (container !== null && editor) {
-			const editorHTML = this._editors[editorId].dom;
+			const editorHTML = this.getEditor(editorId).dom;
 			container.append(editorHTML);
 			editor.focus();
 		} else {

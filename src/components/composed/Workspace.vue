@@ -11,7 +11,7 @@
         <div id="arcode-editor-tabs-container" class="tabs-container">
           <div 
             class="tab" 
-            @click="selectEditor(editor.id)"
+            @click="selectEditor(editor.id, $event)"
             v-for="editor in editors"
             :key="editor.id"
             :class="{ active: editor.active }"> 
@@ -73,22 +73,28 @@ export default defineComponent({
     const addEditor = () => {
       const editorId = workspace.createEditor();
       // Deactivate current editor 
-      if (currentEditorId.value >= 0 && editors[currentEditorId.value]) {
-        editors[currentEditorId.value].active = false;
+      const i = editors.findIndex(ed => ed.id == currentEditorId.value);
+      if (i >= 0 && editors[i]) {
+        editors[i].active = false;
       }
+      // Add new editor
       editors.push({ id: editorId, name: `Untitled-${editorId}`, active: true });
       currentEditorId.value = editorId;
       scrollEditor('right', 120 * editorId);
     };
-    const selectEditor = (editorId: number) => {
+    const selectEditor = (editorId: number, event: Event) => {
+      event.stopPropagation();
+      event.preventDefault();
       // Deactivate current editor 
-      if (currentEditorId.value >= 0 && editors[currentEditorId.value]) {
-        editors[currentEditorId.value].active = false;
+      const i = editors.findIndex(ed => ed.id == currentEditorId.value);
+      if (i >= 0 && editors[i]) {
+        editors[i].active = false;
       }
-      
-        editors[editorId].active = true;
-        currentEditorId.value = editorId;
-        workspace.focusEditor(editorId);
+      // Activate new editor
+      const j = editors.findIndex(ed => ed.id == editorId);
+      editors[j].active = true;
+      currentEditorId.value = editorId;
+      workspace.focusEditor(editorId);
       
     };
     const scrollEditor = (direction: string, translate = 120) => {
@@ -107,7 +113,9 @@ export default defineComponent({
     };
     const destroyEditor = (editorId: number, event: Event) => {
       event.stopPropagation();
-      editors.splice(editorId);
+      event.preventDefault();
+      const i = editors.findIndex(ed => ed.id == editorId);
+      editors.splice(i, 1);
       workspace.destroyEditor(editorId);
     };
     // make sure to reset the refs before each update
