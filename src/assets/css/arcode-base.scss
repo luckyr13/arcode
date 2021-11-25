@@ -61,3 +61,25 @@ body {
 .cm-arcode-gutter {
   width: 20px;
 }
+
+.arcode-workspace .workspace .tabs .tabs-container .tab {
+  background-color: var(--app-background-bgcolor);
+  border-right: 2px solid var(--app-toolbar-panel-bgcolor);
+  border-top: 2px solid var(--app-toolbar-panel-bgcolor);
+}
+.arcode-workspace .workspace .tabs .tabs-container .tab:hover, 
+.arcode-workspace .workspace .tabs .tabs-container .tab.active {
+  background-color: var(--app-toolbar-panel-bgcolor);
+  border-right: 2px solid var(--app-background-bgcolor);
+  border-top: 2px solid var(--app-background-bgcolor);
+}
+
+.arcode-workspace .workspace .tabs .tabs-container .tab:hover {
+  cursor: pointer;
+}
+.arcode-workspace .workspace .tabs .tabs-container .tab .button {
+  background-color: var(--app-background-bgcolor);
+  border-right: 2px solid var(--app-toolbar-panel-bgcolor);
+  border-top: 2px solid var(--app-toolbar-panel-bgcolor);
+  color: var(--app-background-color);
+}

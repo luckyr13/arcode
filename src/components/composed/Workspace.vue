@@ -8,7 +8,16 @@
     </div>
     <div class="workspace">
       <div class="tabs">
-        <button type="button" @click="addEditor()">+</button>
+        <div class="tabs-container">
+          <div class="tab" v-for="editor in editors"
+            :key="editor.id"> 
+            {{ editor.name }} 
+            <button class="button" type="button" >x</button>
+          </div>
+        </div>
+        <div class="tabs-menu">
+          <button type="button" @click="addEditor()">+</button>
+        </div>
       </div>
       <div class="editor" 
         v-for="editor in editors" 
@@ -100,9 +109,41 @@ $workspace-tabs-height: 35px;
 }
 
 .workspace .tabs{
+  width: 100%;
   height: $workspace-tabs-height;
 }
 
+.workspace .tabs .tabs-container{
+  height: 100%;
+  width: 95%;
+  float: left;
+  display: flex;
+  flex-direction: row;
+  overflow-x: hidden;
+}
+
+.workspace .tabs .tabs-container .tab {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: $workspace-tabs-height;
+  font-size: 12px;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-width: 120px;
+}
+
+.workspace .tabs .tabs-container .tab .button {
+  border: 0;
+  margin-left: 4px;
+}
+
+.workspace .tabs .tabs-menu{
+  height: 100%;
+  width: 5%;
+  float: left;
+  text-align: center;
+}
 
 .workspace .editor{
   height: calc(100% - $workspace-tabs-height);
