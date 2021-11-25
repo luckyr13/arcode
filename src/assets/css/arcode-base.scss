@@ -86,21 +86,23 @@ body {
   background-color: var(--app-toolbar-panel-bgcolor);
   border-right: 2px solid var(--app-toolbar-bgcolor);
   border-top: 2px solid var(--app-toolbar-bgcolor);
+  color: var(--app-toolbar-color);
 }
 .arcode-workspace .workspace .tabs .tabs-container .tab:hover, 
 .arcode-workspace .workspace .tabs .tabs-container .tab.active {
   background-color: var(--app-background-bgcolor);
   border-right: 2px solid var(--app-background-bgcolor);
   border-top: 2px solid var(--app-background-bgcolor);
+  color: var(--app-toolbar-color-hover);
 }
 
 .arcode-workspace .workspace .tabs .tabs-container .tab:hover {
   cursor: pointer;
 }
-.arcode-workspace .workspace .tabs .tabs-container .tab .button {
+.arcode-workspace .workspace .tabs .button {
   background-color: var(--app-background-bgcolor);
   color: var(--app-background-color);
 }
-.arcode-workspace .workspace .tabs .tabs-container .tab .button:hover {
+.arcode-workspace .workspace .tabs .button:hover {
   background-color: var(--app-tabs-button-color-hoverbg);
 }

@@ -12,7 +12,8 @@ import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
 
 export interface EditorMetadata {
 	id: number,
-	name: string
+	name: string,
+	active: boolean
 }
 
 export class Workspace {
