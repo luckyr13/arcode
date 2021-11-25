@@ -1,4 +1,8 @@
-# arcode
+# arCode IDE: Smartweave editor and deployer
+
+Demo (permaweb link): https://arweave.net/VPoy3nVNNiuMUYa2fNwrCMmcwPSDXG3V3WEwO9VlPV0
+
+Demo: https://arcode-g66weo.argoapp.io/
 
 ## Project setup
 ```
