@@ -55,8 +55,8 @@ export class Workspace {
     return editorId;
 	}
 
-	public removeEditor(start: number, end: number = start): void {
-		const removed: EditorView = this._editors.splice(start, end)[0];
+	public removeEditor(start: number): void {
+		const removed: EditorView = this._editors.splice(start, start)[0];
 		removed.destroy();
 	}
 
@@ -65,9 +65,11 @@ export class Workspace {
 	}
 
 	public mountEditor(editorId: number, container: HTMLElement|null): void {
-		const editor = this._editors[editorId].dom;
+		const editorHTML = this._editors[editorId].dom;
+		const editor = this.getEditor(editorId);
 		if (container !== null) {
-			container.append(editor);
+			container.append(editorHTML);
+			editor.focus();
 		} else {
 			throw Error(`Error on mounting editor with id ${editorId}`);
 		}
