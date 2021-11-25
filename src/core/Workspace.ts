@@ -62,9 +62,10 @@ export class Workspace {
     return editorId;
 	}
 
-	public removeEditor(start: number): void {
-		const removed: EditorView = this._editors.splice(start, start)[0];
+	public destroyEditor(editorId: number): void {
+		const removed: EditorView = this._editors[editorId];
 		removed.destroy();
+		this._editors.splice(editorId);
 	}
 
 	public getEditor(editorId: number): EditorView {
@@ -72,17 +73,20 @@ export class Workspace {
 	}
 
 	public mountEditor(editorId: number, container: HTMLElement|null): void {
-		const editorHTML = this._editors[editorId].dom;
 		const editor = this.getEditor(editorId);
-		if (container !== null) {
+		if (container !== null && editor) {
+			const editorHTML = this._editors[editorId].dom;
 			container.append(editorHTML);
 			editor.focus();
 		} else {
-			throw Error(`Error on mounting editor with id ${editorId}`);
+			// throw Error(`Error on mounting editor with id ${editorId}`);
 		}
 	}
 
-	public focusEditor(editorId: number) {
-		this.getEditor(editorId).focus();
+	public focusEditor(editorId: number): void {
+		const editor = this.getEditor(editorId);
+		if (editor) {
+			editor.focus();	
+		}
 	}
 }

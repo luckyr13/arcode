@@ -16,7 +16,10 @@
             :key="editor.id"
             :class="{ active: editor.active }"> 
             <div class="tab-button-label">{{ editor.name }}</div>
-            <button class="button tab-button-close" type="button" >x</button>
+            <button 
+              class="button tab-button-close" 
+              type="button" 
+              @click="destroyEditor(editor.id, $event)">x</button>
           </div>
         </div>
         <div class="tabs-menu">
@@ -70,20 +73,23 @@ export default defineComponent({
     const addEditor = () => {
       const editorId = workspace.createEditor();
       // Deactivate current editor 
-      if (currentEditorId.value >= 0) {
+      if (currentEditorId.value >= 0 && editors[currentEditorId.value]) {
         editors[currentEditorId.value].active = false;
       }
       editors.push({ id: editorId, name: `Untitled-${editorId}`, active: true });
       currentEditorId.value = editorId;
+      scrollEditor('right', 120 * editorId);
     };
     const selectEditor = (editorId: number) => {
       // Deactivate current editor 
-      if (currentEditorId.value >= 0) {
+      if (currentEditorId.value >= 0 && editors[currentEditorId.value]) {
         editors[currentEditorId.value].active = false;
       }
-      editors[editorId].active = true;
-      currentEditorId.value = editorId;
-      workspace.focusEditor(editorId);
+      
+        editors[editorId].active = true;
+        currentEditorId.value = editorId;
+        workspace.focusEditor(editorId);
+      
     };
     const scrollEditor = (direction: string, translate = 120) => {
       const tabsContainer = document.getElementById('arcode-editor-tabs-container');
@@ -98,7 +104,12 @@ export default defineComponent({
       } else {
         throw Error('Wrong direction :)');
       }
-    }
+    };
+    const destroyEditor = (editorId: number, event: Event) => {
+      event.stopPropagation();
+      editors.splice(editorId);
+      workspace.destroyEditor(editorId);
+    };
     // make sure to reset the refs before each update
     onBeforeUpdate(() => {
       divs.value = []
@@ -124,7 +135,8 @@ export default defineComponent({
       addEditor,
       divs,
       selectEditor,
-      scrollEditor
+      scrollEditor,
+      destroyEditor
     };
   }
 });
