@@ -24,12 +24,32 @@ body {
 }
 .arcode-main-toolbar .menu-container  {
 	background-color: var(--app-toolbar-bgcolor);
-	color: var(--app-toolbar-color);
 }
+
+.menu-container .toolbar-menu li a {
+	color: var(--app-toolbar-color);
+	
+}
+.menu-container .toolbar-menu li a:hover {
+	color: var(--app-toolbar-color-hover);
+}
+
+.menu-container .toolbar-menu li a:active {
+	border-left: 2px solid var(--app-toolbar-color-onactive);
+}
+.menu-container .toolbar-menu li a.active {
+	border-left: 2px solid var(--app-toolbar-color-hover);
+}
+
 .arcode-main-toolbar .side-container  {
 	background-color: var(--app-toolbar-panel-bgcolor);
 	color: var(--app-toolbar-panel-color);
 }
+.arcode-main-toolbar .side-resize:hover {
+	background-color: var(--app-toolbar-panel-resize-bgcolor);
+}
+
+
 .arcode-notification-container {
 	background-color: var(--app-notification-bgcolor);
 	color: var(--app-notification-color);
@@ -63,13 +83,13 @@ body {
 }
 
 .arcode-workspace .workspace .tabs .tabs-container .tab {
-  background-color: var(--app-background-bgcolor);
-  border-right: 2px solid var(--app-toolbar-panel-bgcolor);
-  border-top: 2px solid var(--app-toolbar-panel-bgcolor);
+  background-color: var(--app-toolbar-panel-bgcolor);
+  border-right: 2px solid var(--app-toolbar-bgcolor);
+  border-top: 2px solid var(--app-toolbar-bgcolor);
 }
 .arcode-workspace .workspace .tabs .tabs-container .tab:hover, 
 .arcode-workspace .workspace .tabs .tabs-container .tab.active {
-  background-color: var(--app-toolbar-panel-bgcolor);
+  background-color: var(--app-background-bgcolor);
   border-right: 2px solid var(--app-background-bgcolor);
   border-top: 2px solid var(--app-background-bgcolor);
 }
@@ -79,7 +99,8 @@ body {
 }
 .arcode-workspace .workspace .tabs .tabs-container .tab .button {
   background-color: var(--app-background-bgcolor);
-  border-right: 2px solid var(--app-toolbar-panel-bgcolor);
-  border-top: 2px solid var(--app-toolbar-panel-bgcolor);
   color: var(--app-background-color);
+}
+.arcode-workspace .workspace .tabs .tabs-container .tab .button:hover {
+  background-color: var(--app-tabs-button-color-hoverbg);
 }

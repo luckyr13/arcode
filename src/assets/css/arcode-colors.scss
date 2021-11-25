@@ -1,8 +1,10 @@
 :root {
 	--app-background-bgcolor: #FFFFFF;
 	--app-background-color: #000000;
-	--app-toolbar-bgcolor: #333333;
-	--app-toolbar-color: #FFFFFF;
+	--app-toolbar-bgcolor: #FFFFFF;
+	--app-toolbar-color: #727F7F;
+	--app-toolbar-color-hover: #000000;
+	--app-toolbar-color-onactive: #000000;
 	--app-toolbar-panel-bgcolor: #F1F0F1;
 	--app-toolbar-panel-color: #000000;
 	--app-notification-bgcolor: #094771;
@@ -11,6 +13,7 @@
 	--app-statusbar-color: #FFFFFF;
 	--app-invert-img: 0;
 	--app-toolbar-panel-resize-bgcolor: #0099FF;
+	--app-tabs-button-color-hoverbg: #dbdbdb;
 	
 }
 
@@ -18,7 +21,9 @@
 	--app-background-bgcolor: #1E1E1E;
 	--app-background-color: #FFFFFF;
 	--app-toolbar-bgcolor: #333333;
-	--app-toolbar-color: #FFFFFF;
+	--app-toolbar-color: #727F7F;
+	--app-toolbar-color-hover: #FEFEFF;
+	--app-toolbar-color-onactive: #017ED4;
 	--app-toolbar-panel-bgcolor: #252526;
 	--app-toolbar-panel-color: #FFFFFF;
 	--app-notification-bgcolor: #094771;
@@ -27,13 +32,16 @@
 	--app-statusbar-color: #FFFFFF;
 	--app-invert-img: 1;
 	--app-toolbar-panel-resize-bgcolor: #0099FF;
+	--app-tabs-button-color-hoverbg: #424242;
 }
 
 .dark-blue {
 	--app-background-bgcolor: #2A2C3F;
 	--app-background-color: #FFFFFF;
 	--app-toolbar-bgcolor: #2A2C3F;
-	--app-toolbar-color: #FFFFFF;
+	--app-toolbar-color: #727F7F;
+	--app-toolbar-color-hover: #FEFEFF;
+	--app-toolbar-color-onactive: #017ED4;
 	--app-toolbar-panel-bgcolor: #222336;
 	--app-toolbar-panel-color: #FFFFFF;
 	--app-notification-bgcolor: #094771;
@@ -42,4 +50,5 @@
 	--app-statusbar-color: #FFFFFF;
 	--app-invert-img: 1;
 	--app-toolbar-panel-resize-bgcolor: #0099FF;
+	--app-tabs-button-color-hoverbg: #424242;
 }

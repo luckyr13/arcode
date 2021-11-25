@@ -1,7 +1,7 @@
 <template>
 	<div class="arcode-main-toolbar">
 		<div class="menu-container">
-			<ul class="top-menu">
+			<ul class="toolbar-menu top-menu">
 				<li v-for="option in options['primary']" :key="option.id">
 					<a tabindex="0" 
 						:class="{ active: option.active }"
@@ -12,7 +12,7 @@
 				</li>
 			</ul>
 			
-			<ul class="bottom-menu">
+			<ul class="toolbar-menu bottom-menu">
 				<li v-for="optionSec in options['secondary']" :key="optionSec.id">
 					<a tabindex="0" 
 						:class="{ active: optionSec.active }"
@@ -174,19 +174,16 @@ $toolbar-container-width: 180px;
 	line-height: $toolbar-width;
 	text-align: center;
 	font-size: 24px;
-	color: #727F7F;
 	display: block;
 }
 .top-menu li a:hover {
 	cursor: pointer;
-	color: #FEFEFF;
 }
 .top-menu li a:active {
-	border-left: 2px solid #017ED4;
+	border-left: 2px solid;
 }
 .top-menu li a.active {
-	border-left: 2px solid #FEFEFF;
-	color: #FEFEFF;
+	border-left: 2px solid;
 }
 .bottom-menu {
 	width: 100%;
@@ -208,19 +205,16 @@ $toolbar-container-width: 180px;
 	line-height: $toolbar-width;
 	text-align: center;
 	font-size: 24px;
-	color: #727F7F;
 	display: block;
 }
 .bottom-menu li a:hover {
 	cursor: pointer;
-	color: #FEFEFF;
 }
 .bottom-menu li a:active {
-	border-left: 2px solid #017ED4;
+	border-left: 2px solid;
 }
 .bottom-menu li a.active {
-	border-left: 2px solid #FEFEFF;
-	color: #FEFEFF;
+	border-left: 2px solid;
 }
 .side-container {
 	width: $toolbar-container-width;
@@ -233,12 +227,10 @@ $toolbar-container-width: 180px;
 	width: 2px;
 	height: 100%;
 	float: left;
-	background-color: var(--app-toolbar-bgcolor);
 }
 
 .side-resize:hover {
 	width: 3px;
-	background-color: var(--app-toolbar-panel-resize-bgcolor);
 	cursor: col-resize;
 }
 

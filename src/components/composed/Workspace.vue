@@ -49,7 +49,7 @@ export default defineComponent({
     };
     const addEditor = () => {
       const editorId = workspace.createEditor();
-      editors.value.push({ id: editorId, name: `Untitled-${editorId}.js`});
+      editors.value.push({ id: editorId, name: `Untitled-${editorId}`});
     };
     // make sure to reset the refs before each update
     onBeforeUpdate(() => {
@@ -115,13 +115,19 @@ $workspace-tabs-height: 35px;
 
 .workspace .tabs .tabs-container{
   height: 100%;
-  width: 95%;
+  width: 70%;
   float: left;
   display: flex;
   flex-direction: row;
   overflow-x: hidden;
 }
 
+.workspace .tabs .tabs-container .tab:hover {
+  cursor: pointer;
+}
+.workspace .tabs .tabs-container .tab .button {
+  border: 0;
+}
 .workspace .tabs .tabs-container .tab {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -130,19 +136,27 @@ $workspace-tabs-height: 35px;
   font-size: 12px;
   padding-left: 10px;
   padding-right: 10px;
-  min-width: 120px;
+  min-width: 110px;
 }
 
 .workspace .tabs .tabs-container .tab .button {
-  border: 0;
-  margin-left: 4px;
+  margin-left: 8px;
 }
 
 .workspace .tabs .tabs-menu{
   height: 100%;
-  width: 5%;
+  width: 30%;
   float: left;
   text-align: center;
+}
+
+@media(min-width: 600px) {
+  .workspace .tabs .tabs-container{
+    width: 90%;
+  }
+  .workspace .tabs .tabs-menu{
+    width: 10%;
+  }
 }
 
 .workspace .editor{
