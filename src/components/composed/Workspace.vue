@@ -7,16 +7,24 @@
       </h4>
     </div>
     <div class="workspace">
-      <div class="tabs"></div>
-      <div id="arcode-code-editor" class="editor"></div>
+      <div class="tabs">
+        <button type="button" @click="addEditor()">+</button>
+      </div>
+      <div class="editor" 
+        v-for="editor in editors" 
+        :key="editor.id"
+        :ref="el => { if (el) { divs[editor.id] = el; } }"></div>
     </div>
   </div>
   
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted} from 'vue';
-import { Workspace } from '@/core/Workspace';
+import { 
+  defineComponent, ref,
+  onBeforeUpdate, watchEffect 
+} from 'vue';
+import { Workspace, EditorMetadata } from '@/core/Workspace';
 
 export default defineComponent({
   name: 'Workspace',
@@ -25,19 +33,39 @@ export default defineComponent({
   },
   setup(props) {
     const workspace = new Workspace(props.theme);
-    const view = workspace.createEditor();
-    
-    onMounted(() => {
-      
-      const editor = view.dom;
-      const editorContainer = document.getElementById('arcode-code-editor');
-      if (editorContainer !== null) {
-        editorContainer.append(editor);
+    const editors = ref<EditorMetadata[]>([]);
+    const divs = ref([]);
+    const getEditor = (editorId: number) => {
+      return workspace.getEditor(editorId);
+    };
+    const addEditor = () => {
+      const editorId = workspace.createEditor();
+      editors.value.push({ id: editorId, name: `Untitled-${editorId}.js`});
+    };
+    // make sure to reset the refs before each update
+    onBeforeUpdate(() => {
+      divs.value = []
+    });
+    watchEffect(() => {
+      const divsCopy = divs.value;
+      for (const id in divsCopy) {
+        const div: HTMLElement = divsCopy[id] as HTMLElement;
+        const divContent: string = div.innerHTML;
+        if (divContent.trim() === '') {
+          workspace.mountEditor(+id, div);
+        }
       }
-      
-    })
+    }, 
+    {
+      flush: 'post'
+    });
 
-    return {};
+    return {
+      editors,
+      getEditor,
+      addEditor,
+      divs
+    };
   }
 });
 </script>
@@ -79,6 +107,9 @@ $workspace-tabs-height: 35px;
 .workspace .editor{
   height: calc(100% - $workspace-tabs-height);
   overflow-y: auto;
+  width: 100%;
+  position: absolute;
+  z-index: 0;
 }
 
 </style>

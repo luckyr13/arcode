@@ -8,9 +8,14 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { defaultHighlightStyle } from "@codemirror/highlight";
 import { closeBrackets } from "@codemirror/closebrackets";
 
+export interface EditorMetadata {
+	id: number,
+	name: string
+}
+
 export class Workspace {
 	private _editors: EditorView[] = [];
-	private _extensions: Array<Extension> = [];
+	private _extensions: Extension[] = [];
 
 	constructor(theme = '') {
 		this._extensions.push(
@@ -36,7 +41,7 @@ export class Workspace {
 
 	}
 
-	public createEditor(): EditorView {
+	public createEditor(): number {
     const startState = EditorState.create({
       doc: '',
       extensions: this._extensions
@@ -45,8 +50,26 @@ export class Workspace {
     const view = new EditorView({
       state: startState
     })
+    const editorId = this._editors.push(view) - 1;
 
-    return view;
+    return editorId;
+	}
 
+	public removeEditor(start: number, end: number = start): void {
+		const removed: EditorView = this._editors.splice(start, end)[0];
+		removed.destroy();
+	}
+
+	public getEditor(editorId: number): EditorView {
+		return this._editors[editorId];
+	}
+
+	public mountEditor(editorId: number, container: HTMLElement|null): void {
+		const editor = this._editors[editorId].dom;
+		if (container !== null) {
+			container.append(editor);
+		} else {
+			throw Error(`Error on mounting editor with id ${editorId}`);
+		}
 	}
 }
