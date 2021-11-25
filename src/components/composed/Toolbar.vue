@@ -24,8 +24,7 @@
 			</ul>
 		</div>
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
-			hi
-			
+			Coming soon...
 		</div>
 		<div class="side-resize" v-if="showPanel" @mousedown="resize($event)">
 		</div>

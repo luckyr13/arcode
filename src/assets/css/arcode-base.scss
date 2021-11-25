@@ -59,6 +59,9 @@ body {
 	color: var(--app-statusbar-color);
 }
 
+.arcode-workspace .workspace-bg {
+	color: var(--app-toolbar-color);
+}
 
 .arcode-workspace .logo {
  -webkit-filter: Invert(var(--app-invert-img));

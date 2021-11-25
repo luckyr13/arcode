@@ -1,14 +1,20 @@
 <template>
   <div class="arcode-workspace">
-    <div class="workspace-bg text-center">
+    <div class="workspace-bg text-center" >
       <img class="logo" alt="arCode" src="@/assets/logo.png">
-      <h4 class="text-center">
+      <h4 class="text-center arcode-title" >
         arCode IDE
       </h4>
+      <h5 class="text-center arcode-instructions">
+        New File. Double click
+      </h5>
     </div>
-    <div class="workspace">
+    <div class="workspace" @dblclick="addEditor($event, true)">
       <div class="tabs">
-        <div id="arcode-editor-tabs-container" class="tabs-container">
+        <div 
+          id="arcode-editor-tabs-container" 
+          class="tabs-container" 
+          @dblclick="addEditor($event, true)">
           <div 
             class="tab" 
             @click="selectEditor(editor.id, $event)"
@@ -23,7 +29,7 @@
           </div>
         </div>
         <div class="tabs-menu">
-          <button class="button" type="button" @click="addEditor()">
+          <button class="button" type="button" @click="addEditor($event)">
               <Icon icon="codicon:file" />
           </button>
           <button class="button" type="button" @click="scrollEditor('left')">
@@ -70,7 +76,12 @@ export default defineComponent({
     const getEditor = (editorId: number) => {
       return workspace.getEditor(editorId);
     };
-    const addEditor = () => {
+    const addEditor = (event: Event, onlyInParent= false) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if(event.target !== event.currentTarget && onlyInParent) return;
+
+
       const editorId = workspace.createEditor();
       // Deactivate current editor 
       const i = editors.findIndex(ed => ed.id == currentEditorId.value);
@@ -228,7 +239,9 @@ $workspace-tabs-height: 35px;
   width: 36%;
   float: left;
   text-align: center;
+  line-height: $workspace-tabs-height;
 }
+
 
 @media(min-width: 600px) {
   .workspace .tabs .tabs-container{
@@ -249,6 +262,14 @@ $workspace-tabs-height: 35px;
 
 .workspace .editor.active{
   z-index: 100;
+}
+
+.arcode-title {
+  margin-bottom: 0px;
+}
+
+.arcode-instructions {
+
 }
 
 </style>
