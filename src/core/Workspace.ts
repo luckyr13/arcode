@@ -7,6 +7,8 @@ import { lineNumbers, gutter } from "@codemirror/gutter";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { defaultHighlightStyle } from "@codemirror/highlight";
 import { closeBrackets } from "@codemirror/closebrackets";
+import { history, historyKeymap } from "@codemirror/history";
+import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
 
 export interface EditorMetadata {
 	id: number,
@@ -21,9 +23,13 @@ export class Workspace {
 		this._extensions.push(
 			keymap.of(defaultKeymap),
       keymap.of([indentWithTab]),
+			history(),
+			autocompletion(),
 			bracketMatching(),
 			closeBrackets(),
 			highlightActiveLine(),
+      keymap.of(historyKeymap),
+      keymap.of(completionKeymap),
 		);
 
 		if (theme == 'theme-dark' || theme == 'dark-blue') {
