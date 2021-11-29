@@ -5,7 +5,7 @@
         <Toolbar :class="theme" />
       </div>
       <div class="workspace-container">
-        <Workspace :class="theme" :theme="theme"/>
+        <Workspace :class="theme" :theme="theme" :workspace="workspace"/>
       </div>
     </div>
     <StatusBar/>

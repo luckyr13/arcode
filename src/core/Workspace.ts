@@ -9,21 +9,13 @@ import { defaultHighlightStyle } from "@codemirror/highlight";
 import { closeBrackets } from "@codemirror/closebrackets";
 import { history, historyKeymap } from "@codemirror/history";
 import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
+import { GenericWorkspace } from './interfaces/GenericWorkspace';
+import { EditorViewMetadata } from './interfaces/EditorViewMetadata';
 
-export interface EditorMetadata {
-	id: number,
-	name: string,
-	active: boolean
-}
-
-export interface EditorViewMetadata {
-	id: number,
-	view: EditorView
-}
-
-export class Workspace {
-	private _editors: EditorViewMetadata[] = [];
+export class Workspace implements GenericWorkspace
+{
 	private _extensions: Extension[] = [];
+	private _editors: EditorViewMetadata[] = [];
 
 	constructor(theme = '') {
 		this._extensions.push(
@@ -59,13 +51,13 @@ export class Workspace {
       extensions: this._extensions
     })
 
-    const view = new EditorView({
+    const view: EditorView = new EditorView({
       state: startState
     })
-    const editorId = this._editors[this._editors.length - 1] ? 
+    const editorId: number = this._editors[this._editors.length - 1] ? 
       this._editors[this._editors.length - 1].id + 1 : 0;
-    this._editors.push({id: editorId, view});
-
+    const metadata: EditorViewMetadata = {id: editorId, view};
+    this._editors.push(metadata);
     return editorId;
 	}
 

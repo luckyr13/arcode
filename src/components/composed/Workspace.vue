@@ -25,7 +25,7 @@
             <button 
               class="button tab-button-close" 
               type="button" 
-              @click="destroyEditor(editor.id, $event)">x</button>
+              @click="deleteEditor(editor.id, $event)">x</button>
           </div>
         </div>
         <div class="tabs-menu">
@@ -54,11 +54,9 @@
 import { 
   defineComponent, ref,
   onBeforeUpdate, watchEffect,
-  reactive
 } from 'vue';
-import { Workspace, EditorMetadata } from '@/core/Workspace';
+import { ReactiveWorkspace } from '@/core/ReactiveWorkspace';
 import { Icon } from '@iconify/vue';
-
 
 export default defineComponent({
   name: 'Workspace',
@@ -69,66 +67,22 @@ export default defineComponent({
     Icon
   },
   setup(props) {
-    const workspace = new Workspace(props.theme);
-    const editors = reactive<EditorMetadata[]>([]);
     const divs = ref([]);
-    const currentEditorId = ref(-1);
-    const getEditor = (editorId: number) => {
-      return workspace.getEditor(editorId);
-    };
+    const workspace = new ReactiveWorkspace(props.theme, 'arcode-editor-tabs-container');
+    const editors = workspace.editors;
     const addEditor = (event: Event, onlyInParent= false) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if(event.target !== event.currentTarget && onlyInParent) return;
-
-
-      const editorId = workspace.createEditor();
-      // Deactivate current editor 
-      const i = editors.findIndex(ed => ed.id == currentEditorId.value);
-      if (i >= 0 && editors[i]) {
-        editors[i].active = false;
-      }
-      // Add new editor
-      editors.push({ id: editorId, name: `Untitled-${editorId}`, active: true });
-      currentEditorId.value = editorId;
-      scrollEditor('right', 120 * editorId);
+      workspace.addEditor(event, onlyInParent);
     };
     const selectEditor = (editorId: number, event: Event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      // Deactivate current editor 
-      const i = editors.findIndex(ed => ed.id == currentEditorId.value);
-      if (i >= 0 && editors[i]) {
-        editors[i].active = false;
-      }
-      // Activate new editor
-      const j = editors.findIndex(ed => ed.id == editorId);
-      editors[j].active = true;
-      currentEditorId.value = editorId;
-      workspace.focusEditor(editorId);
-      
+      workspace.selectEditor(editorId, event);
+    };
+    const deleteEditor = (editorId: number, event: Event) => {
+      workspace.deleteEditor(editorId, event);
     };
     const scrollEditor = (direction: string, translate = 120) => {
-      const tabsContainer = document.getElementById('arcode-editor-tabs-container');
-      if (!tabsContainer) {
-        throw Error('Tabs container undefined!');
-      }
+      workspace.scrollEditor(direction, translate);
+    };
 
-      if (direction === 'left') {
-        tabsContainer.scrollLeft  -= translate;
-      } else if (direction === 'right') {
-        tabsContainer.scrollLeft += translate;
-      } else {
-        throw Error('Wrong direction :)');
-      }
-    };
-    const destroyEditor = (editorId: number, event: Event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      const i = editors.findIndex(ed => ed.id == editorId);
-      editors.splice(i, 1);
-      workspace.destroyEditor(editorId);
-    };
     // make sure to reset the refs before each update
     onBeforeUpdate(() => {
       divs.value = []
@@ -150,12 +104,11 @@ export default defineComponent({
 
     return {
       editors,
-      getEditor,
       addEditor,
       divs,
       selectEditor,
       scrollEditor,
-      destroyEditor
+      deleteEditor
     };
   }
 });
