@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="toolbar-and-workspace">
       <div class="toolbar-container">
-        <Toolbar :class="theme" />
+        <Toolbar :class="theme" :workspace="workspace" />
       </div>
       <div class="workspace-container">
         <Workspace 
@@ -16,46 +16,29 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import Workspace from '@/components/composed/Workspace.vue';
 import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    Workspace,
-    Toolbar,
-    StatusBar
-  },
-  setup() {
-    const version = '0.1';
-    const us: UserSettings = new UserSettings();
-    const settings = us.settings;
-    const theme = settings.theme;
-    const body = document.getElementsByTagName('body')[0];
-    body.className = theme;
-    const menuTheme = us.menuTheme;
-    const workspaceChange = (data: Array<EditorMetadata>) => {
-      console.log(data, 'workspace-change')
-    }
-    onMounted(() => {
-      console.log(workspace.value, 'workspace-mounted');
-    })
-    const workspace = ref(null);
+const us: UserSettings = new UserSettings();
+const settings = us.settings;
+const theme = settings.theme;
+const body = document.getElementsByTagName('body')[0];
+body.className = theme;
+const editors = ref([]);
+const workspaceChange = (data: Array<EditorMetadata>) => {
+  console.log(data, 'workspace-change')
+  editors.value = data;
+};
+onMounted(() => {
+  console.log(workspace.value, 'workspace-mounted');
+})
+const workspace = ref(null);
 
-    return {
-      theme,
-      version,
-      menuTheme,
-      workspaceChange,
-      workspace
-    };
-  }
-});
 </script>
 
 <style lang="scss">

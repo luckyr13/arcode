@@ -24,7 +24,7 @@
 			</ul>
 		</div>
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
-			<FileExplorer v-if="options['primary']['file-explorer'].active" />
+			<FileExplorer v-if="options['primary']['file-explorer'].active" :workspace="workspace" />
 			<RunAndDebug v-if="options['primary']['compile'].active" />
 			<UserSettings v-if="options['secondary']['settings'].active" />
 		</div>
@@ -33,111 +33,88 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
+<script setup lang="ts">
+import { ref, reactive, defineProps } from 'vue';
 import { Icon } from '@iconify/vue';
 import FileExplorer from '@/components/panel/FileExplorer.vue';
 import RunAndDebug from '@/components/panel/RunAndDebug.vue';
 import UserSettings from '@/components/panel/UserSettings.vue';
+import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
 
-interface ToolbarOption {
-	id: string,
-	icon: string,
-	active: boolean
-}
-
-export default defineComponent({
-	name: 'Toolbar',
-	components: {
-		Icon, FileExplorer, RunAndDebug, UserSettings
-	},
-	setup() {
-		const showPanel = ref(false);
-		const selectedOption = ref('');
-		const options = reactive<Record<string, Record<string, ToolbarOption>>>({
-			'primary': {
-				'file-explorer': {
-					id: 'file-explorer',
-					icon: 'codicon:files',
-					active: false
-				}, 
-				'compile': {
-					id: 'compile',
-					icon: 'codicon:debug-alt',
-					active: false
-				}
-			},
-			'secondary': {
-				'settings': {
-					id: 'settings',
-					icon: 'codicon:gear',
-					active: false
-				}
-			}
-			
-		});
-		
-		const initialContainerWidth = 220;
-		const sideContainerWidth = ref(initialContainerWidth);
-
-		const select = (optionId: string, optionType: string, event: Event) => {
-			let target: HTMLAnchorElement = event.currentTarget as HTMLAnchorElement;
-
-			// Clear previous selected option
-			if (selectedOption.value && 
-					options['primary'][selectedOption.value] && 
-					options['primary'][selectedOption.value].active) {
-				options['primary'][selectedOption.value].active = false;
-			}
-			else if (selectedOption.value && 
-							options['secondary'][selectedOption.value] &&
-							options['secondary'][selectedOption.value].active) {
-				options['secondary'][selectedOption.value].active = false;
-			}
-
-			// Show/hide panel
-			if (showPanel.value && 
-					(target.className === 'active' || target.className === 'active focus-visible')) {
-				showPanel.value = false;
-				target.className = '';
-			} else {
-				showPanel.value = true;
-				target.className = 'active';
-				sideContainerWidth.value = initialContainerWidth;
-			}
-			options[optionType][optionId].active = true;
-
-			// Save selected option
-			selectedOption.value = optionId;
-		};
-		
-		const resize = () => {
-			const doResize = (event: MouseEvent) => {
-					sideContainerWidth.value = event.clientX - 48;
-			};
-
-			const stopResize = () => {
-				document.documentElement.removeEventListener('mousemove', doResize, false);
-				document.documentElement.removeEventListener('mouseup', stopResize, false);
-			};
-			document.documentElement.addEventListener('mouseup', stopResize, false);
-			document.documentElement.addEventListener('mousemove', doResize, false);
-		};
-
-		
-
-		
-
-		return {
-			select,
-			showPanel,
-			options,
-			selectedOption,
-			sideContainerWidth,
-			resize
-		};
-	}
+const props = defineProps({
+	workspace: Object
 });
+const showPanel = ref(false);
+const selectedOption = ref('');
+const options = reactive<Record<string, Record<string, ToolbarOption>>>({
+	'primary': {
+		'file-explorer': {
+			id: 'file-explorer',
+			icon: 'codicon:files',
+			active: false
+		}, 
+		'compile': {
+			id: 'compile',
+			icon: 'codicon:debug-alt',
+			active: false
+		}
+	},
+	'secondary': {
+		'settings': {
+			id: 'settings',
+			icon: 'codicon:gear',
+			active: false
+		}
+	}
+	
+});
+
+const initialContainerWidth = 220;
+const sideContainerWidth = ref(initialContainerWidth);
+
+const select = (optionId: string, optionType: string, event: Event) => {
+	let target: HTMLAnchorElement = event.currentTarget as HTMLAnchorElement;
+
+	// Clear previous selected option
+	if (selectedOption.value && 
+			options['primary'][selectedOption.value] && 
+			options['primary'][selectedOption.value].active) {
+		options['primary'][selectedOption.value].active = false;
+	}
+	else if (selectedOption.value && 
+					options['secondary'][selectedOption.value] &&
+					options['secondary'][selectedOption.value].active) {
+		options['secondary'][selectedOption.value].active = false;
+	}
+
+	// Show/hide panel
+	if (showPanel.value && 
+			(target.className === 'active' || target.className === 'active focus-visible')) {
+		showPanel.value = false;
+		target.className = '';
+	} else {
+		showPanel.value = true;
+		target.className = 'active';
+		sideContainerWidth.value = initialContainerWidth;
+	}
+	options[optionType][optionId].active = true;
+
+	// Save selected option
+	selectedOption.value = optionId;
+};
+
+const resize = () => {
+	const doResize = (event: MouseEvent) => {
+			sideContainerWidth.value = event.clientX - 48;
+	};
+
+	const stopResize = () => {
+		document.documentElement.removeEventListener('mousemove', doResize, false);
+		document.documentElement.removeEventListener('mouseup', stopResize, false);
+	};
+	document.documentElement.addEventListener('mouseup', stopResize, false);
+	document.documentElement.addEventListener('mousemove', doResize, false);
+};
 </script>
 
 <style scoped lang="scss">

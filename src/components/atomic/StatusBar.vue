@@ -4,13 +4,7 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-	name: 'StatusBar'
-});
-
+<script setup lang="ts">
 
 </script>
 

@@ -7,48 +7,38 @@
   </DockMenu>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { defineProps, computed } from 'vue';
 import { DockMenu } from 'vue-dock-menu';
 import 'vue-dock-menu/dist/vue-dock-menu.css';
 
-export default defineComponent({
-	name: 'MenuBar',
-	components: {
-		DockMenu
-	},
-  props: {
-      menuTheme: Object
-  },
-	setup(props) {
-		const items = [
-      {
-        name: "File",
-        menu: [
-          { name: "New File"},
-          {name: "Open File..."},
-          { isDivider: true },
-          {name: "New Window"},
-          { isDivider: true },
-          {name: "Exit"}
-        ]
-      },
-      {
-        name: "Edit",
-        menu: [{ name: "Cut"}, {name: "Copy"}, {name: "Paste"}]
-      }
-    ];
-    const selected = (res) => {
-        alert(JSON.stringify(res))
-    }
-    
-		return {
-			items,
-      selected,
-      theme: props.menuTheme
-		};
-	}
+const props = defineProps({
+  theme: String
 });
+const theme = computed(() => {
+  return props.theme;
+});
+
+const items = [
+  {
+    name: "File",
+    menu: [
+      { name: "New File"},
+      {name: "Open File..."},
+      { isDivider: true },
+      {name: "New Window"},
+      { isDivider: true },
+      {name: "Exit"}
+    ]
+  },
+  {
+    name: "Edit",
+    menu: [{ name: "Cut"}, {name: "Copy"}, {name: "Paste"}]
+  }
+];
+const selected = (res) => {
+    alert(JSON.stringify(res))
+}
 </script>
 
 <style lang="scss">

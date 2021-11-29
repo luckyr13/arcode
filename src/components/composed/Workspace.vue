@@ -3,7 +3,7 @@
     <div class="workspace-bg text-center" >
       <img class="logo" alt="arCode" src="@/assets/logo.png">
       <h4 class="text-center arcode-title" >
-        arCode IDE
+        arCode IDE v{{ appVersion }}
       </h4>
       <h5 class="text-center arcode-instructions">
         Double click here to start
@@ -57,6 +57,7 @@ import {
 } from 'vue';
 import { ReactiveWorkspace } from '@/core/ReactiveWorkspace';
 import { Icon } from '@iconify/vue';
+import { appVersion } from '@/core/AppSettings';
 
 const props = defineProps({
   theme: String
@@ -86,7 +87,8 @@ const getEditorData = (editorId: number) => {
 
 // Expose public methods
 defineExpose({
-  getEditorData
+  getEditorData,
+  editors
 });
 
 // make sure to reset the refs before each update

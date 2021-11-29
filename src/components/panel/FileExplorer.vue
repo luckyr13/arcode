@@ -2,16 +2,20 @@
 <div class="arcode-main-toolbar-panel-title">
 	File Explorer
 </div>
-
+<div v-if="workspace.editors.length">
+	<div v-for="editor in workspace.editors" :key="editor.id">
+		{{ editor.name }}
+		{{ workspace.getEditorData(editor.id).state.doc }}
+	</div>
+</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { defineProps } from 'vue';
 
-export default defineComponent({
-	name: 'AppNotifications'
+const props = defineProps({
+	workspace: Object
 });
-
 
 </script>
 
