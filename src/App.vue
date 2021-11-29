@@ -5,7 +5,11 @@
         <Toolbar :class="theme" />
       </div>
       <div class="workspace-container">
-        <Workspace :class="theme" :theme="theme" :workspace="workspace"/>
+        <Workspace 
+          ref="workspace"
+          :class="theme" 
+          :theme="theme" 
+          @workspace-change="workspaceChange"/>
       </div>
     </div>
     <StatusBar/>
@@ -13,11 +17,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import Workspace from '@/components/composed/Workspace.vue';
 import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
+import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
 
 export default defineComponent({
   name: 'App',
@@ -34,11 +39,20 @@ export default defineComponent({
     const body = document.getElementsByTagName('body')[0];
     body.className = theme;
     const menuTheme = us.menuTheme;
+    const workspaceChange = (data: Array<EditorMetadata>) => {
+      console.log(data, 'workspace-change')
+    }
+    onMounted(() => {
+      console.log(workspace.value, 'workspace-mounted');
+    })
+    const workspace = ref(null);
 
     return {
       theme,
       version,
-      menuTheme
+      menuTheme,
+      workspaceChange,
+      workspace
     };
   }
 });

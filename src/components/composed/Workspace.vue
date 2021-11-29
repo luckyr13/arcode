@@ -6,7 +6,7 @@
         arCode IDE
       </h4>
       <h5 class="text-center arcode-instructions">
-        New File. Double click
+        Double click here to start
       </h5>
     </div>
     <div class="workspace" @dblclick="addEditor($event, true)">
@@ -50,68 +50,65 @@
   
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { 
-  defineComponent, ref,
-  onBeforeUpdate, watchEffect,
+  ref, defineProps, defineEmits, defineExpose,
+  onBeforeUpdate, watchEffect
 } from 'vue';
 import { ReactiveWorkspace } from '@/core/ReactiveWorkspace';
 import { Icon } from '@iconify/vue';
 
-export default defineComponent({
-  name: 'Workspace',
-  props: {
-    theme: String
-  },
-  components: {
-    Icon
-  },
-  setup(props) {
-    const divs = ref([]);
-    const workspace = new ReactiveWorkspace(props.theme, 'arcode-editor-tabs-container');
-    const editors = workspace.editors;
-    const addEditor = (event: Event, onlyInParent= false) => {
-      workspace.addEditor(event, onlyInParent);
-    };
-    const selectEditor = (editorId: number, event: Event) => {
-      workspace.selectEditor(editorId, event);
-    };
-    const deleteEditor = (editorId: number, event: Event) => {
-      workspace.deleteEditor(editorId, event);
-    };
-    const scrollEditor = (direction: string, translate = 120) => {
-      workspace.scrollEditor(direction, translate);
-    };
-
-    // make sure to reset the refs before each update
-    onBeforeUpdate(() => {
-      divs.value = []
-    });
-    watchEffect(() => {
-      const divsCopy = divs.value;
-      // Rebuild editors in workspace
-      for (const id in divsCopy) {
-        const div: HTMLElement = divsCopy[id] as HTMLElement;
-        const divContent: string = div.innerHTML;
-        if (divContent.trim() === '') {
-          workspace.mountEditor(+id, div);
-        }
-      }
-    }, 
-    {
-      flush: 'post'
-    });
-
-    return {
-      editors,
-      addEditor,
-      divs,
-      selectEditor,
-      scrollEditor,
-      deleteEditor
-    };
-  }
+const props = defineProps({
+  theme: String
 });
+const emit = defineEmits(['workspace-change']);
+
+const divs = ref([]);
+const workspace = new ReactiveWorkspace(props.theme, 'arcode-editor-tabs-container');
+const editors = workspace.editors;
+const addEditor = (event: Event, onlyInParent= false) => {
+  workspace.addEditor(event, onlyInParent);
+  emit('workspace-change', editors);
+};
+const selectEditor = (editorId: number, event: Event) => {
+  workspace.selectEditor(editorId, event);
+};
+const deleteEditor = (editorId: number, event: Event) => {
+  workspace.deleteEditor(editorId, event);
+  emit('workspace-change', editors);
+};
+const scrollEditor = (direction: string, translate = 120) => {
+  workspace.scrollEditor(direction, translate);
+};
+const getEditorData = (editorId: number) => {
+  return workspace.getEditor(editorId);
+};
+
+// Expose public methods
+defineExpose({
+  getEditorData
+});
+
+// make sure to reset the refs before each update
+onBeforeUpdate(() => {
+  divs.value = []
+});
+watchEffect(() => {
+  const divsCopy = divs.value;
+  // Rebuild editors in workspace
+  for (const id in divsCopy) {
+    const div: HTMLElement = divsCopy[id] as HTMLElement;
+    const divContent: string = div.innerHTML;
+    if (divContent.trim() === '') {
+      workspace.mountEditor(+id, div);
+    }
+  }
+}, 
+{
+  flush: 'post'
+});
+
+
 </script>
 
 <style scoped lang="scss">

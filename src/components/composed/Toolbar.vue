@@ -24,7 +24,9 @@
 			</ul>
 		</div>
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
-			Coming soon...
+			<FileExplorer v-if="options['primary']['file-explorer'].active" />
+			<RunAndDebug v-if="options['primary']['compile'].active" />
+			<UserSettings v-if="options['secondary']['settings'].active" />
 		</div>
 		<div class="side-resize" v-if="showPanel" @mousedown="resize($event)">
 		</div>
@@ -34,6 +36,9 @@
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue';
 import { Icon } from '@iconify/vue';
+import FileExplorer from '@/components/panel/FileExplorer.vue';
+import RunAndDebug from '@/components/panel/RunAndDebug.vue';
+import UserSettings from '@/components/panel/UserSettings.vue';
 
 interface ToolbarOption {
 	id: string,
@@ -44,7 +49,7 @@ interface ToolbarOption {
 export default defineComponent({
 	name: 'Toolbar',
 	components: {
-		Icon
+		Icon, FileExplorer, RunAndDebug, UserSettings
 	},
 	setup() {
 		const showPanel = ref(false);
@@ -63,11 +68,6 @@ export default defineComponent({
 				}
 			},
 			'secondary': {
-				'account': {
-					id: 'account',
-					icon: 'codicon:account',
-					active: false
-				}, 
 				'settings': {
 					id: 'settings',
 					icon: 'codicon:gear',

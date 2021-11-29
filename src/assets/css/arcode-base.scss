@@ -38,18 +38,20 @@ body {
 	border-left: 2px solid var(--app-toolbar-color-onactive);
 }
 .menu-container .toolbar-menu li a.active {
+	color: var(--app-toolbar-color-hover);
 	border-left: 2px solid var(--app-toolbar-color-hover);
 }
-
-.arcode-main-toolbar .side-container  {
+.arcode-main-toolbar .side-container {
 	background-color: var(--app-toolbar-panel-bgcolor);
 	color: var(--app-toolbar-panel-color);
 }
 .arcode-main-toolbar .side-resize:hover {
 	background-color: var(--app-toolbar-panel-resize-bgcolor);
 }
-
-
+.arcode-main-toolbar-panel-title {
+	background-color: var(--app-toolbar-panel-title-bgcolor);
+	color: var(--app-toolbar-panel-title-color);
+}
 .arcode-notification-container {
 	background-color: var(--app-notification-bgcolor);
 	color: var(--app-notification-color);
