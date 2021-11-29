@@ -34,13 +34,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, defineProps } from 'vue';
+import { ref, reactive } from 'vue';
 import { Icon } from '@iconify/vue';
 import FileExplorer from '@/components/panel/FileExplorer.vue';
 import RunAndDebug from '@/components/panel/RunAndDebug.vue';
 import UserSettings from '@/components/panel/UserSettings.vue';
 import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
-
 const props = defineProps({
 	workspace: Object
 });

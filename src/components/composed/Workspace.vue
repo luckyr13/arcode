@@ -52,8 +52,7 @@
 
 <script setup lang="ts">
 import { 
-  ref, defineProps, defineEmits, defineExpose,
-  onBeforeUpdate, watchEffect
+  ref, onBeforeUpdate, watchEffect
 } from 'vue';
 import { ReactiveWorkspace } from '@/core/ReactiveWorkspace';
 import { Icon } from '@iconify/vue';

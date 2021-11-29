@@ -3,19 +3,26 @@
 	File Explorer
 </div>
 <div v-if="workspace.editors.length">
-	<div v-for="editor in workspace.editors" :key="editor.id">
+	<div v-for="editor in workspace.editors" :key="editor.id" 
+		@click="getEditorData(workspace.getEditorData(editor.id))">
 		{{ editor.name }}
-		{{ workspace.getEditorData(editor.id).state.doc }}
 	</div>
 </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
+import {EditorView} from "@codemirror/view";
+import { } from '';
 const props = defineProps({
 	workspace: Object
 });
+const getEditorData = (editorV: EditorView) => {
+	let data = '';
+	if (editorV) {
+		data = editorV.state.doc;
+	}
+	alert(data);
+};
 
 </script>
 
