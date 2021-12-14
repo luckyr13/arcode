@@ -1,11 +1,12 @@
 {
-  "name": "arcode",
-  "version": "0.1.0",
+  "name": "arCode Studio",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "build-docs": "vue-cli-service build --dest docs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^0.19.9",
