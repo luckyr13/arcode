@@ -10,8 +10,8 @@ module.exports = {
   publicPath: './',
   pwa: {
     workboxOptions: {
-    	//exclude: ['index.html'],
-    	navigateFallback: './'
+    	exclude: ['index.html'],
+    	//navigateFallback: './'
 		}
 	}
 }
