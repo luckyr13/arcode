@@ -10,7 +10,7 @@ module.exports = {
   publicPath: './',
   pwa: {
     workboxOptions: {
-    	exclude: ['index.html'],
+    	exclude: ['index.html', /\.map$/],
     	//navigateFallback: './'
 		}
 	}
