@@ -4,6 +4,7 @@
 			<ul class="toolbar-menu top-menu">
 				<li v-for="option in options['primary']" :key="option.id">
 					<a tabindex="0" 
+						:data-tippy-content="option.label"
 						:class="{ active: option.active }"
 						@click="select(option.id, 'primary', $event)"
 						@keyup.enter="select(option.id, 'primary', $event)">
@@ -15,6 +16,7 @@
 			<ul class="toolbar-menu bottom-menu">
 				<li v-for="optionSec in options['secondary']" :key="optionSec.id">
 					<a tabindex="0" 
+						:data-tippy-content="optionSec.label"
 						:class="{ active: optionSec.active }"
 						@click="select(optionSec.id, 'secondary', $event)"
 						@keyup.enter="select(optionSec.id, 'secondary', $event)">
@@ -34,12 +36,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import FileExplorer from '@/components/panel/FileExplorer.vue';
 import RunAndDebug from '@/components/panel/RunAndDebug.vue';
 import UserSettings from '@/components/panel/UserSettings.vue';
 import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
+import tippy from 'tippy.js';
+
 const props = defineProps({
 	workspace: Object
 });
@@ -50,11 +54,13 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 		'file-explorer': {
 			id: 'file-explorer',
 			icon: 'codicon:files',
+			label: 'File explorer',
 			active: false
 		}, 
 		'compile': {
 			id: 'compile',
 			icon: 'codicon:debug-alt',
+			label: 'Debug and testing',
 			active: false
 		}
 	},
@@ -62,6 +68,7 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 		'settings': {
 			id: 'settings',
 			icon: 'codicon:gear',
+			label: 'Settings',
 			active: false
 		}
 	}
@@ -114,6 +121,14 @@ const resize = () => {
 	document.documentElement.addEventListener('mouseup', stopResize, false);
 	document.documentElement.addEventListener('mousemove', doResize, false);
 };
+
+onMounted(() => {
+	tippy('[data-tippy-content]', {
+		arrow: true,
+		placement: 'right',
+	});
+});
+
 </script>
 
 <style scoped lang="scss">

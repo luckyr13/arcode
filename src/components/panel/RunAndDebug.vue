@@ -1,6 +1,6 @@
 <template>
 <div class="arcode-main-toolbar-panel-title">
-	Run and debug
+	Debug and Testing
 </div>
 
 </template>

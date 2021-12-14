@@ -21,6 +21,7 @@
     "@codemirror/view": "^0.19.31",
     "core-js": "^3.19.3",
     "register-service-worker": "^1.7.1",
+    "tippy.js": "^6.3.7",
     "vue": "^3.2.26",
     "vue-dock-menu": "^1.1.0"
   },

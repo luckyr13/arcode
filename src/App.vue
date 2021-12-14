@@ -10,6 +10,7 @@
           :class="theme" 
           :theme="theme" 
           @workspace-change="workspaceChange"/>
+        <Console />
       </div>
     </div>
     <StatusBar/>
@@ -19,20 +20,21 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Workspace from '@/components/composed/Workspace.vue';
+import Console from '@/components/atomic/Console.vue';
 import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
+import 'tippy.js/dist/tippy.css'; // optional for styling
 
 const us: UserSettings = new UserSettings();
 const settings = us.settings;
 const theme = settings.theme;
 const body = document.getElementsByTagName('body')[0];
 body.className = theme;
-const editors = ref([]);
 const workspaceChange = (data: Array<EditorMetadata>) => {
   console.log(data, 'workspace-change')
-  editors.value = data;
+  // editors.value = data;
 };
 onMounted(() => {
   console.log(workspace.value, 'workspace-mounted');
@@ -59,14 +61,32 @@ const workspace = ref(null);
   height: 100%;
   display: flex;
   flex-direction: row;
+  overflow-y: auto;
 }
 .toolbar-container {
   height: 100%;
-        flex-shrink: 0;
 }
 .workspace-container {
   height: 100%;
-  flex-basis: 0;
-        flex-grow: 1;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.tippy-box {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
+}
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

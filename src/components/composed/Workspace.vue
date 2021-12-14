@@ -29,13 +29,25 @@
           </div>
         </div>
         <div class="tabs-menu">
-          <button class="button" type="button" @click="addEditor($event)">
+          <button 
+            class="button" 
+            type="button" 
+            @click="addEditor($event)"
+            data-tippy-workspace-content="Add New File">
               <Icon icon="codicon:file" />
           </button>
-          <button class="button" type="button" @click="scrollEditor('left')">
+          <button 
+            class="button" 
+            type="button" 
+            @click="scrollEditor('left')"
+            data-tippy-workspace-content="Move left">
               <Icon icon="codicon:chevron-left" />
           </button>
-          <button class="button" type="button" @click="scrollEditor('right')">
+          <button 
+            class="button" 
+            type="button" 
+            @click="scrollEditor('right')"
+            data-tippy-workspace-content="Move right">
               <Icon icon="codicon:chevron-right" />
           </button>
         </div>
@@ -52,11 +64,12 @@
 
 <script setup lang="ts">
 import { 
-  ref, onBeforeUpdate, watchEffect
+  ref, onBeforeUpdate, watchEffect, onMounted
 } from 'vue';
 import { ReactiveWorkspace } from '@/core/ReactiveWorkspace';
 import { Icon } from '@iconify/vue';
 import { appVersion } from '@/core/AppSettings';
+import tippy from 'tippy.js';
 
 const props = defineProps({
   theme: String
@@ -87,7 +100,9 @@ const getEditorData = (editorId: number) => {
 // Expose public methods
 defineExpose({
   getEditorData,
-  editors
+  editors,
+  deleteEditor,
+  selectEditor
 });
 
 // make sure to reset the refs before each update
@@ -109,6 +124,13 @@ watchEffect(() => {
   flush: 'post'
 });
 
+onMounted(() => {
+  tippy('[data-tippy-workspace-content]', {
+    arrow: true,
+    placement: 'bottom',
+    content: (reference) => reference.getAttribute('data-tippy-workspace-content')
+  });
+});
 
 </script>
 

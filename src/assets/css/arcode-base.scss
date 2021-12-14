@@ -111,3 +111,8 @@ body {
 .arcode-workspace .workspace .tabs .button:hover {
   background-color: var(--app-tabs-button-color-hoverbg);
 }
+
+.arcode-console-tab {
+	background-color: var(--app-toolbar-panel-bgcolor);
+	color: var(--app-toolbar-panel-color);
+}

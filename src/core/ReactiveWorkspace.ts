@@ -4,7 +4,7 @@ import {
   ref, reactive, Ref
 } from 'vue';
 
-export class ReactiveWorkspace extends Workspace  {	
+export class ReactiveWorkspace extends Workspace  {
 	private _currentEditorId: Ref<number> = ref(0);
 	private _editorsReactive: EditorMetadata[] = reactive<EditorMetadata[]>([]);
 	private _tabsContainerId = '';
@@ -33,12 +33,12 @@ export class ReactiveWorkspace extends Workspace  {
 
     const editorId = this.createEditor();
     // Deactivate current editor 
-    const i = this._editorsReactive.findIndex(ed => ed.id == this.currentEditorId);
-		if (i >= 0 && this._editorsReactive[i]) {
-			this._editorsReactive[i].active = false;
+    const i = this.editors.findIndex(ed => ed.id == this.currentEditorId);
+		if (i >= 0 && this.editors[i]) {
+			this.editors[i].active = false;
 		}
     // Add new editor
-    this._editorsReactive.push({ id: editorId, name: `Untitled-${editorId}`, active: true });
+    this.editors.push({ id: editorId, name: `Untitled-${editorId}`, active: true });
     this.currentEditorId = editorId;
     this.scrollEditor('right', 120 * editorId);
   }
