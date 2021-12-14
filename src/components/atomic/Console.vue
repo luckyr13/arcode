@@ -1,18 +1,19 @@
 <template>
-<div class="arcode-console-tab">
+<div class="arcode-console-tab" @click="toggleConsole()">
 	<Icon icon="codicon:terminal" /> <span>Console</span>
 </div>
-<div id="arcode-console-container"></div>
+<div id="arcode-console-container" :class="{ active: showConsole }"></div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
 var terminal = new Terminal({cursorBlink: true});
 const fitAddon = new FitAddon();
+const showConsole = ref(false);
 
 const initConsole = () => {
 	const containerElement = document.getElementById('arcode-console-container');
@@ -49,6 +50,12 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', fitConsole);
 })
+const toggleConsole = () => {
+	showConsole.value = !showConsole.value;
+	window.setTimeout(() => {
+		fitConsole();
+	}, 10)
+};
 
 </script>
 
@@ -75,6 +82,10 @@ onUnmounted(() => {
 	padding: 0;
 	width: 100%;
 	padding: 0;
+	display: none;
 }
 
+#arcode-console-container.active {
+	display: block;
+}
 </style>

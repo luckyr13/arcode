@@ -7,5 +7,11 @@ module.exports = {
         return args;
       })
   },
-  publicPath: './'
+  publicPath: './',
+  pwa: {
+    workboxOptions: {
+    	//exclude: ['index.html'],
+    	navigateFallback: './'
+		}
+	}
 }
