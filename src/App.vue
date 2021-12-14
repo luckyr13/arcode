@@ -25,7 +25,8 @@ import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
-import 'tippy.js/dist/tippy.css'; // optional for styling
+import 'tippy.js/dist/tippy.css';
+import 'xterm/css/xterm.css';
 
 const us: UserSettings = new UserSettings();
 const settings = us.settings;
@@ -88,5 +89,19 @@ const workspace = ref(null);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+
+.xterm .xterm-viewport {
+  width: 100% !important;
+}
+
+.xterm .xterm-screen {
+  width: 100% !important;
+
+}
+
+.xterm .xterm-screen canvas {
+  width: 100% !important;
 }
 </style>

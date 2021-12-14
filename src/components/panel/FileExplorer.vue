@@ -39,6 +39,7 @@
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
 import { Icon } from '@iconify/vue';
+import Workspace from '@/components/composed/Workspace.vue';
 
 const props = defineProps({
 	workspace: Object
@@ -59,15 +60,15 @@ const openFile = (inputId: string) => {
 	}
 }
 
-const openFile_helper = (inputEvent: any, workspace: any): Promise<any> => {
-  let method = new Promise<any>((resolve, reject) => {
+const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<string> => {
+  let method = new Promise<string>((resolve, reject) => {
      // Transform .json file into key
      try {
       const file = inputEvent.target.files.length ? 
         inputEvent.target.files[0] : null;
 
       const freader = new FileReader();
-      freader.onload = async (_fileObj) => {
+      freader.onload = async () => {
         const res = freader.result;
         const fname = file.name;
         workspace.addEditor(inputEvent, false, res, fname)
