@@ -6,7 +6,7 @@
         arCode IDE v{{ appVersion }}
       </h4>
       <h5 class="text-center arcode-instructions">
-        Double click here to start
+         Double click here to start 
       </h5>
     </div>
     <div class="workspace" @dblclick="addEditor($event, true)">
@@ -242,7 +242,10 @@ $workspace-tabs-height: 35px;
 }
 
 .arcode-instructions {
-
+  font-size: 10px;
+  padding: 4px 8px;
+  background: black;
+  border-radius: 20px;
 }
 
 </style>
