@@ -1,7 +1,7 @@
 import {EditorView} from "@codemirror/view";
 
 export interface GenericWorkspace {
-	createEditor(): number;
+	createEditor(content: string): number;
 	destroyEditor(editorId: number): void;
 	getEditor(editorId: number): EditorView;
 	mountEditor(editorId: number, container: HTMLElement|null): void;

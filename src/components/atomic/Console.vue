@@ -1,6 +1,6 @@
 <template>
 <div class="arcode-console-tab">
-	<Icon icon="codicon:chevron-right" /> Console
+	<Icon icon="codicon:terminal" /> <span>Console</span>
 </div>
 
 </template>
@@ -15,8 +15,16 @@ import { Icon } from '@iconify/vue';
 .arcode-console-tab {
 	height: 24px;
 	line-height: 24px;
-	font-size: 10px;
 	padding-left: 20px;
 	cursor: pointer;
+}
+.arcode-console-tab .iconify {
+	font-size: 12px;
+
+}
+.arcode-console-tab span {
+	font-size: 10px;
+	margin-left: 2px;
+	line-height: 24px;
 }
 </style>

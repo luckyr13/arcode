@@ -6,7 +6,7 @@
         arCode IDE v{{ appVersion }}
       </h4>
       <h5 class="text-center arcode-instructions">
-         Double click here to start 
+         Double click to start 
       </h5>
     </div>
     <div class="workspace" @dblclick="addEditor($event, true)">
@@ -79,8 +79,8 @@ const emit = defineEmits(['workspace-change']);
 const divs = ref([]);
 const workspace = new ReactiveWorkspace(props.theme, 'arcode-editor-tabs-container');
 const editors = workspace.editors;
-const addEditor = (event: Event, onlyInParent= false) => {
-  workspace.addEditor(event, onlyInParent);
+const addEditor = (event: Event, onlyInParent= false, content='') => {
+  workspace.addEditor(event, onlyInParent, content);
   emit('workspace-change', editors);
 };
 const selectEditor = (editorId: number, event: Event) => {
@@ -102,7 +102,8 @@ defineExpose({
   getEditorData,
   editors,
   deleteEditor,
-  selectEditor
+  selectEditor,
+  addEditor
 });
 
 // make sure to reset the refs before each update
@@ -246,6 +247,7 @@ $workspace-tabs-height: 35px;
   padding: 4px 8px;
   background: black;
   border-radius: 20px;
+  color: white;
 }
 
 </style>

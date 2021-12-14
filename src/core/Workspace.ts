@@ -45,15 +45,14 @@ export class Workspace implements GenericWorkspace
 
 	}
 
-	public createEditor(): number {
+	public createEditor(content: string): number {
     const startState = EditorState.create({
-      doc: '',
+      doc: content,
       extensions: this._extensions
-    })
-
+    });
     const view: EditorView = new EditorView({
       state: startState
-    })
+    });
     const editorId: number = this._editors[this._editors.length - 1] ? 
       this._editors[this._editors.length - 1].id + 1 : 0;
     const metadata: EditorViewMetadata = {id: editorId, view};

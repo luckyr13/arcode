@@ -62,9 +62,21 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 			icon: 'codicon:debug-alt',
 			label: 'Debug and testing',
 			active: false
+		},
+		'deploy': {
+			id: 'deploy',
+			icon: 'codicon:rocket',
+			label: 'Deploy',
+			active: false
 		}
 	},
 	'secondary': {
+		'accounts': {
+			id: 'accounts',
+			icon: 'codicon:account',
+			label: 'Accounts',
+			active: false
+		},
 		'settings': {
 			id: 'settings',
 			icon: 'codicon:gear',
