@@ -204,6 +204,9 @@ $workspace-tabs-height: 35px;
   flex-basis: 0;
   flex-grow: 1;
   padding-left: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .workspace .tabs .tabs-container .tab-button-close {
 }

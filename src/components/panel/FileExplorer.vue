@@ -27,7 +27,7 @@
 		:key="editor.id" 
 		:class="{ active: editor.active }"
 		@click="workspace.selectEditor(editor.id, $event)">
-			{{ editor.name }}
+		<span>{{ editor.name }}</span>
 		<Icon 
 			class="close-icon" 
 			@click="workspace.deleteEditor(editor.id, $event)"
@@ -69,7 +69,9 @@ const openFile_helper = (inputEvent: any, workspace: any): Promise<any> => {
       const freader = new FileReader();
       freader.onload = async (_fileObj) => {
         const res = freader.result;
-        workspace.addEditor(inputEvent, false, res)
+        const fname = file.name;
+        workspace.addEditor(inputEvent, false, res, fname)
+        inputEvent.target.value = '';
         resolve(res);
       }
       freader.onerror = () => {
@@ -114,6 +116,17 @@ $title-height: 28px;
 	line-height: 12px;
 	list-style: none;
 	cursor: pointer;
+	overflow: hidden;
+
+}
+
+.file-list li span {
+	text-overflow: ellipsis;
+  white-space: nowrap;
+	width: 80%;
+	float: left;
+	display: block;
+	overflow: hidden;
 }
 
 .file-list li:hover {
@@ -149,5 +162,6 @@ $title-height: 28px;
 	margin-top: 20px;
 	margin-bottom: 0px;
 }
+
 
 </style>
