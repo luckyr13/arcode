@@ -28,7 +28,10 @@
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
 			<FileExplorer v-if="options['primary']['file-explorer'].active" :workspace="workspace" />
 			<RunAndDebug v-if="options['primary']['compile'].active" />
+			<Deploy v-if="options['primary']['deploy'].active" />
 			<UserSettings v-if="options['secondary']['settings'].active" />
+			<Accounts v-if="options['secondary']['accounts'].active" />
+			<Help v-if="options['secondary']['help'].active" />
 		</div>
 		<div class="side-resize" v-if="showPanel" @mousedown="resize($event)">
 		</div>
@@ -38,10 +41,13 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
+import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
 import FileExplorer from '@/components/panel/FileExplorer.vue';
 import RunAndDebug from '@/components/panel/RunAndDebug.vue';
 import UserSettings from '@/components/panel/UserSettings.vue';
-import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
+import Accounts from '@/components/panel/Accounts.vue';
+import Deploy from '@/components/panel/Deploy.vue';
+import Help from '@/components/panel/Help.vue';
 import tippy from 'tippy.js';
 
 const props = defineProps({
@@ -81,6 +87,12 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 			id: 'settings',
 			icon: 'codicon:gear',
 			label: 'Settings',
+			active: false
+		},
+		'help': {
+			id: 'help',
+			icon: 'codicon:question',
+			label: 'Help',
 			active: false
 		}
 	}
