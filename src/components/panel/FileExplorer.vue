@@ -8,14 +8,19 @@
 			icon="codicon:file" />
 		<span>New File</span>
 	</li>
-	<li @click="openFile(workspace.addEditor($event, false, 'Open File. Coming soon ...'))">
+	<li @click="openFile('txt_file_openFile')">
 		<Icon class="close-icon"
 			icon="codicon:folder-opened" />
 		<span>Open File...</span>
+		<input type="file" 
+			id="txt_file_openFile" 
+			style="display: none" 
+			accept=".json,application/json,.js,text/javascript" 
+			@change="openFile_helper($event, workspace)">
 	</li>
 </ul>
 <div class="arcode-main-toolbar-panel-title subheader">
-	+ Files in workspace
+	Files in workspace
 </div>
 <ul class="file-list" v-if="workspace">
 	<li v-for="editor in workspace.editors" 
@@ -47,9 +52,41 @@ const getEditorData = (editorV: EditorView) => {
 	alert(data);
 };
 */
-const openFile = (data) => {
-	console.log(data)
-};
+
+const openFile = (inputId: string) => {
+	if (document.getElementById(inputId)) {
+		document.getElementById(inputId).click();
+	}
+}
+
+const openFile_helper = (inputEvent: any, workspace: any): Promise<any> => {
+  let method = new Promise<any>((resolve, reject) => {
+     // Transform .json file into key
+     try {
+      const file = inputEvent.target.files.length ? 
+        inputEvent.target.files[0] : null;
+
+      const freader = new FileReader();
+      freader.onload = async (_fileObj) => {
+        const res = freader.result;
+        workspace.addEditor(inputEvent, false, res)
+        resolve(res);
+      }
+      freader.onerror = () => {
+        throw Error('Error reading file');
+      }
+      freader.readAsText(file);
+
+     } catch (error) {
+			console.log('Error:', error);
+			reject(error);
+     }
+    
+  });
+
+  return method;
+
+}
 
 </script>
 
@@ -107,6 +144,8 @@ $title-height: 28px;
 .subheader {
 	font-size: 12px;
 	padding-left: 10px;
+	padding-top: 4px;
+	padding-bottom: 4px;
 	margin-top: 20px;
 	margin-bottom: 0px;
 }

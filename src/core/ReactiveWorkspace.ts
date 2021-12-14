@@ -26,7 +26,7 @@ export class ReactiveWorkspace extends Workspace  {
 		this._tabsContainerId = tabsContainerId;
 	}
 
-	public addEditor(event: Event, onlyInParent= false, content= ''): void {
+	public addEditor(event: Event, onlyInParent= false, content= '', fileName=''): void {
     event.stopPropagation();
     event.preventDefault();
     if(event.target !== event.currentTarget && onlyInParent) return;
@@ -38,7 +38,8 @@ export class ReactiveWorkspace extends Workspace  {
 			this.editors[i].active = false;
 		}
     // Add new editor
-    this.editors.push({ id: editorId, name: `Untitled-${editorId}`, active: true });
+    fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
+    this.editors.push({ id: editorId, name: fileName, active: true });
     this.currentEditorId = editorId;
     this.scrollEditor('right', 120 * editorId);
   }

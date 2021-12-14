@@ -79,8 +79,8 @@ const emit = defineEmits(['workspace-change']);
 const divs = ref([]);
 const workspace = new ReactiveWorkspace(props.theme, 'arcode-editor-tabs-container');
 const editors = workspace.editors;
-const addEditor = (event: Event, onlyInParent= false, content='') => {
-  workspace.addEditor(event, onlyInParent, content);
+const addEditor = (event: Event, onlyInParent= false, content='', fileName='') => {
+  workspace.addEditor(event, onlyInParent, content, fileName);
   emit('workspace-change', editors);
 };
 const selectEditor = (editorId: number, event: Event) => {
