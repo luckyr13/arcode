@@ -1,4 +1,4 @@
-import {EditorState, Extension} from "@codemirror/state";
+import {EditorState, Extension, Compartment} from "@codemirror/state";
 import {EditorView, keymap, highlightActiveLine} from "@codemirror/view";
 import {defaultKeymap, indentWithTab} from "@codemirror/commands";
 import { bracketMatching } from "@codemirror/matchbrackets";
@@ -16,6 +16,7 @@ export class Workspace implements GenericWorkspace
 {
 	private _extensions: Extension[] = [];
 	private _editors: EditorViewMetadata[] = [];
+	private _themeExtension: Compartment = new Compartment();
 
 	constructor(theme = '') {
 		this._extensions.push(
@@ -29,12 +30,7 @@ export class Workspace implements GenericWorkspace
       keymap.of(historyKeymap),
       keymap.of(completionKeymap),
 		);
-
-		if (theme == 'theme-dark' || theme == 'dark-blue') {
-			this._extensions.push(oneDark);
-		} else {
-			this._extensions.push(defaultHighlightStyle.fallback);
-		}
+		this._extensions.push(this._themeExtension.of(this._getThemeExtension(theme)));
 
 		this._extensions.push(
 			javascript(),
@@ -45,7 +41,14 @@ export class Workspace implements GenericWorkspace
 
 	}
 
-	public createEditor(content: string): number {
+	private _getThemeExtension(theme: string): Extension {
+		if (theme == 'theme-dark' || theme == 'dark-blue') {
+			return oneDark;
+		}
+		return defaultHighlightStyle.fallback;
+	}
+
+	public createEditor(content: string, theme: string): number {
     const startState = EditorState.create({
       doc: content,
       extensions: this._extensions
@@ -57,6 +60,7 @@ export class Workspace implements GenericWorkspace
       this._editors[this._editors.length - 1].id + 1 : 0;
     const metadata: EditorViewMetadata = {id: editorId, view};
     this._editors.push(metadata);
+    this.setTheme(editorId, theme);
     return editorId;
 	}
 
@@ -87,6 +91,15 @@ export class Workspace implements GenericWorkspace
 		const editor = this.getEditor(editorId);
 		if (editor) {
 			editor.focus();	
+		}
+	}
+
+	public setTheme(editorId: number, theme: string): void {
+		const editor = this.getEditor(editorId);
+		if (editor) {
+			editor.dispatch({
+				effects: this._themeExtension.reconfigure(this._getThemeExtension(theme))
+			});
 		}
 	}
 }

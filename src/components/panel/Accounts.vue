@@ -2,18 +2,20 @@
 <div class="arcode-main-toolbar-panel-title">
 	Wallet manager
 </div>
-<ul class="accounts-menu">
-	<li>
-		<Icon class="close-icon"
-			icon="codicon:file" />
-		<span>New File</span>
-	</li>
-	<li>
-		<Icon class="close-icon"
-			icon="codicon:folder-opened" />
-		<span>Open File...</span>
-	</li>
-</ul>
+<div class="accounts-container">
+	<h4>Login option:</h4>
+	<ul class="accounts-menu">
+		<li>
+			<span>ArConnect</span>
+		</li>
+		<li>
+			<span>Arweave.app</span>
+		</li>
+		<li>
+			<span>Upload your keyfile</span>
+		</li>
+	</ul>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -27,6 +29,10 @@ import { Icon } from '@iconify/vue';
 	line-height: 28px;
 	font-size: 12px;
 	padding-left: 20px;
+}
+.accounts-container {
+	padding: 20px;
+	font-size: 12px;
 }
 .accounts-menu {
 	padding: 0px;

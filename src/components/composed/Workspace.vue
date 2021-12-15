@@ -3,7 +3,7 @@
     <div class="workspace-bg text-center" >
       <img class="logo" alt="arCode" src="@/assets/logo.png">
       <h4 class="text-center arcode-title" >
-        arCode IDE v{{ appVersion }}
+        arCode Studio v{{ appVersion }}
       </h4>
       <h5 class="text-center arcode-instructions">
          Double click to start 
@@ -77,10 +77,11 @@ const props = defineProps({
 const emit = defineEmits(['workspace-change']);
 
 const divs = ref([]);
-const workspace = new ReactiveWorkspace(props.theme, 'arcode-editor-tabs-container');
+const baseTheme = ref(props.theme);
+const workspace = new ReactiveWorkspace(baseTheme.value, 'arcode-editor-tabs-container');
 const editors = workspace.editors;
 const addEditor = (event: Event, onlyInParent= false, content='', fileName='') => {
-  workspace.addEditor(event, onlyInParent, content, fileName);
+  workspace.addEditor(event, onlyInParent, content, fileName, baseTheme.value);
   emit('workspace-change', editors);
 };
 const selectEditor = (editorId: number, event: Event) => {
@@ -97,13 +98,23 @@ const getEditorData = (editorId: number) => {
   return workspace.getEditor(editorId);
 };
 
+const setTheme = (editorId: number, theme: string) => {
+  return workspace.setTheme(editorId, theme);
+};
+const setAppTheme = (theme: string) => {
+  baseTheme.value = theme;
+};
+
+
 // Expose public methods
 defineExpose({
   getEditorData,
   editors,
   deleteEditor,
   selectEditor,
-  addEditor
+  addEditor,
+  setTheme,
+  setAppTheme
 });
 
 // make sure to reset the refs before each update

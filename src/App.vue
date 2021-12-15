@@ -2,12 +2,11 @@
   <div class="main-container">
     <div class="toolbar-and-workspace">
       <div class="toolbar-container">
-        <Toolbar :class="theme" :workspace="workspace" />
+        <Toolbar :workspace="workspace" :theme="theme"  />
       </div>
       <div class="workspace-container">
         <Workspace 
           ref="workspace"
-          :class="theme" 
           :theme="theme" 
           @workspace-change="workspaceChange"/>
         <Console />
@@ -30,8 +29,8 @@ import 'xterm/css/xterm.css';
 
 const us: UserSettings = new UserSettings();
 const settings = us.settings;
-const theme = settings.theme;
-us.setAppTheme(theme);
+const theme = ref(settings.theme);
+us.setAppTheme(theme.value);
 
 const workspaceChange = (data: Array<EditorMetadata>) => {
   console.log(data, 'workspace-change')

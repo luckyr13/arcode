@@ -26,12 +26,12 @@ export class ReactiveWorkspace extends Workspace  {
 		this._tabsContainerId = tabsContainerId;
 	}
 
-	public addEditor(event: Event, onlyInParent= false, content= '', fileName=''): void {
+	public addEditor(event: Event, onlyInParent= false, content= '', fileName='', theme=''): void {
     event.stopPropagation();
     event.preventDefault();
     if(event.target !== event.currentTarget && onlyInParent) return;
 
-    const editorId = this.createEditor(content);
+    const editorId = this.createEditor(content, theme);
     // Deactivate current editor 
     const i = this.editors.findIndex(ed => ed.id == this.currentEditorId);
 		if (i >= 0 && this.editors[i]) {

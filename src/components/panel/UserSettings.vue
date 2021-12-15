@@ -5,7 +5,10 @@
 <div class="theme-selector-container">
 	<h4>Select a theme:</h4>
 	<ul class="theme-menu">
-		<li v-for="t in themeNames" :key="t">
+		<li 
+			v-for="t in themeNames" :key="t"
+			:class="{ active: t == theme }" 
+			@click="setTheme(t)">
 			<span>{{ t ? t : 'default' }}</span>
 		</li>
 	</ul>
@@ -15,13 +18,29 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
+import { ref } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
+const props = defineProps({
+	workspace: Object
+});
+
 const us = new UserSettings();
-const settings = us.settings;
-const theme = settings.theme;
+const settings = ref(us.settings);
+const theme = ref(us.settings.theme);
 const themes = us.themes;
 const themeNames = Object.keys(themes);
+
+const setTheme = (newTheme: string) => {
+	us.setAppTheme(newTheme);
+	settings.value = us.settings;
+	theme.value = us.settings.theme;
+	const editors = props.workspace.editors;
+	props.workspace.setAppTheme(newTheme);
+	for (const e of editors) {
+		props.workspace.setTheme(e.id, newTheme);
+	}
+	
+};
 
 </script>
 
@@ -52,6 +71,10 @@ const themeNames = Object.keys(themes);
 .theme-menu li:hover {
 	background-color: rgba(0,0,0,0.3);
 }
+.theme-menu li.active {
+	background-color: rgba(0,0,0,0.3);
+}
+
 .close-icon {
 	float: right;
 	cursor: pointer;
