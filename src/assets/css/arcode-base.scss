@@ -48,6 +48,9 @@ body {
 .arcode-main-toolbar .side-resize:hover {
 	background-color: var(--app-toolbar-panel-resize-bgcolor);
 }
+.side-resize:hover {
+	background-color: var(--app-toolbar-panel-resize-bgcolor);
+}
 .arcode-main-toolbar-panel-title {
 	background-color: var(--app-toolbar-panel-title-bgcolor);
 	color: var(--app-toolbar-panel-title-color);

@@ -238,13 +238,13 @@ $toolbar-container-width: 180px;
 }
 
 .side-resize {
-	width: 2px;
+	width: 3px;
 	height: 100%;
 	float: left;
 }
 
 .side-resize:hover {
-	width: 3px;
+	width: 4px;
 	cursor: col-resize;
 }
 

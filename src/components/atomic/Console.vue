@@ -1,8 +1,15 @@
 <template>
+<div class="side-resize" v-if="showConsole" @mousedown="resize($event)">
+</div>
 <div class="arcode-console-tab" @click="toggleConsole()">
 	<Icon icon="codicon:terminal" /> <span>Console</span>
 </div>
-<div id="arcode-console-container" :class="{ active: showConsole }"></div>
+<transition name="fade" >
+		<div 
+				id="arcode-console-container" 
+				v-show="showConsole" 
+				:style="{ height: `${sideContainerHeight}px` }"></div>
+</transition>
 </template>
 
 <script setup lang="ts">
@@ -16,9 +23,9 @@ const fitAddon = new FitAddon();
 const showConsole = ref(false);
 
 const initConsole = () => {
-	const containerElement = document.getElementById('arcode-console-container');
 	const lineData = '';
 	terminal.loadAddon(fitAddon);
+	const containerElement = document.getElementById('arcode-console-container');
 	terminal.open(containerElement);
 	fitConsole();
 	terminal.write('$ ');
@@ -54,7 +61,31 @@ const toggleConsole = () => {
 	showConsole.value = !showConsole.value;
 	window.setTimeout(() => {
 		fitConsole();
-	}, 10)
+	}, 100)
+};
+
+const initialContainerHeight = 220;
+const sideContainerHeight = ref(initialContainerHeight);
+const resize = () => {
+	const doResize = (event: MouseEvent) => {
+		const containerElement = document.getElementById('arcode-console-container');
+		var offset = containerElement.getBoundingClientRect();
+		var top = offset.top;
+		var newHeight = top - event.clientY;
+		sideContainerHeight.value += newHeight - 24;
+		fitConsole();
+	};
+
+	const stopResize = () => {
+		document.documentElement.removeEventListener('mousemove', doResize, false);
+		document.documentElement.removeEventListener('mouseup', stopResize, false);
+		window.setTimeout(() => {
+			fitConsole();
+		}, 100)
+		
+	};
+	document.documentElement.addEventListener('mouseup', stopResize, false);
+	document.documentElement.addEventListener('mousemove', doResize, false);
 };
 
 </script>
@@ -78,14 +109,37 @@ const toggleConsole = () => {
 }
 
 #arcode-console-container {
-	height: 220px;
 	padding: 0;
 	width: 100%;
 	padding: 0;
-	display: none;
 }
 
 #arcode-console-container.active {
 	display: block;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+.side-resize {
+	width: 100%;
+	line-height: 24px;
+	height: 4px;
+	z-index: 20;
+}
+
+.side-resize:hover {
+	height: 5px;
+	cursor: row-resize;
+}
+
+
 </style>

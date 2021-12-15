@@ -39,5 +39,17 @@ export class UserSettings {
 	public get menuTheme(): ThemeColor {
 		return this._menuThemes[this._settings.theme];
 	}
+	public get themes(): Record<string, ThemeColor> {
+		return this._menuThemes;
+	}
+
+	public setAppTheme(theme: string) {
+		if (!Object.prototype.hasOwnProperty.call(this._menuThemes, theme)) {
+			throw Error('Wrong theme!');
+		}
+		const body = document.getElementsByTagName('body')[0];
+		body.className = theme;
+		this._settings.theme = theme;
+	}
 	
 }

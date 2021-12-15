@@ -31,8 +31,8 @@ import 'xterm/css/xterm.css';
 const us: UserSettings = new UserSettings();
 const settings = us.settings;
 const theme = settings.theme;
-const body = document.getElementsByTagName('body')[0];
-body.className = theme;
+us.setAppTheme(theme);
+
 const workspaceChange = (data: Array<EditorMetadata>) => {
   console.log(data, 'workspace-change')
   // editors.value = data;
