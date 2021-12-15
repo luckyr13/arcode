@@ -6,7 +6,7 @@
 	<h4>Links:</h4>
 	<ul class="accounts-menu">
 		<li>
-			<span>arCode GitHub</span>
+			<a href="https://github.com/luckyr13/arcode" target="_blank">arCode GitHub</a>
 		</li>
 	</ul>
 </div>
@@ -47,5 +47,8 @@ import { Icon } from '@iconify/vue';
 	float: right;
 	cursor: pointer;
 	line-height: 12px;
+}
+a {
+	color: inherit;
 }
 </style>
