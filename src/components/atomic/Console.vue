@@ -20,7 +20,7 @@ import { FitAddon } from 'xterm-addon-fit';
 
 var terminal = new Terminal({cursorBlink: true});
 const fitAddon = new FitAddon();
-const showConsole = ref(false);
+const showConsole = ref(true);
 
 const initConsole = () => {
 	const lineData = '';
@@ -64,7 +64,7 @@ const toggleConsole = () => {
 	}, 100)
 };
 
-const initialContainerHeight = 220;
+const initialContainerHeight = 160;
 const sideContainerHeight = ref(initialContainerHeight);
 const resize = () => {
 	const doResize = (event: MouseEvent) => {
@@ -97,6 +97,7 @@ const resize = () => {
 	line-height: 24px;
 	padding-left: 20px;
 	cursor: pointer;
+	z-index: 10;
 }
 .arcode-console-tab .iconify {
 	font-size: 12px;

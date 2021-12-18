@@ -91,16 +91,16 @@ const workspace = ref(null);
 }
 
 
+/* Responsive xterm */
 .xterm .xterm-viewport {
   width: 100% !important;
 }
-
+.xterm {
+  height: 100%;
+  overflow-y: hidden;
+}
 .xterm .xterm-screen {
   width: 100% !important;
-
 }
 
-.xterm .xterm-screen canvas {
-  width: 100% !important;
-}
 </style>
