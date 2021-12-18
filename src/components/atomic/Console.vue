@@ -28,7 +28,10 @@ const initConsole = () => {
 	const containerElement = document.getElementById('arcode-console-container');
 	terminal.open(containerElement);
 	fitConsole();
+	const welcomeMsg = `Welcome to \x1B[1;3;31mArCode Studio \x1B[0m\n\n\r`;
+	terminal.write(welcomeMsg);
 	terminal.write('$ ');
+	terminal.focus();
 	window.addEventListener('resize', fitConsole);
 	terminal.onKey(e => {
 		terminal.write(e.key);
@@ -61,7 +64,10 @@ const toggleConsole = () => {
 	showConsole.value = !showConsole.value;
 	window.setTimeout(() => {
 		fitConsole();
-	}, 100)
+		if (showConsole.value === true) {
+			terminal.focus();
+		}
+	}, 300)
 };
 
 const initialContainerHeight = 160;

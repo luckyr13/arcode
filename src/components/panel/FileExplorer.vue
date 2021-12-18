@@ -4,12 +4,12 @@
 </div>
 <ul class="file-menu">
 	<li @click="workspace.addEditor($event)">
-		<Icon class="close-icon"
+		<Icon class="menu-icon"
 			icon="codicon:file" />
 		<span>New File</span>
 	</li>
 	<li @click="openFile('txt_file_openFile')">
-		<Icon class="close-icon"
+		<Icon class="menu-icon"
 			icon="codicon:folder-opened" />
 		<span>Open File...</span>
 		<input type="file" 
@@ -17,6 +17,16 @@
 			style="display: none" 
 			accept=".json,application/json,.js,text/javascript" 
 			@change="openFile_helper($event, workspace)">
+	</li>
+	<li @click="showModal = true">
+		<Icon class="menu-icon"
+			icon="codicon:cloud-download" />
+		<span>Download File</span>
+	</li>
+	<li @click="showModal = true">
+		<Icon class="menu-icon"
+			icon="codicon:mirror" />
+		<span>Load Contract from TX</span>
 	</li>
 </ul>
 <div class="arcode-main-toolbar-panel-title subheader">
@@ -29,18 +39,30 @@
 		@click="workspace.selectEditor(editor.id, $event)">
 		<span>{{ editor.name }}</span>
 		<Icon 
-			class="close-icon" 
+			class="menu-icon" 
 			@click="workspace.deleteEditor(editor.id, $event)"
 			icon="codicon:close" />
 	</li>
 </ul>
+<!-- use the modal component, pass in the prop -->
+<transition name="modal">
+<Modal v-if="showModal" @close="showModal = false">
+	Test
+	<template v-slot:header>
+		<h3>custom header</h3>
+	</template>
+</Modal>
+</transition>
 </template>
 
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
+import { ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import Workspace from '@/components/composed/Workspace.vue';
+import Modal from '@/components/atomic/Modal.vue';
 
+const showModal = ref(false);
 const props = defineProps({
 	workspace: Object
 });
@@ -101,10 +123,11 @@ $title-height: 28px;
 	font-size: 12px;
 	padding-left: 20px;
 }
-.close-icon {
+.menu-icon {
 	float: right;
 	cursor: pointer;
-	line-height: 12px;
+	line-height: 15px;
+	font-size: 15px;
 }
 .file-list {
 	padding: 0px;

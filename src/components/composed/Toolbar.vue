@@ -54,7 +54,7 @@ const props = defineProps({
 	workspace: Object
 });
 const showPanel = ref(true);
-const selectedOption = ref('');
+const selectedOption = ref('file-explorer');
 const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 	'primary': {
 		'file-explorer': {
