@@ -53,7 +53,7 @@ import tippy from 'tippy.js';
 const props = defineProps({
 	workspace: Object
 });
-const showPanel = ref(false);
+const showPanel = ref(true);
 const selectedOption = ref('');
 const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 	'primary': {
@@ -61,7 +61,7 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 			id: 'file-explorer',
 			icon: 'codicon:files',
 			label: 'File explorer',
-			active: false
+			active: true
 		}, 
 		'compile': {
 			id: 'compile',
