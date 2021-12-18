@@ -1,105 +1,81 @@
-import {EditorState, Extension, Compartment} from "@codemirror/state";
-import {EditorView, keymap, highlightActiveLine} from "@codemirror/view";
-import {defaultKeymap, indentWithTab} from "@codemirror/commands";
-import { bracketMatching } from "@codemirror/matchbrackets";
-import {javascript} from "@codemirror/lang-javascript";
-import { lineNumbers, gutter } from "@codemirror/gutter";
-import { oneDark } from "@codemirror/theme-one-dark";
-import { defaultHighlightStyle } from "@codemirror/highlight";
-import { closeBrackets } from "@codemirror/closebrackets";
-import { history, historyKeymap } from "@codemirror/history";
-import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
-import { GenericWorkspace } from './interfaces/GenericWorkspace';
-import { EditorViewMetadata } from './interfaces/EditorViewMetadata';
+import { BaseWorkspace } from './BaseWorkspace';
+import { EditorMetadata } from './interfaces/EditorMetadata';
 
-export class Workspace implements GenericWorkspace
-{
-	private _extensions: Extension[] = [];
-	private _editors: EditorViewMetadata[] = [];
-	private _themeExtension: Compartment = new Compartment();
+export class Workspace extends BaseWorkspace  {
+	private _currentEditorId = 0;
+	private _editorsMetadata: EditorMetadata[] = [];
+	private _tabsContainerId = '';
 
-	constructor(theme = '') {
-		this._extensions.push(
-			keymap.of(defaultKeymap),
-      keymap.of([indentWithTab]),
-			history(),
-			autocompletion(),
-			bracketMatching(),
-			closeBrackets(),
-			highlightActiveLine(),
-      keymap.of(historyKeymap),
-      keymap.of(completionKeymap),
-		);
-		this._extensions.push(this._themeExtension.of(this._getThemeExtension(theme)));
-
-		this._extensions.push(
-			javascript(),
-			lineNumbers(),
-			gutter({class: 'cm-arcode-gutter'}),
-			EditorView.lineWrapping,
-		);
-
+	public get currentEditorId(): number {
+		return this._currentEditorId;
 	}
 
-	private _getThemeExtension(theme: string): Extension {
-		if (theme == 'theme-dark' || theme == 'dark-blue') {
-			return oneDark;
+	public set currentEditorId(editorId: number) {
+		this._currentEditorId = editorId;
+	}
+
+	public get editors(): EditorMetadata[] {
+		return this._editorsMetadata;
+	}
+
+	constructor(theme= '', tabsContainerId= '') {
+		super(theme);
+		this._tabsContainerId = tabsContainerId;
+	}
+
+	public addEditor(event: Event, onlyInParent= false, content= '', fileName='', theme=''): void {
+    event.stopPropagation();
+    event.preventDefault();
+    if(event.target !== event.currentTarget && onlyInParent) return;
+
+    const editorId = this.createEditor(content, theme);
+    // Deactivate current editor 
+    const i = this.editors.findIndex(ed => ed.id == this.currentEditorId);
+		if (i >= 0 && this.editors[i]) {
+			this.editors[i].active = false;
 		}
-		return defaultHighlightStyle.fallback;
-	}
+    // Add new editor
+    fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
+    this.editors.push({ id: editorId, name: fileName, active: true });
+    this.currentEditorId = editorId;
+    this.scrollEditor('right', 120 * editorId);
+  }
 
-	public createEditor(content: string, theme: string): number {
-    const startState = EditorState.create({
-      doc: content,
-      extensions: this._extensions
-    });
-    const view: EditorView = new EditorView({
-      state: startState
-    });
-    const editorId: number = this._editors[this._editors.length - 1] ? 
-      this._editors[this._editors.length - 1].id + 1 : 0;
-    const metadata: EditorViewMetadata = {id: editorId, view};
-    this._editors.push(metadata);
-    this.setTheme(editorId, theme);
-    return editorId;
-	}
+  public selectEditor(editorId: number, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    // Deactivate current editor 
+    const i = this.editors.findIndex(ed => ed.id == this.currentEditorId);
+    if (i >= 0 && this.editors[i]) {
+      this.editors[i].active = false;
+    }
+    // Activate new editor
+    const j = this.editors.findIndex(ed => ed.id == editorId);
+    this.editors[j].active = true;
+    this.currentEditorId = editorId;
+    this.focusEditor(editorId);
+  }
 
-	public destroyEditor(editorId: number): void {
-		const i = this._editors.findIndex(ed => ed.id == editorId);
-		const removed: EditorView = this._editors[i].view;
-		removed.destroy();
-		this._editors.splice(i, 1);
-	}
+  public deleteEditor(editorId: number, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    const i = this.editors.findIndex(ed => ed.id == editorId);
+    this.editors.splice(i, 1);
+    this.destroyEditor(editorId);
+  }
 
-	public getEditor(editorId: number): EditorView {
-		const i = this._editors.findIndex(ed => ed.id == editorId);
-		return this._editors[i].view;
-	}
+	scrollEditor(direction: string, translate = 120): void {
+    const tabsContainer = document.getElementById(this._tabsContainerId);
+    if (!tabsContainer) {
+      throw Error('Tabs container undefined!');
+    }
 
-	public mountEditor(editorId: number, container: HTMLElement|null): void {
-		const editor = this.getEditor(editorId);
-		if (container !== null && editor) {
-			const editorHTML = this.getEditor(editorId).dom;
-			container.append(editorHTML);
-			editor.focus();
-		} else {
-			// throw Error(`Error on mounting editor with id ${editorId}`);
-		}
-	}
-
-	public focusEditor(editorId: number): void {
-		const editor = this.getEditor(editorId);
-		if (editor) {
-			editor.focus();	
-		}
-	}
-
-	public setTheme(editorId: number, theme: string): void {
-		const editor = this.getEditor(editorId);
-		if (editor) {
-			editor.dispatch({
-				effects: this._themeExtension.reconfigure(this._getThemeExtension(theme))
-			});
-		}
-	}
+    if (direction === 'left') {
+      tabsContainer.scrollLeft  -= translate;
+    } else if (direction === 'right') {
+      tabsContainer.scrollLeft += translate;
+    } else {
+      throw Error('Wrong direction :)');
+    }
+  }
 }

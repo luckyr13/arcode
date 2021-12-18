@@ -33,7 +33,7 @@
             class="button" 
             type="button" 
             @click="addEditor($event)"
-            data-tippy-workspace-content="Add New File">
+            data-tippy-workspace-content="New File">
               <Icon icon="codicon:file" />
           </button>
           <button 
@@ -64,9 +64,9 @@
 
 <script setup lang="ts">
 import { 
-  ref, onBeforeUpdate, watchEffect, onMounted
+  ref, onBeforeUpdate, watchEffect, onMounted, reactive
 } from 'vue';
-import { ReactiveWorkspace } from '@/core/ReactiveWorkspace';
+import { Workspace } from '@/core/Workspace';
 import { Icon } from '@iconify/vue';
 import { appVersion } from '@/core/AppSettings';
 import tippy from 'tippy.js';
@@ -78,7 +78,9 @@ const emit = defineEmits(['workspace-change']);
 
 const divs = ref([]);
 const baseTheme = ref(props.theme);
-const workspace = new ReactiveWorkspace(baseTheme.value, 'arcode-editor-tabs-container');
+const workspace = reactive<Workspace>(
+  new Workspace(baseTheme.value, 'arcode-editor-tabs-container')
+);
 const editors = workspace.editors;
 const addEditor = (event: Event, onlyInParent= false, content='', fileName='') => {
   workspace.addEditor(event, onlyInParent, content, fileName, baseTheme.value);
@@ -187,6 +189,7 @@ $workspace-tabs-height: 35px;
   display: flex;
   flex-direction: row;
   overflow-x: hidden;
+
 }
 
 .workspace .tabs .tabs-container .tab:hover {
@@ -195,7 +198,7 @@ $workspace-tabs-height: 35px;
 .workspace .tabs .button {
   border: 0;
   margin-left: 8px;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
 }
 .workspace .tabs .tabs-container .tab {
@@ -233,10 +236,10 @@ $workspace-tabs-height: 35px;
 
 @media(min-width: 600px) {
   .workspace .tabs .tabs-container{
-    width: 90%;
+    width: 88%;
   }
   .workspace .tabs .tabs-menu{
-    width: 10%;
+    width: 12%;
   }
 }
 
