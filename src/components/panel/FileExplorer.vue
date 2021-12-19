@@ -20,8 +20,8 @@
 	</li>
 	<li @click="workspace.addEditor($event)">
 		<Icon class="menu-icon"
-			icon="codicon:cloud-download" />
-		<span>Download File</span>
+			icon="codicon:new-folder" />
+		<span>Add Folder</span>
 	</li>
 	<li @click="showModal = true">
 		<Icon class="menu-icon"
@@ -32,9 +32,8 @@
 <FileList :workspace="workspace" />
 <transition name="modal">
 <Modal v-if="showModal" @close="showModal = false">
-	Test
 	<template v-slot:header>
-		<h3>custom header</h3>
+		<h3>Load Contract from TX</h3>
 	</template>
 </Modal>
 </transition>

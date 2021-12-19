@@ -20,6 +20,8 @@
 			class="menu-icon" 
 			@click="workspace.deleteEditor(editor.id, $event)"
 			icon="codicon:close" />
+		<Icon class="menu-icon"
+			icon="codicon:cloud-download" />
 	</li>
 </ul>
 </template>
@@ -39,7 +41,7 @@ const props = defineProps({
 	cursor: pointer;
 	line-height: 15px;
 	font-size: 15px;
-	margin-left: 4px;
+	margin-left: 8px;
 }
 .fd-icon {
 	margin-right: 6px;
@@ -78,6 +80,7 @@ const props = defineProps({
 }
 .file-list li.folder {
 	background-color: rgba(0,0,0,0.6);
+	color: #FFF;
 }
 .file-list li.file {
 	padding-left: 20px;

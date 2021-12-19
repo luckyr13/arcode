@@ -48,15 +48,18 @@ export class Workspace extends BaseWorkspace  {
     this.updateEditorName(editorId, fileName);
 
     this.currentEditorId = editorId;
-    this.scrollEditor('right', 120 * editorId);
+    window.setTimeout(() => {
+      this.scrollEditor('right', 120 * editorId);
+    }, 300);
   }
 
   public selectEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-
+    const previousEditorId = this.currentEditorId;
     this.currentEditorId = editorId;
     this.focusEditor(editorId);
+    this.scrollEditor('right', 120 * (this.currentEditorId - previousEditorId));
   }
 
   public deleteEditor(editorId: number, event: Event): void {
