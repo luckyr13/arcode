@@ -3,7 +3,7 @@
 	File Explorer
 </div>
 <ul class="file-menu">
-	<li @click="workspace.addEditor($event)">
+	<li @click="newFileModal($event, workspace)">
 		<Icon class="menu-icon"
 			icon="codicon:new-file" />
 		<span>New File</span>
@@ -23,7 +23,7 @@
 			icon="codicon:new-folder" />
 		<span>Add Folder</span>
 	</li>
-	<li @click="showModal = true">
+	<li @click="showModalLoadContractFromTX = true">
 		<Icon class="menu-icon"
 			icon="codicon:mirror" />
 		<span>Load Contract from TX</span>
@@ -31,10 +31,20 @@
 </ul>
 <FileList v-if="workspace" :workspace="workspace" :fileTree="workspace.getFileTree()" />
 <transition name="modal">
-<Modal v-if="showModal" @close="showModal = false">
+<Modal v-if="showModalLoadContractFromTX" @close="showModalLoadContractFromTX = false">
 	<template v-slot:header>
 		<h3>Load Contract from TX</h3>
 	</template>
+	<template v-slot:body>
+		<p>Body</p>
+		<button 
+			class="modal-default-button" 
+			v-if="workspace"
+			@click="addFolderModal(workspace, '/', 'test23')">
+      ADD FOLDER
+    </button>
+	</template>
+
 </Modal>
 </transition>
 </template>
@@ -47,7 +57,10 @@ import Workspace from '@/components/composed/Workspace.vue';
 import Modal from '@/components/atomic/Modal.vue';
 import FileList from '@/components/atomic/FileList.vue';
 
-const showModal = ref(false);
+const showModalLoadContractFromTX = ref(false);
+const showModalAddFolder = ref(false);
+const showModalNewFile = ref(false);
+
 const props = defineProps({
 	workspace: Object
 });
@@ -82,6 +95,21 @@ const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<strin
      }
   });
   return method;
+};
+
+const addFolderModal = (workspace: Workspace, path: string, folderName: string) => {
+	workspace.addFolder(path, folderName);
+	//showModal.value = false;
+};
+const newFileModal = (inputEvent: Event, workspace: Workspace) => {
+	const onlyInParent= false;
+  const content= '';
+  const path='/';
+  const fileName='';
+  const theme='';
+
+	workspace.addEditor(inputEvent)
+	//showModal.value = false;
 };
 </script>
 

@@ -4,9 +4,12 @@
 	<li 
 		class="folder" @click="showFiles = !showFiles">
 		<span>
-			<Icon 
+			<Icon v-if="showFiles"
 			class="fd-icon" 
 			icon="codicon:folder-opened" />
+			<Icon v-if="!showFiles"
+			class="fd-icon" 
+			icon="codicon:folder" />
 			{{ fileTree.name ? fileTree.name : '/' }}
 		</span>
 		
@@ -16,7 +19,7 @@
 		<Icon v-if="!showFiles"
 			class="menu-icon" 
 			icon="codicon:chevron-down" />
-		<Icon
+		<Icon v-if="fileTree.name"
 			class="menu-icon" 
 			icon="codicon:trash" />
 	</li>
