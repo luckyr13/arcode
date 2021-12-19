@@ -26,7 +26,7 @@ export class FileTree
 	private _addFolderHelper(tree: FileTreeFolder, path: string[], newFolder: FileTreeFolder) {
 		// Base cases
 		if (path.length === 0) {
-			throw Error(`Empty Path: ${JSON.stringify(path)} `);
+			return;
 		}
 		const firstRouteElem = path[0];
 		if (tree.name == firstRouteElem) {
@@ -50,7 +50,6 @@ export class FileTree
 			}
 
 		}
-		throw Error(`ERR:Path ${JSON.stringify(path)} Tree: ${JSON.stringify(tree)} NF: ${newFolder}`);
 	}
 
 	public addFolder(path: string, newFolderName: string) {
@@ -68,7 +67,8 @@ export class FileTree
 	private _addFileHelper(tree: FileTreeFolder, path: string[], newFile: EditorMetadata) {
 		// Base cases
 		if (path.length === 0) {
-			throw Error(`Empty Path: ${JSON.stringify(path)} `);
+			// throw Error(`Empty Path: ${JSON.stringify(path)} `);
+			return;
 		}
 		const firstRouteElem = path[0];
 		if (tree.name == firstRouteElem) {

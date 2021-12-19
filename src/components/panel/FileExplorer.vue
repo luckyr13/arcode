@@ -18,7 +18,7 @@
 			accept=".json,application/json,.js,text/javascript" 
 			@change="openFile_helper($event, workspace)">
 	</li>
-	<li @click="workspace.addEditor($event)">
+	<li @click="workspace.addFolder('/', 'test')">
 		<Icon class="menu-icon"
 			icon="codicon:new-folder" />
 		<span>Add Folder</span>
@@ -29,7 +29,7 @@
 		<span>Load Contract from TX</span>
 	</li>
 </ul>
-<FileList :workspace="workspace" />
+<FileList v-if="workspace" :workspace="workspace" :fileTree="workspace.getFileTree()" />
 <transition name="modal">
 <Modal v-if="showModal" @close="showModal = false">
 	<template v-slot:header>
@@ -51,22 +51,12 @@ const showModal = ref(false);
 const props = defineProps({
 	workspace: Object
 });
-/*
-const getEditorData = (editorV: EditorView) => {
-	let data = '';
-	if (editorV) {
-		data = editorV.state.doc;
-	}
-	alert(data);
-};
-*/
 
 const openFile = (inputId: string) => {
 	if (document.getElementById(inputId)) {
 		document.getElementById(inputId).click();
 	}
-}
-
+};
 const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<string> => {
   let method = new Promise<string>((resolve, reject) => {
      // Transform .json file into key
@@ -86,18 +76,13 @@ const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<strin
         throw Error('Error reading file');
       }
       freader.readAsText(file);
-
      } catch (error) {
 			console.log('Error:', error);
 			reject(error);
      }
-    
   });
-
   return method;
-
-}
-
+};
 </script>
 
 <style scoped lang="scss">

@@ -87,10 +87,6 @@ const addEditor = (event: Event, onlyInParent= false, content='', fileName='') =
   workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value);
   emit('workspace-change', editors);
 };
-const addFolder = (folderName='') => {
-  workspace.addEditor(path, folderName);
-  emit('workspace-change', editors);
-};
 const selectEditor = (editorId: number, event: Event) => {
   workspace.selectEditor(editorId, event);
 };
@@ -120,6 +116,10 @@ const getFileTree = () => {
   return workspace.fileTree.getTree();
 };
 
+const addFolder =  (path: string, folderName: string) => {
+  workspace.fileTree.addFolder(path, folderName);
+};
+
 
 // Expose public methods
 defineExpose({
@@ -131,6 +131,7 @@ defineExpose({
   setTheme,
   setAppTheme,
   getFileTree,
+  addFolder,
   getCurrentEditorId
 });
 
