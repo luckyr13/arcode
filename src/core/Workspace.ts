@@ -36,7 +36,7 @@ export class Workspace extends BaseWorkspace  {
 		}
     // Add new editor
     fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
-    this.editors.push({ id: editorId, name: fileName, active: true });
+    this.editors.push({ id: editorId, name: fileName, active: true, type: 'FILE' });
     this.currentEditorId = editorId;
     this.scrollEditor('right', 120 * editorId);
   }

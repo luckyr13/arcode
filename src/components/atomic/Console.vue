@@ -20,7 +20,7 @@ import { FitAddon } from 'xterm-addon-fit';
 
 var terminal = new Terminal({cursorBlink: true});
 const fitAddon = new FitAddon();
-const showConsole = ref(true);
+const showConsole = ref(false);
 
 const initConsole = () => {
 	const lineData = '';
@@ -28,10 +28,10 @@ const initConsole = () => {
 	const containerElement = document.getElementById('arcode-console-container');
 	terminal.open(containerElement);
 	fitConsole();
-	const welcomeMsg = `Welcome to \x1B[1;3;31mArCode Studio \x1B[0m\n\n\r`;
+	const welcomeMsg = `\n\r>> Welcome to \x1B[1;3;31mArCode Studio ⚡\x1B[0m\n\n\r`;
 	terminal.write(welcomeMsg);
 	terminal.write('$ ');
-	terminal.focus();
+	// terminal.focus();
 	window.addEventListener('resize', fitConsole);
 	terminal.onKey(e => {
 		terminal.write(e.key);

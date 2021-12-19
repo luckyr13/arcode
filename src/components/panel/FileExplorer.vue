@@ -5,7 +5,7 @@
 <ul class="file-menu">
 	<li @click="workspace.addEditor($event)">
 		<Icon class="menu-icon"
-			icon="codicon:file" />
+			icon="codicon:new-file" />
 		<span>New File</span>
 	</li>
 	<li @click="openFile('txt_file_openFile')">
@@ -18,7 +18,7 @@
 			accept=".json,application/json,.js,text/javascript" 
 			@change="openFile_helper($event, workspace)">
 	</li>
-	<li @click="showModal = true">
+	<li @click="workspace.addEditor($event)">
 		<Icon class="menu-icon"
 			icon="codicon:cloud-download" />
 		<span>Download File</span>
@@ -29,22 +29,7 @@
 		<span>Load Contract from TX</span>
 	</li>
 </ul>
-<div class="arcode-main-toolbar-panel-title subheader">
-	Files in workspace
-</div>
-<ul class="file-list" v-if="workspace">
-	<li v-for="editor in workspace.editors" 
-		:key="editor.id" 
-		:class="{ active: editor.active }"
-		@click="workspace.selectEditor(editor.id, $event)">
-		<span>{{ editor.name }}</span>
-		<Icon 
-			class="menu-icon" 
-			@click="workspace.deleteEditor(editor.id, $event)"
-			icon="codicon:close" />
-	</li>
-</ul>
-<!-- use the modal component, pass in the prop -->
+<FileList :workspace="workspace" />
 <transition name="modal">
 <Modal v-if="showModal" @close="showModal = false">
 	Test
@@ -61,6 +46,7 @@ import { ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import Workspace from '@/components/composed/Workspace.vue';
 import Modal from '@/components/atomic/Modal.vue';
+import FileList from '@/components/atomic/FileList.vue';
 
 const showModal = ref(false);
 const props = defineProps({
@@ -128,40 +114,11 @@ $title-height: 28px;
 	cursor: pointer;
 	line-height: 15px;
 	font-size: 15px;
+	margin-left: 4px;
 }
-.file-list {
-	padding: 0px;
-	margin-top: 0px;
-	margin-bottom: 0px;
+.fd-icon {
+	margin-right: 6px;
 }
-.file-list li {
-	padding: 10px;
-	font-size: 12px;
-	line-height: 12px;
-	list-style: none;
-	cursor: pointer;
-	overflow: hidden;
-
-}
-
-.file-list li span {
-	text-overflow: ellipsis;
-  white-space: nowrap;
-	width: 80%;
-	float: left;
-	display: block;
-	overflow: hidden;
-}
-
-.file-list li:hover {
-	background-color: rgba(0,0,0,0.3);
-}
-
-.file-list li.active {
-	background-color: rgba(0,0,0,0.3);
-}
-
-
 .file-menu {
 	padding: 0px;
 	margin-top: 0px;
@@ -172,10 +129,10 @@ $title-height: 28px;
 	font-size: 12px;
 	line-height: 12px;
 	list-style: none;
-	cursor: pointer;
 }
 .file-menu li:hover {
 	background-color: rgba(0,0,0,0.3);
+	cursor: pointer;
 }
 
 .subheader {

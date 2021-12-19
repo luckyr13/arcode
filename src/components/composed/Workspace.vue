@@ -3,7 +3,7 @@
     <div class="workspace-bg text-center" >
       <img class="logo" alt="arCode" src="@/assets/logo.png">
       <h4 class="text-center arcode-title" >
-        arCode Studio v{{ appVersion }}
+        ArCode Studio v{{ appVersion }}
       </h4>
       <h5 class="text-center arcode-instructions">
          Double click to start 
@@ -34,7 +34,7 @@
             type="button" 
             @click="addEditor($event)"
             data-tippy-workspace-content="New File">
-              <Icon icon="codicon:file" />
+              <Icon icon="codicon:new-file" />
           </button>
           <button 
             class="button" 

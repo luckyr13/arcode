@@ -99,7 +99,7 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 	
 });
 
-const initialContainerWidth = 220;
+const initialContainerWidth = 260;
 const sideContainerWidth = ref(initialContainerWidth);
 
 const select = (optionId: string, optionType: string, event: Event) => {
@@ -150,6 +150,7 @@ onMounted(() => {
 	tippy('[data-tippy-content]', {
 		arrow: true,
 		placement: 'right',
+		delay: [1000, 100]
 	});
 });
 

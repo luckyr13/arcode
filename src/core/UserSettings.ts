@@ -43,7 +43,7 @@ export class UserSettings {
 		return this._menuThemes;
 	}
 
-	public setAppTheme(theme: string) {
+	public setAppTheme(theme: string): void {
 		if (!Object.prototype.hasOwnProperty.call(this._menuThemes, theme)) {
 			throw Error('Wrong theme!');
 		}
