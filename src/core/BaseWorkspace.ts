@@ -41,6 +41,10 @@ export class BaseWorkspace implements GenericWorkspace
 
 	}
 
+	public get editors() : EditorViewMetadata[] {
+		return this._editors;
+	}
+
 	private _getThemeExtension(theme: string): Extension {
 		if (theme == 'theme-dark' || theme == 'dark-blue') {
 			return oneDark;
@@ -58,10 +62,15 @@ export class BaseWorkspace implements GenericWorkspace
     });
     const editorId: number = this._editors[this._editors.length - 1] ? 
       this._editors[this._editors.length - 1].id + 1 : 0;
-    const metadata: EditorViewMetadata = {id: editorId, view};
+    const metadata: EditorViewMetadata = {id: editorId, view, name: ''};
     this._editors.push(metadata);
     this.setTheme(editorId, theme);
     return editorId;
+	}
+
+	public updateEditorName(editorId: number, newName: string): void {
+		const i = this._editors.findIndex(ed => ed.id == editorId);
+		this._editors[i].name = newName;
 	}
 
 	public destroyEditor(editorId: number): void {

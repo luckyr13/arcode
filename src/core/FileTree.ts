@@ -3,14 +3,14 @@ import { EditorMetadata } from './interfaces/EditorMetadata';
 
 export class FileTree
 {
-	private _tree: FileTreeFolder = {
-		name: '',
-		children: [],
-		type: 'FOLDER'
-	};
+	private _tree: FileTreeFolder;
 
 	constructor() {
-
+		this._tree = {
+			name: '',
+			children: [],
+			type: 'FOLDER'
+		};
 	}
 
 	private _breakPath(path: string) {
@@ -92,7 +92,6 @@ export class FileTree
 			}
 
 		}
-		throw Error(`ERR:Path ${JSON.stringify(path)} Tree: ${JSON.stringify(tree)} NF: ${newFile}`);
 	}
 
 	public addFile(path: string, file: EditorMetadata) {
@@ -101,12 +100,54 @@ export class FileTree
 		this._addFileHelper(this._tree, folders, file);
 	}
 
-	public removeFile(path: string, fileName: string) {
-
-	}
-
+	
 	public removeFolder(path: string) {
-
+		console.log('...')
 	}
 
+	private _findFileInChildrenById(fileId: number, tree: FileTreeFolder): EditorMetadata|null {
+		// Search children
+		const i = tree.children.findIndex((f) => {
+			const tmpF: EditorMetadata = <EditorMetadata>f;
+			return (tmpF.type == 'FILE' && tmpF.id == fileId);
+		});
+    if (i >= 0 && tree.children[i]) {
+      return <EditorMetadata>tree.children[i];
+    }
+
+    return null;
+	}
+
+	private _removeFileHelper(tree: FileTreeFolder, fileId: number): void {
+		if (tree.children.length === 0) {
+			return;
+		}
+		
+		// Search in children
+		for (const i in tree.children) {
+			// Is this the element I'm looking for?
+			if (tree.children[i].type === 'FILE') {
+				const c2: EditorMetadata = <EditorMetadata>tree.children[i];
+				if (c2.id === fileId) {
+					tree.children.splice(+i, 1);
+					return;
+				}
+			}
+
+			// If the element is a Folder, search recursively
+			if (tree.children[i].type === 'FOLDER') {
+				const c2: FileTreeFolder = <FileTreeFolder>tree.children[i];
+				this._removeFileHelper(c2, fileId);
+			}
+		}
+	}
+
+	public removeFile(fileId: number): void {
+		// Search in Tree 
+		this._removeFileHelper(this._tree, fileId);
+	}
+
+	public getTree() {
+		return this._tree;
+	}
 }

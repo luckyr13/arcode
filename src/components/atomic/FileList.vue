@@ -7,14 +7,13 @@
 			@click="workspace.deleteEditor(editor.id, $event)"
 			icon="codicon:folder-opened" />/</span>
 	</li>
-	<li class="empty" v-if="!workspace.editors.length" >
-		<span>Empty folder</span>
+	<li class="empty" v-if="!workspace.getFileTree().children.length" >
+		<span>Empty folder</span> 
 	</li>
-
-	<li v-for="editor in workspace.editors" 
+	<li v-for="editor in workspace.getFileTree().children" 
 		:key="editor.id"
 		class="file"
-		:class="{ active: editor.active }"
+		:class="{ active: editor.id == workspace.getCurrentEditorId() }"
 		@click="workspace.selectEditor(editor.id, $event)">
 		<span>{{ editor.name }}</span>
 		<Icon 

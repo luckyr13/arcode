@@ -1,9 +1,9 @@
 import { BaseWorkspace } from './BaseWorkspace';
-import { EditorMetadata } from './interfaces/EditorMetadata';
+import { FileTree } from './FileTree';
 
 export class Workspace extends BaseWorkspace  {
 	private _currentEditorId = 0;
-	private _editorsMetadata: EditorMetadata[] = [];
+	private _fileTree: FileTree = new FileTree();
 	private _tabsContainerId = '';
 
 	public get currentEditorId(): number {
@@ -14,8 +14,8 @@ export class Workspace extends BaseWorkspace  {
 		this._currentEditorId = editorId;
 	}
 
-	public get editors(): EditorMetadata[] {
-		return this._editorsMetadata;
+	public get fileTree(): FileTree {
+		return this._fileTree;
 	}
 
 	constructor(theme= '', tabsContainerId= '') {
@@ -23,20 +23,30 @@ export class Workspace extends BaseWorkspace  {
 		this._tabsContainerId = tabsContainerId;
 	}
 
-	public addEditor(event: Event, onlyInParent= false, content= '', fileName='', theme=''): void {
+	public addEditor(
+    event: Event,
+    onlyInParent= false,
+    content= '',
+    path='/',
+    fileName='',
+    theme=''): void {
     event.stopPropagation();
     event.preventDefault();
     if(event.target !== event.currentTarget && onlyInParent) return;
 
     const editorId = this.createEditor(content, theme);
-    // Deactivate current editor 
-    const i = this.editors.findIndex(ed => ed.id == this.currentEditorId);
-		if (i >= 0 && this.editors[i]) {
-			this.editors[i].active = false;
-		}
+ 
     // Add new editor
     fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
-    this.editors.push({ id: editorId, name: fileName, active: true, type: 'FILE' });
+    const newEditor = { 
+      id: editorId,
+      name: fileName,
+      active: true,
+      type: 'FILE' 
+    };
+    this._fileTree.addFile(path, newEditor);
+    this.updateEditorName(editorId, fileName);
+
     this.currentEditorId = editorId;
     this.scrollEditor('right', 120 * editorId);
   }
@@ -44,14 +54,7 @@ export class Workspace extends BaseWorkspace  {
   public selectEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-    // Deactivate current editor 
-    const i = this.editors.findIndex(ed => ed.id == this.currentEditorId);
-    if (i >= 0 && this.editors[i]) {
-      this.editors[i].active = false;
-    }
-    // Activate new editor
-    const j = this.editors.findIndex(ed => ed.id == editorId);
-    this.editors[j].active = true;
+
     this.currentEditorId = editorId;
     this.focusEditor(editorId);
   }
@@ -59,8 +62,7 @@ export class Workspace extends BaseWorkspace  {
   public deleteEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-    const i = this.editors.findIndex(ed => ed.id == editorId);
-    this.editors.splice(i, 1);
+    this.fileTree.removeFile(editorId)
     this.destroyEditor(editorId);
   }
 

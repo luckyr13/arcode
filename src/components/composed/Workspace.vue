@@ -20,7 +20,7 @@
             @click="selectEditor(editor.id, $event)"
             v-for="editor in editors"
             :key="editor.id"
-            :class="{ active: editor.active }"> 
+            :class="{ active: editor.id == getCurrentEditorId() }"> 
             <div class="tab-button-label">{{ editor.name }}</div>
             <button 
               class="button tab-button-close" 
@@ -55,7 +55,7 @@
       <div class="editor" 
         v-for="editor in editors" 
         :key="editor.id"
-        :class="{ active: editor.active }"
+        :class="{ active: editor.id == getCurrentEditorId() }"
         :ref="el => { if (el) { divs[editor.id] = el; } }"></div>
     </div>
   </div>
@@ -82,8 +82,9 @@ const workspace = reactive<Workspace>(
   new Workspace(baseTheme.value, 'arcode-editor-tabs-container')
 );
 const editors = workspace.editors;
+const path = '/';
 const addEditor = (event: Event, onlyInParent= false, content='', fileName='') => {
-  workspace.addEditor(event, onlyInParent, content, fileName, baseTheme.value);
+  workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value);
   emit('workspace-change', editors);
 };
 const selectEditor = (editorId: number, event: Event) => {
@@ -107,6 +108,14 @@ const setAppTheme = (theme: string) => {
   baseTheme.value = theme;
 };
 
+const getCurrentEditorId = () => {
+  return workspace.currentEditorId;
+};
+
+const getFileTree = () => {
+  return workspace.fileTree.getTree();
+};
+
 
 // Expose public methods
 defineExpose({
@@ -116,7 +125,9 @@ defineExpose({
   selectEditor,
   addEditor,
   setTheme,
-  setAppTheme
+  setAppTheme,
+  getFileTree,
+  getCurrentEditorId
 });
 
 // make sure to reset the refs before each update
