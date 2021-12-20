@@ -49,7 +49,7 @@
 }
 
 .modal-container {
-  width: 300px;
+  max-width: 400px;
   margin: 0px auto;
   padding: 20px 20px;
   border-radius: 2px;

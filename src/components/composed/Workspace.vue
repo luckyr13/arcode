@@ -107,7 +107,7 @@ const scrollEditor = (direction: string, translate = 120) => {
   workspace.scrollEditor(direction, translate);
 };
 const getEditorData = (editorId: number) => {
-  return workspace.getEditor(editorId);
+  return workspace.getEditorView(editorId);
 };
 
 const setTheme = (editorId: number, theme: string) => {

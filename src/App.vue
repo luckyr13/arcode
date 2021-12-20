@@ -52,6 +52,7 @@ const workspace = ref(null);
   margin: 0px;
   padding: 0px;
 }
+
 .main-container {
   display: flex;
   flex-direction: column;

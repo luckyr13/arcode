@@ -80,7 +80,7 @@ export class BaseWorkspace implements GenericWorkspace
 		this._editors.splice(i, 1);
 	}
 
-	public getEditor(editorId: number): EditorView {
+	public getEditorView(editorId: number): EditorView {
 		const i = this._editors.findIndex(ed => ed.id == editorId);
 		return this._editors[i].view;
 	}
@@ -102,9 +102,9 @@ export class BaseWorkspace implements GenericWorkspace
 	}
 
 	public mountEditor(editorId: number, container: HTMLElement|null): void {
-		const editor = this.getEditor(editorId);
+		const editor = this.getEditorView(editorId);
 		if (container !== null && editor) {
-			const editorHTML = this.getEditor(editorId).dom;
+			const editorHTML = this.getEditorView(editorId).dom;
 			container.append(editorHTML);
 			editor.focus();
 		} else {
@@ -113,14 +113,14 @@ export class BaseWorkspace implements GenericWorkspace
 	}
 
 	public focusEditor(editorId: number): void {
-		const editor = this.getEditor(editorId);
+		const editor = this.getEditorView(editorId);
 		if (editor) {
 			editor.focus();	
 		}
 	}
 
 	public setTheme(editorId: number, theme: string): void {
-		const editor = this.getEditor(editorId);
+		const editor = this.getEditorView(editorId);
 		if (editor) {
 			editor.dispatch({
 				effects: this._themeExtension.reconfigure(this._getThemeExtension(theme))

@@ -3,7 +3,7 @@
 	File Explorer
 </div>
 <ul class="file-menu">
-	<li @click="showModalNewFile = true">
+	<li @click="showModalNewFile = true; selNewFileLocation = '/'; txtNewFileName = getProposedFileName(workspace);">
 		<Icon class="menu-icon"
 			icon="codicon:new-file" />
 		<span>New File</span>
@@ -28,10 +28,15 @@
 			icon="codicon:mirror" />
 		<span>Load Contract from TX</span>
 	</li>
-	<li>
+	<li v-if="workspace.getCurrentEditorId() >= 0">
 		<Icon class="menu-icon"
 			icon="codicon:cloud-download" />
 		<span>Download File</span>
+	</li>
+	<li v-else class="disabled">
+		<Icon class="menu-icon"
+			icon="codicon:cloud-download" />
+		<span>Download File :)</span>
 	</li>
 </ul>
 <FileList v-if="workspace" :workspace="workspace" :fileTree="workspace.getFileTree()" />
@@ -91,15 +96,23 @@
 			<h3>Create a New File</h3>
 		</template>
 		<template v-slot:body>
-			<p>Body</p>
-			
+			<div class="form-input">
+				<label>Workspace Location</label>
+				<select v-model.trim="selNewFileLocation">
+					<option value="/">/</option>
+				</select>
+			</div>
+			<div class="form-input">
+				<label>File Name</label>
+				<input v-model.trim="txtNewFileName" type="text">
+			</div>
 		</template>
 		<template v-slot:footer>
 			<div class="modal-footer text-right">
 				<button 
 					class="modal-button modal-button-primary" 
 					v-if="workspace"
-					@click="newFileModal($event, workspace)">
+					@click="newFileModal($event, workspace, txtNewFileName, selNewFileLocation)">
 					<span >Add File</span >
 				</button>
 				<button 
@@ -163,16 +176,18 @@ const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<strin
   return method;
 };
 
+
 const addFolderModal = (workspace: Workspace, path: string, folderName: string) => {
 	workspace.addFolder(path, folderName);
 	showModalAddFolder.value = false;
 };
-const newFileModal = (inputEvent: Event, workspace: Workspace) => {
+const newFileModal = (
+	inputEvent: Event,
+	workspace: Workspace,
+	fileName: string,
+	path: string) => {
 	const onlyInParent= false;
   const content= '';
-  const path='/';
-  const fileName='';
-
 	workspace.addEditor(inputEvent, onlyInParent, content, fileName, path);
 	showModalNewFile.value = false;
 };
@@ -182,10 +197,24 @@ const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
 	console.log(inputEvent, workspace);
 };
 
+const getProposedFileName = (workspace: Workspace): string => {
+	let newEditorId = workspace.editors.length;
+	if (newEditorId) {
+		newEditorId = workspace.editors[newEditorId - 1].id + 1;
+	}
+	return `Untitled-${newEditorId}`;
+};
+
+
 </script>
 
 <style scoped lang="scss">
 $title-height: 28px;
+
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
 .panel-title {
 	height: $title-height;
 	line-height: $title-height;
@@ -221,6 +250,10 @@ $title-height: 28px;
 	background-color: rgba(0,0,0,0.3);
 	cursor: pointer;
 	color: #FFF;
+}
+.file-menu li.disabled {
+	color: gray;
+	cursor: default;
 }
 
 .subheader {
@@ -262,5 +295,25 @@ $title-height: 28px;
 }
 .modal-footer {
 	width: 100%;
+}
+.form-input {
+	padding: 10px;
+}
+.form-input input,
+.form-input select,
+.form-input option,
+ {
+	width: 100%;
+	padding: 12px;
+	border-radius: 4px;
+	border: 1px solid var(--app-background-color);
+	background: inherit;
+	color: inherit;
+}
+
+.form-input label {
+	font-size: 12px;
+	margin-bottom: 4px;
+	display: block;
 }
 </style>
