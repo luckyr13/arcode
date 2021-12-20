@@ -24,6 +24,8 @@ import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
+import { lootContract } from '@/core/contracts/Examples';
+
 import 'tippy.js/dist/tippy.css';
 import 'xterm/css/xterm.css';
 
@@ -36,8 +38,26 @@ const workspaceChange = (data: Array<EditorMetadata>) => {
   console.log(data, 'workspace-change')
   // editors.value = data;
 };
+const loadExamples = () => {
+  workspace.value.addFolder('/', 'Contracts');
+  workspace.value.addFolder('/Contracts', 'loot-contract');
+  workspace.value.addEditor(
+    new Event('emptyEvent'),
+    false,
+    lootContract.state,
+    lootContract.stateName,
+    '/contracts/loot-contract');
+  workspace.value.addEditor(
+    new Event('emptyEvent'),
+    false,
+    lootContract.contract,
+    lootContract.name,
+    '/contracts/loot-contract');
+};
 onMounted(() => {
-  console.log(workspace.value, 'workspace-mounted');
+  // console.log(workspace.value, 'workspace-mounted');
+  // Load examples
+  loadExamples();
 })
 const workspace = ref(null);
 
