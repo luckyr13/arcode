@@ -231,7 +231,7 @@ const openFile = (inputId: string) => {
 		document.getElementById(inputId).click();
 	}
 };
-const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<string> => {
+const openFile_helper = (inputEvent: Event): Promise<string> => {
 	txtOpenFileContent.value = '';
   let method = new Promise<string>((resolve, reject) => {
      // Transform .json file into key
