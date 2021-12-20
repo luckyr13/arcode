@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.e590f0b8cf1446fc5f64b40069d3ccc7.js"
+  "precache-manifest.216b0959c86f54c0d8d08d2b90aeaf2b.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "arcode"});

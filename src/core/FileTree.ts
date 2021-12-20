@@ -40,7 +40,8 @@ export class FileTree
 			return;
 		}
 		if (tree.children.length === 0) {
-			throw Error(`No children: ${JSON.stringify(tree)}`);
+			//throw Error(`No children: ${JSON.stringify(tree)}`);
+			return;
 		}
 		// Search in children
 		for (const c of tree.children) {
@@ -96,7 +97,8 @@ export class FileTree
 			return;
 		}
 		if (tree.children.length === 0) {
-			throw Error(`No children: ${JSON.stringify(tree)}`);
+			//throw Error(`No children: ${JSON.stringify(tree)}`);
+			return;
 		}
 		// Search in children
 		for (const c of tree.children) {
