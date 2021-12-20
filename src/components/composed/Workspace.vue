@@ -5,7 +5,7 @@
       <h4 class="text-center arcode-title" >
         ArCode Studio v{{ appVersion }}
       </h4>
-      <h5 class="text-center arcode-instructions">
+      <h5 @click="addEditor($event, true)" class="text-center arcode-instructions">
          Double click to start 
       </h5>
     </div>
@@ -40,14 +40,14 @@
             class="button" 
             type="button" 
             @click="scrollEditor('left')"
-            data-tippy-workspace-content="Move left">
+            data-tippy-workspace-content="Scroll left">
               <Icon icon="codicon:chevron-left" />
           </button>
           <button 
             class="button" 
             type="button" 
             @click="scrollEditor('right')"
-            data-tippy-workspace-content="Move right">
+            data-tippy-workspace-content="Scroll right">
               <Icon icon="codicon:chevron-right" />
           </button>
         </div>
@@ -82,8 +82,7 @@ const workspace = reactive<Workspace>(
   new Workspace(baseTheme.value, 'arcode-editor-tabs-container')
 );
 const editors = workspace.editors;
-const path = '/';
-const addEditor = (event: Event, onlyInParent= false, content='', fileName='') => {
+const addEditor = (event: Event, onlyInParent= false, content='', fileName='', path='/') => {
   workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value);
   emit('workspace-change', editors);
 };
@@ -200,7 +199,7 @@ $workspace-tabs-height: 35px;
 
 .workspace .tabs .tabs-container{
   height: 100%;
-  width: 64%;
+  width: 54%;
   float: left;
   display: flex;
   flex-direction: row;
@@ -243,19 +242,20 @@ $workspace-tabs-height: 35px;
 
 .workspace .tabs .tabs-menu{
   height: 100%;
-  width: 36%;
+  width: 46%;
   float: left;
-  text-align: center;
+  text-align: right;
+  padding-right: 10px;
   line-height: $workspace-tabs-height;
 }
 
 
 @media(min-width: 600px) {
   .workspace .tabs .tabs-container{
-    width: 88%;
+    width: 86%;
   }
   .workspace .tabs .tabs-menu{
-    width: 12%;
+    width: 14%;
   }
 }
 

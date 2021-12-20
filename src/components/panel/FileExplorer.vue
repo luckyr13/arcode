@@ -3,7 +3,7 @@
 	File Explorer
 </div>
 <ul class="file-menu">
-	<li @click="newFileModal($event, workspace)">
+	<li @click="showModalNewFile = true">
 		<Icon class="menu-icon"
 			icon="codicon:new-file" />
 		<span>New File</span>
@@ -18,7 +18,7 @@
 			accept=".json,application/json,.js,text/javascript" 
 			@change="openFile_helper($event, workspace)">
 	</li>
-	<li @click="workspace.addFolder('/', 'test')">
+	<li @click="showModalAddFolder = true">
 		<Icon class="menu-icon"
 			icon="codicon:new-folder" />
 		<span>Add Folder</span>
@@ -30,24 +30,68 @@
 	</li>
 </ul>
 <FileList v-if="workspace" :workspace="workspace" :fileTree="workspace.getFileTree()" />
-<transition name="modal">
-<Modal v-if="showModalLoadContractFromTX" @close="showModalLoadContractFromTX = false">
-	<template v-slot:header>
-		<h3>Load Contract from TX</h3>
-	</template>
-	<template v-slot:body>
-		<p>Body</p>
-		<button 
+<transition name="modal1">
+	<Modal v-if="showModalLoadContractFromTX" @close="showModalLoadContractFromTX = false">
+		<template v-slot:header>
+			<h3>Load Contract from TX</h3>
+		</template>
+		<template v-slot:body>
+			<p>Body</p>
+			<button 
 			class="modal-default-button" 
 			v-if="workspace"
-			@click="addFolderModal(workspace, '/', 'test23')">
-      ADD FOLDER
-    </button>
-	</template>
-
-</Modal>
+			@click="loadFromTXModal($event, workspace)">
+			LOAD FILES INTO WORKSPACE
+			</button>
+		</template>
+	</Modal>
+</transition>
+<transition name="modal2">
+	<Modal v-if="showModalAddFolder" @close="showModalAddFolder = false">
+		<template v-slot:header>
+			<h3>Add Folder</h3>
+		</template>
+		<template v-slot:body>
+			<p>Body</p>
+			<button 
+				class="modal-default-button" 
+				v-if="workspace"
+				@click="addFolderModal(workspace, '/', 'test23')">
+				ADD FOLDER
+			</button>
+		</template>
+	</Modal>
+</transition>
+<transition name="modal2">
+	<Modal v-if="showModalNewFile" @close="showModalNewFile = false">
+		<template v-slot:header>
+			<h3>Create a New File</h3>
+		</template>
+		<template v-slot:body>
+			<p>Body</p>
+			
+		</template>
+		<template v-slot:footer>
+			<div class="modal-footer text-right">
+				<button 
+					class="modal-button modal-button-primary" 
+					v-if="workspace"
+					@click="newFileModal($event, workspace)">
+					<Icon class="modal-btn-icon" icon="codicon:new-file" />
+					<span >Add File</span >
+				</button>
+				<button 
+					class="modal-button" 
+					@click="showModalNewFile = false">
+					Close
+				</button>
+			</div>
+		</template>
+	</Modal>
 </transition>
 </template>
+
+
 
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
@@ -99,18 +143,22 @@ const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<strin
 
 const addFolderModal = (workspace: Workspace, path: string, folderName: string) => {
 	workspace.addFolder(path, folderName);
-	//showModal.value = false;
+	showModalAddFolder.value = false;
 };
 const newFileModal = (inputEvent: Event, workspace: Workspace) => {
 	const onlyInParent= false;
   const content= '';
   const path='/';
   const fileName='';
-  const theme='';
 
-	workspace.addEditor(inputEvent)
-	//showModal.value = false;
+	workspace.addEditor(inputEvent, onlyInParent, content, fileName, path);
+	showModalNewFile.value = false;
 };
+const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
+	showModalNewFile.value = false;
+	showModalLoadContractFromTX.value = false;
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -120,6 +168,10 @@ $title-height: 28px;
 	line-height: $title-height;
 	font-size: 12px;
 	padding-left: 20px;
+}
+.modal-btn-icon {
+	font-size: 15px;
+	margin-left: 4px;
 }
 .menu-icon {
 	float: right;
@@ -157,4 +209,33 @@ $title-height: 28px;
 }
 
 
+.modal-button {
+  display: inline;
+  margin-top: 1rem;
+  padding: 10px;
+  background-color: rgba(55, 55, 55, 1);
+  color: #FFF;
+  border: 0;
+  margin-left: 8px;
+  cursor: pointer;
+}
+.modal-button:hover {
+  cursor: pointer;
+  background-color: rgba(55, 55, 55, 0.5);
+}
+.modal-button span {
+	margin-left: 4px;
+}
+.modal-button-primary {
+  background-color: var(--app-toolbar-panel-title-bgcolor);
+  color:  var(--app-toolbar-panel-title-color);
+}
+.modal-button-primary:hover {
+  background-color: #000;
+  color: #FFF;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-footer {
+	width: 100%;
+}
 </style>

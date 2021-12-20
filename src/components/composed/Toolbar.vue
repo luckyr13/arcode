@@ -53,15 +53,15 @@ import tippy from 'tippy.js';
 const props = defineProps({
 	workspace: Object
 });
-const showPanel = ref(true);
-const selectedOption = ref('file-explorer');
+const showPanel = ref(false);
+const selectedOption = ref('');
 const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 	'primary': {
 		'file-explorer': {
 			id: 'file-explorer',
 			icon: 'codicon:files',
 			label: 'File explorer',
-			active: true
+			active: false
 		}, 
 		'compile': {
 			id: 'compile',
@@ -99,7 +99,7 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 	
 });
 
-const initialContainerWidth = 260;
+const initialContainerWidth = 220;
 const sideContainerWidth = ref(initialContainerWidth);
 
 const select = (optionId: string, optionType: string, event: Event) => {
@@ -152,6 +152,16 @@ onMounted(() => {
 		placement: 'right',
 		delay: [1000, 100]
 	});
+
+function responsiveToolbar(x) {
+	if (x.matches) { 
+		showPanel.value = true;
+		selectedOption.value = 'file-explorer';
+	}
+}
+
+var x = window.matchMedia("(min-width: 700px)")
+responsiveToolbar(x)
 });
 
 </script>

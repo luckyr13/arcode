@@ -14,7 +14,7 @@
         </div>
         <div class="modal-footer">
           <slot name="footer">
-            <button class="modal-default-button" @click="$emit('close')">
+            <button class="modal-button" @click="$emit('close')">
               Close
             </button>
           </slot>
@@ -51,7 +51,7 @@
 .modal-container {
   width: 300px;
   margin: 0px auto;
-  padding: 20px 30px;
+  padding: 20px 20px;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   font-family: Helvetica, Arial, sans-serif;
@@ -66,9 +66,19 @@
   margin: 20px 0;
 }
 
-.modal-default-button {
+.modal-button {
   display: block;
   margin-top: 1rem;
+  padding: 10px;
+  background-color: #000;
+  color: #FFF;
+  border: 0;
+  cursor: pointer;
+}
+.modal-button:hover {
+  cursor: pointer;
+
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 /*

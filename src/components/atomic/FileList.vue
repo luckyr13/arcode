@@ -86,7 +86,7 @@ const showFiles = ref(true);
 .file-list li span {
 	text-overflow: ellipsis;
   white-space: nowrap;
-	width: 80%;
+	width: 74%;
 	float: left;
 	display: block;
 	overflow: hidden;
