@@ -54,6 +54,7 @@ export class FileTree
 				}
 				
 				c2.children.push(newFolder);
+				return;
 			}
 
 			// If the element is a Folder, search recursively
@@ -92,6 +93,7 @@ export class FileTree
 			}
 
 			tree.children.push(newFile);
+			return;
 		}
 		if (tree.children.length === 0) {
 			throw Error(`No children: ${JSON.stringify(tree)}`);
@@ -99,7 +101,7 @@ export class FileTree
 		// Search in children
 		for (const c of tree.children) {
 			// Is this the element I'm looking for?
-			if (c.name == firstRouteElem && c.type === 'FOLDER') {
+			if (c.name == firstRouteElem && c.type === 'FOLDER' && path.length == 1) {
 				// Is the name already taken?
 				const findName = this.findFileInChildrenByName(newFile.name, <FileTreeFolder>c);
 				if (findName) {
@@ -108,6 +110,7 @@ export class FileTree
 
 				const c2: FileTreeFolder = <FileTreeFolder>c;
 				c2.children.push(newFile);
+				return;
 			}
 
 			// If the element is a Folder, search recursively
