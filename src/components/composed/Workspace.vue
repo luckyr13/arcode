@@ -5,7 +5,7 @@
       <h4 class="text-center arcode-title" >
         ArCode Studio v{{ appVersion }}
       </h4>
-      <h5 @click="addEditor($event, true)" class="text-center arcode-instructions">
+      <h5 class="text-center arcode-instructions">
          Double click to start 
       </h5>
     </div>
@@ -255,7 +255,7 @@ $workspace-tabs-height: 35px;
     width: 86%;
   }
   .workspace .tabs .tabs-menu{
-    width: 14%;
+    width: 12%;
   }
 }
 

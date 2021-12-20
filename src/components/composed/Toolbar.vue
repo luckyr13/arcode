@@ -153,15 +153,20 @@ onMounted(() => {
 		delay: [1000, 100]
 	});
 
-function responsiveToolbar(x) {
-	if (x.matches) { 
-		showPanel.value = true;
-		selectedOption.value = 'file-explorer';
+	function responsiveToolbar(x) {
+		if (x.matches) { 
+			showPanel.value = true;
+			selectedOption.value = 'file-explorer';
+			options['primary']['file-explorer'].active = true;
+		} else {
+			showPanel.value = false;
+			selectedOption.value = '';
+			options['primary']['file-explorer'].active = false;
+		}
 	}
-}
 
-var x = window.matchMedia("(min-width: 700px)")
-responsiveToolbar(x)
+	var x = window.matchMedia("(min-width: 700px)")
+	responsiveToolbar(x)
 });
 
 </script>
