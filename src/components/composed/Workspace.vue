@@ -90,9 +90,15 @@ const workspace = reactive<Workspace>(
   new Workspace(baseTheme.value, 'arcode-editor-tabs-container')
 );
 const editors = workspace.editors;
-const addEditor = (event: Event, onlyInParent= false, content='', fileName='', path='/') => {
+const addEditor = (
+  event: Event, 
+  onlyInParent= false, 
+  content='', 
+  fileName='', 
+  path='/',
+  active=true) => {
   try {
-    workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value);
+    workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value, active);
   } catch (err) {
     alert(err);
   }

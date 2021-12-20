@@ -48,15 +48,17 @@ const loadExamples = () => {
     false,
     lootContract.state,
     lootContract.stateName,
-    '/contracts/loot-contract');
+    '/contracts/loot-contract',
+    false);
   workspace.value.addEditor(
     emptyEvent,
     false,
     lootContract.contract,
     lootContract.name,
-    '/contracts/loot-contract');
-  workspace.value.closeEditor(0, emptyEvent);
-  //workspace.value.closeEditor(1, emptyEvent);
+    '/contracts/loot-contract',
+    false);
+
+  console.log(workspace.value.editors)
   
 };
 onMounted(() => {

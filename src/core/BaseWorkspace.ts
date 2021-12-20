@@ -52,7 +52,7 @@ export class BaseWorkspace implements GenericWorkspace
 		return defaultHighlightStyle.fallback;
 	}
 
-	public createEditor(content: string, theme: string): number {
+	public createEditor(content: string, theme: string, active: boolean): number {
     const startState = EditorState.create({
       doc: content,
       extensions: this._extensions
@@ -62,7 +62,7 @@ export class BaseWorkspace implements GenericWorkspace
     });
     const editorId: number = this._editors[this._editors.length - 1] ? 
       this._editors[this._editors.length - 1].id + 1 : 0;
-    const metadata: EditorViewMetadata = {id: editorId, view, name: '', active: true};
+    const metadata: EditorViewMetadata = {id: editorId, view, name: '', active: active};
     this._editors.push(metadata);
     this.setTheme(editorId, theme);
     return editorId;

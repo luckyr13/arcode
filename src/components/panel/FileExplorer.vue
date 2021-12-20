@@ -2,7 +2,7 @@
 <div class="arcode-main-toolbar-panel-title panel-title">
 	File Explorer
 </div>
-<ul class="file-menu">
+<ul class="file-menu" v-if="workspace">
 	<li @click="showModalNewFile = true; selNewFileLocation = '/'; txtNewFileName = getProposedFileName(workspace);">
 		<Icon class="menu-icon"
 			icon="codicon:new-file" />

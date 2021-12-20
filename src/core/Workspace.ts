@@ -31,12 +31,13 @@ export class Workspace extends BaseWorkspace  {
     content= '',
     path='/',
     fileName='',
-    theme=''): void {
+    theme='',
+    active=true): void {
     event.stopPropagation();
     event.preventDefault();
     if(event.target !== event.currentTarget && onlyInParent) return;
 
-    const editorId = this.createEditor(content, theme);
+    const editorId = this.createEditor(content, theme, active);
  
     // Add new editor
     fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
