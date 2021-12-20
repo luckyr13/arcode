@@ -31,15 +31,16 @@
 			<li 
 				v-if="editor.type == 'FILE'"
 				class="file"
-				:class="{ active: editor.id == workspace.getCurrentEditorId() }"
+				:class="{ 
+					active: editor.id == workspace.getCurrentEditorId() && workspace.isEditorActive(editor.id) }"
 				@click="workspace.selectEditor(editor.id, $event)">
 				<span>{{ editor.name }}</span>
 				<Icon 
 					class="menu-icon" 
 					@click="workspace.deleteEditor(editor.id, $event)"
-					icon="codicon:close" />
+					icon="codicon:trash" />
 				<Icon class="menu-icon"
-					icon="codicon:cloud-download" />
+					icon="codicon:edit" />
 			</li>
 			<FileList 
 				v-if="editor.type=='FOLDER'" 
@@ -96,10 +97,12 @@ const showFiles = ref(true);
 .file-list li.file:hover,
  {
 	background-color: rgba(0,0,0,0.3);
+	color: #FFF;
 }
 
 .file-list li.active {
 	background-color: rgba(0,0,0,0.3);
+	color: #FFF;
 }
 .file-list li.folder {
 	background-color: rgba(0,0,0,0.6);

@@ -62,7 +62,7 @@ export class BaseWorkspace implements GenericWorkspace
     });
     const editorId: number = this._editors[this._editors.length - 1] ? 
       this._editors[this._editors.length - 1].id + 1 : 0;
-    const metadata: EditorViewMetadata = {id: editorId, view, name: ''};
+    const metadata: EditorViewMetadata = {id: editorId, view, name: '', active: true};
     this._editors.push(metadata);
     this.setTheme(editorId, theme);
     return editorId;
@@ -83,6 +83,22 @@ export class BaseWorkspace implements GenericWorkspace
 	public getEditor(editorId: number): EditorView {
 		const i = this._editors.findIndex(ed => ed.id == editorId);
 		return this._editors[i].view;
+	}
+
+
+  public isEditorActive(editorId: number): boolean {
+		const i = this._editors.findIndex(ed => ed.id == editorId);
+		if (i >= 0) {
+			return this._editors[i].active;
+		}
+    return false;
+  }
+
+	public editorActive(editorId: number, active: boolean) {
+		const i = this._editors.findIndex(ed => ed.id == editorId);
+		if (i >= 0) {
+			this._editors[i].active = active;
+		}
 	}
 
 	public mountEditor(editorId: number, container: HTMLElement|null): void {

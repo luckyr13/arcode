@@ -1,5 +1,6 @@
 import { BaseWorkspace } from './BaseWorkspace';
 import { FileTree } from './FileTree';
+import { EditorMetadata } from './interfaces/EditorMetadata';
 
 export class Workspace extends BaseWorkspace  {
 	private _currentEditorId = 0;
@@ -23,6 +24,7 @@ export class Workspace extends BaseWorkspace  {
 		this._tabsContainerId = tabsContainerId;
 	}
 
+
 	public addEditor(
     event: Event,
     onlyInParent= false,
@@ -38,10 +40,9 @@ export class Workspace extends BaseWorkspace  {
  
     // Add new editor
     fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
-    const newEditor = { 
+    const newEditor: EditorMetadata = { 
       id: editorId,
       name: fileName,
-      active: true,
       type: 'FILE' 
     };
     this._fileTree.addFile(path, newEditor);
@@ -58,6 +59,8 @@ export class Workspace extends BaseWorkspace  {
     event.preventDefault();
     const previousEditorId = this.currentEditorId;
     this.currentEditorId = editorId;
+
+    this.editorActive(editorId, true);
     this.focusEditor(editorId);
     this.scrollEditor('right', 120 * (this.currentEditorId - previousEditorId));
   }
@@ -67,6 +70,12 @@ export class Workspace extends BaseWorkspace  {
     event.preventDefault();
     this.fileTree.removeFile(editorId)
     this.destroyEditor(editorId);
+  }
+
+  public closeEditor(editorId: number, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.editorActive(editorId, false);
   }
 
 	scrollEditor(direction: string, translate = 120): void {

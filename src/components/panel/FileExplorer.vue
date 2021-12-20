@@ -28,6 +28,11 @@
 			icon="codicon:mirror" />
 		<span>Load Contract from TX</span>
 	</li>
+	<li>
+		<Icon class="menu-icon"
+			icon="codicon:cloud-download" />
+		<span>Download File</span>
+	</li>
 </ul>
 <FileList v-if="workspace" :workspace="workspace" :fileTree="workspace.getFileTree()" />
 <transition name="modal1">
@@ -37,12 +42,21 @@
 		</template>
 		<template v-slot:body>
 			<p>Body</p>
-			<button 
-			class="modal-default-button" 
-			v-if="workspace"
-			@click="loadFromTXModal($event, workspace)">
-			LOAD FILES INTO WORKSPACE
-			</button>
+		</template>
+		<template v-slot:footer>
+			<div class="modal-footer text-right">
+				<button 
+					class="modal-button modal-button-primary" 
+					v-if="workspace"
+					@click="loadFromTXModal($event, workspace)">
+					<span >Load files into Workspace</span >
+				</button>
+				<button 
+					class="modal-button" 
+					@click="showModalLoadContractFromTX = false">
+					Close
+				</button>
+			</div>
 		</template>
 	</Modal>
 </transition>
@@ -53,12 +67,21 @@
 		</template>
 		<template v-slot:body>
 			<p>Body</p>
-			<button 
-				class="modal-default-button" 
-				v-if="workspace"
-				@click="addFolderModal(workspace, '/', 'test23')">
-				ADD FOLDER
-			</button>
+		</template>
+		<template v-slot:footer>
+			<div class="modal-footer text-right">
+				<button 
+					class="modal-button modal-button-primary" 
+					v-if="workspace"
+					@click="addFolderModal(workspace, '/', 'test23')">
+					<span >Add Folder</span >
+				</button>
+				<button 
+					class="modal-button" 
+					@click="showModalAddFolder = false">
+					Close
+				</button>
+			</div>
 		</template>
 	</Modal>
 </transition>
@@ -77,7 +100,6 @@
 					class="modal-button modal-button-primary" 
 					v-if="workspace"
 					@click="newFileModal($event, workspace)">
-					<Icon class="modal-btn-icon" icon="codicon:new-file" />
 					<span >Add File</span >
 				</button>
 				<button 
@@ -197,6 +219,7 @@ $title-height: 28px;
 .file-menu li:hover {
 	background-color: rgba(0,0,0,0.3);
 	cursor: pointer;
+	color: #FFF;
 }
 
 .subheader {
@@ -218,6 +241,7 @@ $title-height: 28px;
   border: 0;
   margin-left: 8px;
   cursor: pointer;
+  border-radius: 4px;
 }
 .modal-button:hover {
   cursor: pointer;

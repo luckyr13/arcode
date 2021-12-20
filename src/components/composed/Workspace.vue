@@ -6,7 +6,7 @@
         ArCode Studio v{{ appVersion }}
       </h4>
       <h5 class="text-center arcode-instructions">
-         Double click to start 
+         Double Click to Start 
       </h5>
     </div>
     <div class="workspace" @dblclick="addEditor($event, true)">
@@ -15,18 +15,21 @@
           id="arcode-editor-tabs-container" 
           class="tabs-container" 
           @dblclick="addEditor($event, true)">
-          <div 
-            class="tab" 
-            @click="selectEditor(editor.id, $event)"
+          <template
             v-for="editor in editors"
-            :key="editor.id"
-            :class="{ active: editor.id == getCurrentEditorId() }"> 
-            <div class="tab-button-label">{{ editor.name }}</div>
-            <button 
-              class="button tab-button-close" 
-              type="button" 
-              @click="deleteEditor(editor.id, $event)">x</button>
-          </div>
+            :key="editor.id">
+            <div 
+              class="tab" 
+              @click="selectEditor(editor.id, $event)"
+              v-if="editor.active"
+              :class="{ active: editor.id == getCurrentEditorId() }"> 
+              <div class="tab-button-label">{{ editor.name }}</div>
+              <button 
+                class="button tab-button-close" 
+                type="button" 
+                @click="closeEditor(editor.id, $event)">x</button>
+            </div>
+          </template>
         </div>
         <div class="tabs-menu">
           <button 
@@ -84,14 +87,16 @@ const workspace = reactive<Workspace>(
 const editors = workspace.editors;
 const addEditor = (event: Event, onlyInParent= false, content='', fileName='', path='/') => {
   workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value);
-  emit('workspace-change', editors);
+  // emit('workspace-change', editors);
 };
 const selectEditor = (editorId: number, event: Event) => {
   workspace.selectEditor(editorId, event);
 };
 const deleteEditor = (editorId: number, event: Event) => {
   workspace.deleteEditor(editorId, event);
-  emit('workspace-change', editors);
+};
+const closeEditor = (editorId: number, event: Event) => {
+  workspace.closeEditor(editorId, event);
 };
 const scrollEditor = (direction: string, translate = 120) => {
   workspace.scrollEditor(direction, translate);
@@ -119,6 +124,10 @@ const addFolder =  (path: string, folderName: string) => {
   workspace.fileTree.addFolder(path, folderName);
 };
 
+const isEditorActive = (editorId: number) => {
+  return workspace.isEditorActive(editorId);
+};
+
 
 // Expose public methods
 defineExpose({
@@ -131,7 +140,8 @@ defineExpose({
   setAppTheme,
   getFileTree,
   addFolder,
-  getCurrentEditorId
+  getCurrentEditorId,
+  isEditorActive
 });
 
 // make sure to reset the refs before each update
