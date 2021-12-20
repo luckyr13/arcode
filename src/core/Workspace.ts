@@ -53,11 +53,12 @@ export class Workspace extends BaseWorkspace  {
       throw err;
     }
     this.updateEditorName(editorId, fileName);
-
-    this.currentEditorId = editorId;
-    window.setTimeout(() => {
-      this.scrollEditor('right', 120 * editorId);
-    }, 200);
+    if (active) {
+      this.currentEditorId = editorId;
+      window.setTimeout(() => {
+        this.scrollEditor('right', 120 * editorId);
+      }, 200);
+    }
   }
 
   public selectEditor(editorId: number, event: Event): void {
