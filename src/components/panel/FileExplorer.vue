@@ -179,6 +179,7 @@ const newFileModal = (inputEvent: Event, workspace: Workspace) => {
 const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
 	showModalNewFile.value = false;
 	showModalLoadContractFromTX.value = false;
+	console.log(inputEvent, workspace);
 };
 
 </script>

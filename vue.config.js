@@ -3,7 +3,7 @@ module.exports = {
     config
       .plugin('html')
       .tap(args => {
-      	args[0].title = 'ArCode Studio: Online Arweave IDE';
+      	args[0].title = 'ArCode Studio: Smartweave IDE';
         return args;
       })
   },

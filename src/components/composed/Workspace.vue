@@ -82,7 +82,7 @@ import tippy from 'tippy.js';
 const props = defineProps({
   theme: String
 });
-const emit = defineEmits(['workspace-change']);
+// const emit = defineEmits(['workspace-change']);
 
 const divs = ref([]);
 const baseTheme = ref(props.theme);

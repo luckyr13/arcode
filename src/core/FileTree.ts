@@ -52,7 +52,7 @@ export class FileTree
 		}
 	}
 
-	public addFolder(path: string, newFolderName: string) {
+	public addFolder(path: string, newFolderName: string): void {
 		const folders = this._breakPath(path);
 		const newFolder: FileTreeFolder = {
 			name: newFolderName,
@@ -94,14 +94,14 @@ export class FileTree
 		}
 	}
 
-	public addFile(path: string, file: EditorMetadata) {
+	public addFile(path: string, file: EditorMetadata): void {
 		const folders = this._breakPath(path);
 		// Search in Tree 
 		this._addFileHelper(this._tree, folders, file);
 	}
 
 	
-	public removeFolder(path: string) {
+	public removeFolder(): void {
 		console.log('...')
 	}
 
@@ -147,7 +147,7 @@ export class FileTree
 		this._removeFileHelper(this._tree, fileId);
 	}
 
-	public getTree() {
+	public getTree(): FileTreeFolder {
 		return this._tree;
 	}
 }

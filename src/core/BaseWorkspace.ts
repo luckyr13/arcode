@@ -94,7 +94,7 @@ export class BaseWorkspace implements GenericWorkspace
     return false;
   }
 
-	public editorActive(editorId: number, active: boolean) {
+	public editorActive(editorId: number, active: boolean): void {
 		const i = this._editors.findIndex(ed => ed.id == editorId);
 		if (i >= 0) {
 			this._editors[i].active = active;
