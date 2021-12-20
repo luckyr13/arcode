@@ -290,7 +290,7 @@ const openFileModal = (
 	content='') => {
 	const onlyInParent= false;
 	workspace.addEditor(inputEvent, onlyInParent, content, fileName, path);
-	txtOpenFileContent.value.value = '';
+	txtOpenFileContent.value = '';
 	showModalOpenFile.value = false;
 };
 const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
