@@ -3,7 +3,8 @@ export const lootContract = {
   stateName: 'initial-state.json',
 	contract: `/*
 *  LOOT CONTRACT
-*  From: https://github.com/redstone-finance/smartweave-loot/blob/main/docs/LOOT_CONTRACT_TUTORIAL.md
+*  @author: RedStone Finance
+*  @link: https://github.com/redstone-finance/smartweave-loot/blob/main/docs/LOOT_CONTRACT_TUTORIAL.md
 */
 export async function handle(state, action) {
 

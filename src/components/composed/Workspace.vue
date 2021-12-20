@@ -159,7 +159,8 @@ defineExpose({
   addFolder,
   getCurrentEditorId,
   isEditorActive,
-  getFileTreePaths
+  getFileTreePaths,
+  closeEditor
 });
 
 // make sure to reset the refs before each update
@@ -187,6 +188,8 @@ onMounted(() => {
     placement: 'bottom',
     content: (reference) => reference.getAttribute('data-tippy-workspace-content')
   });
+
+
 });
 
 </script>

@@ -41,18 +41,23 @@ const workspaceChange = (data: Array<EditorMetadata>) => {
 const loadExamples = () => {
   workspace.value.addFolder('/', 'Contracts');
   workspace.value.addFolder('/Contracts', 'loot-contract');
+  const emptyEvent = new Event('emptyEvent');
+
   workspace.value.addEditor(
-    new Event('emptyEvent'),
+    emptyEvent,
     false,
     lootContract.state,
     lootContract.stateName,
     '/contracts/loot-contract');
   workspace.value.addEditor(
-    new Event('emptyEvent'),
+    emptyEvent,
     false,
     lootContract.contract,
     lootContract.name,
     '/contracts/loot-contract');
+  workspace.value.closeEditor(0, emptyEvent);
+  //workspace.value.closeEditor(1, emptyEvent);
+  
 };
 onMounted(() => {
   // console.log(workspace.value, 'workspace-mounted');
