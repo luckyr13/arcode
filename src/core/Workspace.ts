@@ -3,7 +3,7 @@ import { FileTree } from './FileTree';
 import { EditorMetadata } from './interfaces/EditorMetadata';
 
 export class Workspace extends BaseWorkspace  {
-	private _currentEditorId = 0;
+	private _currentEditorId = -1;
 	private _fileTree: FileTree = new FileTree();
 	private _tabsContainerId = '';
 
@@ -77,6 +77,7 @@ export class Workspace extends BaseWorkspace  {
   public closeEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();
+    this.currentEditorId = this.editors.length - 1;
     this.editorActive(editorId, false);
   }
 

@@ -55,11 +55,16 @@
           </button>
         </div>
       </div>
-      <div class="editor" 
-        v-for="editor in editors" 
-        :key="editor.id"
-        :class="{ active: editor.id == getCurrentEditorId() }"
-        :ref="el => { if (el) { divs[editor.id] = el; } }"></div>
+
+      <template
+        v-for="editor in editors"
+        :key="editor.id">
+        <div class="editor"
+          v-if="editor.active && getCurrentEditorId() >= 0"
+          :class="{ active: editor.id == getCurrentEditorId() }"
+          :ref="el => { if (el) { divs[editor.id] = el; } }"></div>
+      </template>
+      
     </div>
   </div>
   
