@@ -150,6 +150,9 @@ const isEditorActive = (editorId: number) => {
 const getFileTreePaths = () => {
   return workspace.fileTree.getTreeAsPathStringArr();
 };
+const updateEditorName = (editorId: number, newName: string) => {
+  return workspace.updateEditorNameFull(editorId, newName);
+};
 
 
 // Expose public methods
@@ -166,7 +169,8 @@ defineExpose({
   getCurrentEditorId,
   isEditorActive,
   getFileTreePaths,
-  closeEditor
+  closeEditor,
+  updateEditorName
 });
 
 // make sure to reset the refs before each update

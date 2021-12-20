@@ -33,7 +33,8 @@
 	Files In Workspace
 </div>
 <ul class="file-menu">
-	<li v-if="workspace.getCurrentEditorId() >= 0">
+	<li v-if="workspace.getCurrentEditorId() >= 0"
+		@click="showModalEditFile = true; txtEditFileName = workspace.editors[workspace.getCurrentEditorId()].name;">
 		<Icon class="menu-icon"
 			icon="codicon:edit" />
 		<span>Edit File Name</span>
@@ -104,7 +105,10 @@
 			</div>
 			<div class="form-input">
 				<label>Folder Name</label>
-				<input v-model.trim="txtNewFolderName" type="text">
+				<input 
+					v-model.trim="txtNewFolderName" 
+					@keyup.enter="txtNewFolderName != '' ? addFolderModal(workspace, selNewFolderLocation, txtNewFolderName) : false"
+					type="text">
 			</div>
 		</template>
 		<template v-slot:footer>
@@ -144,7 +148,10 @@
 			</div>
 			<div class="form-input">
 				<label>File Name</label>
-				<input v-model.trim="txtNewFileName" type="text">
+				<input 
+					v-model.trim="txtNewFileName" 
+					@keyup.enter="newFileModal($event, workspace, txtNewFileName, selNewFileLocation)"
+					type="text">
 			</div>
 		</template>
 		<template v-slot:footer>
@@ -182,7 +189,10 @@
 			</div>
 			<div class="form-input">
 				<label>File Name</label>
-				<input v-model.trim="txtOpenFileName" type="text">
+				<input 
+					v-model.trim="txtOpenFileName" 
+					@keyup.enter="openFileModal($event, workspace, txtOpenFileName, selOpenFileLocation, txtOpenFileContent)"
+					type="text">
 			</div>
 		</template>
 		<template v-slot:footer>
@@ -198,6 +208,39 @@
 				<button 
 					class="modal-button" 
 					@click="showModalOpenFile = false">
+					Close
+				</button>
+			</div>
+		</template>
+	</Modal>
+</transition>
+<transition name="fade">
+	<Modal v-if="showModalEditFile" @close="showModalEditFile = false">
+		<template v-slot:header>
+			<h3>Edit File Name</h3>
+		</template>
+		<template v-slot:body>
+			<div class="form-input">
+				<label>New File Name</label>
+				<input 
+					v-model.trim="txtEditFileName" 
+					@keyup.enter="editFileModal(workspace, txtEditFileName, workspace.getCurrentEditorId())"
+					type="text">
+			</div>
+		</template>
+		<template v-slot:footer>
+			<div class="modal-footer text-right">
+				<button 
+					class="modal-button" 
+					:class="{ 'modal-button-primary': txtEditFileName }"
+					:disabled="!txtEditFileName"
+					v-if="workspace"
+					@click="editFileModal(workspace, txtEditFileName, workspace.getCurrentEditorId())">
+					<span >Update File</span >
+				</button>
+				<button 
+					class="modal-button" 
+					@click="showModalEditFile = false">
 					Close
 				</button>
 			</div>
@@ -221,6 +264,7 @@ const showModalLoadContractFromTX = ref(false);
 const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
 const showModalOpenFile = ref(false);
+const showModalEditFile = ref(false);
 
 const props = defineProps({
 	workspace: Object
@@ -293,6 +337,14 @@ const openFileModal = (
 	txtOpenFileContent.value = '';
 	showModalOpenFile.value = false;
 };
+const editFileModal = (
+	workspace: Workspace,
+	newFileName: string,
+	editorId: number) => {
+	workspace.updateEditorName(editorId, newFileName);
+	txtEditFileName.value = '';
+	showModalEditFile.value = false;
+};
 const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
 	showModalNewFile.value = false;
 	showModalLoadContractFromTX.value = false;
@@ -316,12 +368,14 @@ const txtNewFolderName = ref('');
 const txtOpenFileName = ref('');
 const txtOpenFileContent = ref('');
 const selOpenFileLocation = ref('/');
+const txtEditFileName = ref('');
 
 watchEffect(() => {
 	const r = /(\/|\\)/g;
 	txtNewFileName.value = txtNewFileName.value.replace(r, '');
 	txtNewFolderName.value = txtNewFolderName.value.replace(r, '');
 	txtOpenFileName.value = txtOpenFileName.value.replace(r, '');
+	txtEditFileName.value = txtEditFileName.value.replace(r, '');
 });
 
 

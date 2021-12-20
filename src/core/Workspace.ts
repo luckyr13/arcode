@@ -61,6 +61,11 @@ export class Workspace extends BaseWorkspace  {
     }
   }
 
+  public updateEditorNameFull(editorId: number, newName: string): void {
+    this.updateEditorName(editorId, newName);
+    this._fileTree.updateFileById(editorId, newName);
+  }
+
   public selectEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();

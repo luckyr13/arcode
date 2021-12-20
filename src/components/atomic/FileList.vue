@@ -24,7 +24,7 @@
 	</li>
 	<template v-if="showFiles">
 		<li class="empty" v-if="!fileTree.children.length" >
-			<span :style="{ paddingLeft: `${level * 6}px` }">Empty folder</span> 
+			<span :style="{ paddingLeft: `${level * 10}px` }">Empty folder</span> 
 		</li>
 		<template v-for="editor in fileTree.children" :key="editor.id" >
 			<li 
@@ -51,15 +51,20 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const props = defineProps({
 	workspace: Object,
 	fileTree: Object,
 	level: Number
 });
-const showFiles = ref(true);
+const showFiles = ref(false);
 
+onMounted(() => {
+	if (props.level === 0 || props.level === 1) {
+		showFiles.value = true;
+	}
+})
 </script>
 
 <style scoped lang="scss">

@@ -24,7 +24,9 @@ import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
-import { lootContract } from '@/core/contracts/Examples';
+import { lootContract } from '@/core/contracts/LootContract';
+import { token } from '@/core/contracts/Token';
+import { tokenPST } from '@/core/contracts/TokenPST';
 
 import 'tippy.js/dist/tippy.css';
 import 'xterm/css/xterm.css';
@@ -41,6 +43,8 @@ const workspaceChange = (data: Array<EditorMetadata>) => {
 const loadExamples = () => {
   workspace.value.addFolder('/', 'Contracts');
   workspace.value.addFolder('/Contracts', 'loot-contract');
+  workspace.value.addFolder('/Contracts', 'token');
+  workspace.value.addFolder('/Contracts', 'token-pst');
   const emptyEvent = new Event('emptyEvent');
 
   workspace.value.addEditor(
@@ -57,9 +61,34 @@ const loadExamples = () => {
     lootContract.name,
     '/contracts/loot-contract',
     false);
-
-  console.log(workspace.value.editors)
-  
+  workspace.value.addEditor(
+    emptyEvent,
+    false,
+    token.contract,
+    token.name,
+    '/contracts/token',
+    false);
+  workspace.value.addEditor(
+    emptyEvent,
+    false,
+    token.state,
+    token.stateName,
+    '/contracts/token',
+    false);
+  workspace.value.addEditor(
+    emptyEvent,
+    false,
+    tokenPST.contract,
+    tokenPST.name,
+    '/contracts/token-pst',
+    false);
+  workspace.value.addEditor(
+    emptyEvent,
+    false,
+    tokenPST.state,
+    tokenPST.stateName,
+    '/contracts/token-pst',
+    false);
 };
 onMounted(() => {
   // console.log(workspace.value, 'workspace-mounted');

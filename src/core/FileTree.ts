@@ -231,4 +231,34 @@ export class FileTree
 		// Search in Tree 
 		return this._getTreeAsPathStringArrHelper(this._tree, '');
 	}
+
+
+	private _updateFileByIdHelper(tree: FileTreeFolder, fileId: number, newName: string) {
+		if (tree.children.length === 0) {
+			return;
+		}
+		
+		// Search in children
+		for (const i in tree.children) {
+			// Is this the element I'm looking for?
+			if (tree.children[i].type === 'FILE') {
+				const c2: EditorMetadata = <EditorMetadata>tree.children[i];
+				if (c2.id === fileId) {
+					tree.children[i].name = newName;
+					return;
+				}
+			}
+
+			// If the element is a Folder, search recursively
+			if (tree.children[i].type === 'FOLDER') {
+				const c2: FileTreeFolder = <FileTreeFolder>tree.children[i];
+				this._updateFileByIdHelper(c2, fileId, newName);
+			}
+		}
+	}
+
+	public updateFileById(fileId: number, name: string): void {
+		// Search in Tree 
+		this._updateFileByIdHelper(this._tree, fileId, name);
+	}
 }
