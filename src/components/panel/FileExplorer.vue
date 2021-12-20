@@ -162,8 +162,47 @@
 		</template>
 	</Modal>
 </transition>
+<transition name="fade">
+	<Modal v-if="showModalOpenFile" @close="showModalOpenFile = false">
+		<template v-slot:header>
+			<h3>Open File: Select Location</h3>
+		</template>
+		<template v-slot:body>
+			<div class="form-input">
+				<label>Workspace Location</label>
+				<select v-model.trim="selOpenFileLocation">
+					<option value="/">/</option>
+					<template v-for="path of workspace.getFileTreePaths()" :key="path">
+						<option v-if="path" :value="path">{{ path }}</option>
+					</template>
+					
+				</select>
+			</div>
+			<div class="form-input">
+				<label>File Name</label>
+				<input v-model.trim="txtOpenFileName" type="text">
+			</div>
+		</template>
+		<template v-slot:footer>
+			<div class="modal-footer text-right">
+				<button 
+					class="modal-button" 
+					:class="{ 'modal-button-primary': txtOpenFileName }"
+					:disabled="!txtOpenFileName"
+					v-if="workspace"
+					@click="openFileModal($event, workspace, txtOpenFileName, selOpenFileLocation, txtOpenFileContent)">
+					<span >Open File</span >
+				</button>
+				<button 
+					class="modal-button" 
+					@click="showModalOpenFile = false">
+					Close
+				</button>
+			</div>
+		</template>
+	</Modal>
+</transition>
 </template>
-
 
 
 <script setup lang="ts">
@@ -177,6 +216,7 @@ import FileList from '@/components/atomic/FileList.vue';
 const showModalLoadContractFromTX = ref(false);
 const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
+const showModalOpenFile = ref(false);
 
 const props = defineProps({
 	workspace: Object
@@ -188,6 +228,7 @@ const openFile = (inputId: string) => {
 	}
 };
 const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<string> => {
+	txtOpenFileContent.value = '';
   let method = new Promise<string>((resolve, reject) => {
      // Transform .json file into key
      try {
@@ -195,18 +236,25 @@ const openFile_helper = (inputEvent: Event, workspace: Workspace): Promise<strin
         inputEvent.target.files[0] : null;
 
       const freader = new FileReader();
-      freader.onload = async () => {
-        const res = freader.result;
-        const fname = file.name;
-        workspace.addEditor(inputEvent, false, res, fname)
-        inputEvent.target.value = '';
-        resolve(res);
-      }
-      freader.onerror = () => {
-        throw Error('Error reading file');
-      }
-      freader.readAsText(file);
+			freader.onload = async () => {
+				const res = freader.result;
+				const fname = file.name;
+				selOpenFileLocation.value = '/';
+				txtOpenFileContent.value = res;
+				txtOpenFileName.value = fname;
+				// workspace.addEditor(inputEvent, false, res, fname);
+				showModalOpenFile.value = true;
+
+				inputEvent.target.value = '';
+				resolve(res);
+			};
+			freader.onerror = () => {
+				showModalOpenFile.value = false;
+				throw Error('Error reading file');
+			};
+			freader.readAsText(file);
      } catch (error) {
+			showModalOpenFile.value = false;
 			console.log('Error:', error);
 			reject(error);
      }
@@ -229,6 +277,17 @@ const newFileModal = (
 	workspace.addEditor(inputEvent, onlyInParent, content, fileName, path);
 	showModalNewFile.value = false;
 };
+
+const openFileModal = (
+	inputEvent: Event,
+	workspace: Workspace,
+	fileName: string,
+	path: string,
+	content='') => {
+	const onlyInParent= false;
+	workspace.addEditor(inputEvent, onlyInParent, content, fileName, path);
+	showModalOpenFile.value = false;
+};
 const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
 	showModalNewFile.value = false;
 	showModalLoadContractFromTX.value = false;
@@ -245,11 +304,15 @@ const getProposedFileName = (workspace: Workspace): string => {
 
 const txtNewFileName = ref('');
 const txtNewFolderName = ref('');
+const txtOpenFileName = ref('');
+const txtOpenFileContent = ref('');
+const selOpenFileLocation = ref('/');
 
 watchEffect(() => {
 	const r = /(\/|\\)/g;
 	txtNewFileName.value = txtNewFileName.value.replace(r, '');
 	txtNewFolderName.value = txtNewFolderName.value.replace(r, '');
+	txtOpenFileName.value = txtOpenFileName.value.replace(r, '');
 });
 
 
