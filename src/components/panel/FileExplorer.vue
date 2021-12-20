@@ -18,7 +18,7 @@
 			accept=".json,application/json,.js,text/javascript" 
 			@change="openFile_helper($event, workspace)">
 	</li>
-	<li @click="showModalAddFolder = true">
+	<li @click="showModalAddFolder = true; selNewFolderLocation = '/'; txtNewFolderName='';">
 		<Icon class="menu-icon"
 			icon="codicon:new-folder" />
 		<span>Add Folder</span>
@@ -36,7 +36,7 @@
 	<li v-else class="disabled">
 		<Icon class="menu-icon"
 			icon="codicon:cloud-download" />
-		<span>Download File :)</span>
+		<span>Download File</span>
 	</li>
 </ul>
 <FileList v-if="workspace" :workspace="workspace" :fileTree="workspace.getFileTree()" />
@@ -46,7 +46,7 @@
 			<h3>Load Contract from TX</h3>
 		</template>
 		<template v-slot:body>
-			<p>Body</p>
+			<p>Coming soon...</p>
 		</template>
 		<template v-slot:footer>
 			<div class="modal-footer text-right">
@@ -71,14 +71,29 @@
 			<h3>Add Folder</h3>
 		</template>
 		<template v-slot:body>
-			<p>Body</p>
+			<div class="form-input">
+				<label>Workspace Location</label>
+				<select v-model.trim="selNewFolderLocation">
+					<option value="/">/</option>
+					<template v-for="path of workspace.getFileTreePaths()" :key="path">
+						<option v-if="path" :value="path">{{ path }}</option>
+					</template>
+					
+				</select>
+			</div>
+			<div class="form-input">
+				<label>Folder Name</label>
+				<input v-model.trim="txtNewFolderName" type="text">
+			</div>
 		</template>
 		<template v-slot:footer>
 			<div class="modal-footer text-right">
 				<button 
-					class="modal-button modal-button-primary" 
+					class="modal-button" 
+					:class="{ 'modal-button-primary': txtNewFolderName }"
+					:disabled="!txtNewFolderName"
 					v-if="workspace"
-					@click="addFolderModal(workspace, '/', 'test23')">
+					@click="addFolderModal(workspace, selNewFolderLocation, txtNewFolderName)">
 					<span >Add Folder</span >
 				</button>
 				<button 
@@ -100,6 +115,10 @@
 				<label>Workspace Location</label>
 				<select v-model.trim="selNewFileLocation">
 					<option value="/">/</option>
+					<template v-for="path of workspace.getFileTreePaths()" :key="path">
+						<option v-if="path" :value="path">{{ path }}</option>
+					</template>
+					
 				</select>
 			</div>
 			<div class="form-input">
@@ -205,6 +224,9 @@ const getProposedFileName = (workspace: Workspace): string => {
 	return `Untitled-${newEditorId}`;
 };
 
+const txtNewFileName = ref('');
+const txtNewFolderName = ref('');
+
 
 </script>
 
@@ -300,8 +322,7 @@ $title-height: 28px;
 	padding: 10px;
 }
 .form-input input,
-.form-input select,
-.form-input option,
+.form-input select
  {
 	width: 100%;
 	padding: 12px;
@@ -309,6 +330,15 @@ $title-height: 28px;
 	border: 1px solid var(--app-background-color);
 	background: inherit;
 	color: inherit;
+}
+.form-input option
+ {
+	width: 100%;
+	padding: 12px;
+	border-radius: 4px;
+	border: 1px solid var(--app-background-color);
+	background: inherit;
+	color: #000;
 }
 
 .form-input label {

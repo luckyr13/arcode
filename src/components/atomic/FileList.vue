@@ -3,7 +3,7 @@
 <ul class="file-list" v-if="workspace">
 	<li 
 		class="folder" @click="showFiles = !showFiles">
-		<span>
+		<span :class="{ child: fileTree.name }">
 			<Icon v-if="showFiles"
 			class="fd-icon" 
 			icon="codicon:folder-opened" />
@@ -109,12 +109,16 @@ const showFiles = ref(true);
 	color: #FFF;
 	cursor: pointer;
 }
+.file-list li.folder .child {
+	padding-left: 4px;
+}
+
 .file-list li.file {
-	padding-left: 20px;
+	padding-left: 10px;
 	cursor: pointer;
 }
 .file-list li.empty {
 	font-style: italic;
-	padding-left: 20px;
+	padding-left: 10px;
 }
 </style>

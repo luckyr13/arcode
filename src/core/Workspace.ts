@@ -45,7 +45,12 @@ export class Workspace extends BaseWorkspace  {
       name: fileName,
       type: 'FILE' 
     };
-    this._fileTree.addFile(path, newEditor);
+    try {
+      this._fileTree.addFile(path, newEditor);
+    } catch(err) {
+      this.destroyEditor(editorId);
+      throw err;
+    }
     this.updateEditorName(editorId, fileName);
 
     this.currentEditorId = editorId;
@@ -77,8 +82,15 @@ export class Workspace extends BaseWorkspace  {
   public closeEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-    this.currentEditorId = this.editors.length - 1;
     this.editorActive(editorId, false);
+    const lastEditorIdInWorkspace = this.editors.find((e) => {
+      return e.active;
+    });
+    if (lastEditorIdInWorkspace) {
+     this.currentEditorId = lastEditorIdInWorkspace.id;
+    } else {
+      this.currentEditorId = -1;
+    }
   }
 
 	scrollEditor(direction: string, translate = 120): void {

@@ -30,7 +30,14 @@ export class FileTree
 		}
 		const firstRouteElem = path[0];
 		if (tree.name == firstRouteElem) {
+			// Is the name already taken?
+			const findName = this.findFolderInChildrenByName(newFolder.name, tree);
+			if (findName) {
+				throw Error(`Name ${newFolder.name} already taken!`);
+			}
+
 			tree.children.push(newFolder);
+			return;
 		}
 		if (tree.children.length === 0) {
 			throw Error(`No children: ${JSON.stringify(tree)}`);
@@ -38,8 +45,14 @@ export class FileTree
 		// Search in children
 		for (const c of tree.children) {
 			// Is this the element I'm looking for?
-			if (c.name == firstRouteElem && c.type === 'FOLDER') {
+			if (c.name == firstRouteElem && c.type === 'FOLDER' && path.length == 1) {
 				const c2: FileTreeFolder = <FileTreeFolder>c;
+				// Is the name already taken?
+				const findName = this.findFolderInChildrenByName(newFolder.name, c2);
+				if (findName) {
+					throw Error(`Name ${newFolder.name} already taken!`);
+				}
+				
 				c2.children.push(newFolder);
 			}
 
@@ -72,6 +85,12 @@ export class FileTree
 		}
 		const firstRouteElem = path[0];
 		if (tree.name == firstRouteElem) {
+			// Is the name already taken?
+			const findName = this.findFileInChildrenByName(newFile.name, tree);
+			if (findName) {
+				throw Error(`Name ${newFile.name} already taken!`);
+			}
+
 			tree.children.push(newFile);
 		}
 		if (tree.children.length === 0) {
@@ -81,6 +100,12 @@ export class FileTree
 		for (const c of tree.children) {
 			// Is this the element I'm looking for?
 			if (c.name == firstRouteElem && c.type === 'FOLDER') {
+				// Is the name already taken?
+				const findName = this.findFileInChildrenByName(newFile.name, <FileTreeFolder>c);
+				if (findName) {
+					throw Error(`Name ${newFile.name} already taken! Please use a different name.`);
+				}
+
 				const c2: FileTreeFolder = <FileTreeFolder>c;
 				c2.children.push(newFile);
 			}
@@ -105,7 +130,7 @@ export class FileTree
 		console.log('...')
 	}
 
-	private _findFileInChildrenById(fileId: number, tree: FileTreeFolder): EditorMetadata|null {
+	public findFileInChildrenById(fileId: number, tree: FileTreeFolder): EditorMetadata|null {
 		// Search children
 		const i = tree.children.findIndex((f) => {
 			const tmpF: EditorMetadata = <EditorMetadata>f;
@@ -113,6 +138,31 @@ export class FileTree
 		});
     if (i >= 0 && tree.children[i]) {
       return <EditorMetadata>tree.children[i];
+    }
+    return null;
+	}
+
+	public findFileInChildrenByName(fileName: string, tree: FileTreeFolder): EditorMetadata|null {
+		// Search children
+		const i = tree.children.findIndex((f) => {
+			const tmpF: EditorMetadata = <EditorMetadata>f;
+			return (tmpF.type == 'FILE' && tmpF.name == fileName);
+		});
+    if (i >= 0 && tree.children[i]) {
+      return <EditorMetadata>tree.children[i];
+    }
+
+    return null;
+	}
+
+	public findFolderInChildrenByName(folderName: string, tree: FileTreeFolder): FileTreeFolder|null {
+		// Search children
+		const i = tree.children.findIndex((f) => {
+			const tmpF: FileTreeFolder = <FileTreeFolder>f;
+			return (tmpF.type == 'FOLDER' && tmpF.name == folderName);
+		});
+    if (i >= 0 && tree.children[i]) {
+      return <FileTreeFolder>tree.children[i];
     }
 
     return null;
@@ -149,5 +199,31 @@ export class FileTree
 
 	public getTree(): FileTreeFolder {
 		return this._tree;
+	}
+
+	private _getTreeAsPathStringArrHelper(tree: FileTreeFolder, path: string): string[] {
+		if (tree.children.length === 0) {
+			return [];
+		}
+		let res: string[] = [];
+		
+		// Search in children
+		for (const i in tree.children) {
+			// If the element is a Folder, search recursively
+			if (tree.children[i].type === 'FOLDER') {
+				const c2: FileTreeFolder = <FileTreeFolder>tree.children[i];
+				const newPath2 = `${path}/${c2.name}`;
+				res.push(newPath2);
+				res = res.concat(this._getTreeAsPathStringArrHelper(c2, newPath2));
+			}
+		}
+		
+		
+		return res;
+	}
+
+	public getTreeAsPathStringArr(): string[] {
+		// Search in Tree 
+		return this._getTreeAsPathStringArrHelper(this._tree, '');
 	}
 }

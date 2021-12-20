@@ -91,7 +91,11 @@ const workspace = reactive<Workspace>(
 );
 const editors = workspace.editors;
 const addEditor = (event: Event, onlyInParent= false, content='', fileName='', path='/') => {
-  workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value);
+  try {
+    workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value);
+  } catch (err) {
+    alert(err);
+  }
   // emit('workspace-change', editors);
 };
 const selectEditor = (editorId: number, event: Event) => {
@@ -126,11 +130,19 @@ const getFileTree = () => {
 };
 
 const addFolder =  (path: string, folderName: string) => {
-  workspace.fileTree.addFolder(path, folderName);
+  try {
+    workspace.fileTree.addFolder(path, folderName);
+  } catch (err) {
+    alert(err);
+  }
 };
 
 const isEditorActive = (editorId: number) => {
   return workspace.isEditorActive(editorId);
+};
+
+const getFileTreePaths = () => {
+  return workspace.fileTree.getTreeAsPathStringArr();
 };
 
 
@@ -146,7 +158,8 @@ defineExpose({
   getFileTree,
   addFolder,
   getCurrentEditorId,
-  isEditorActive
+  isEditorActive,
+  getFileTreePaths
 });
 
 // make sure to reset the refs before each update
