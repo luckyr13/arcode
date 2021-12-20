@@ -43,7 +43,9 @@
 			icon="codicon:edit" />
 		<span>Edit File Name</span>
 	</li>
-	<li v-if="workspace.getCurrentEditorId() >= 0">
+	<li 
+		v-if="workspace.getCurrentEditorId() >= 0"
+		@click="downloadFile(workspace.editors[workspace.getCurrentEditorId()])">
 		<Icon class="menu-icon"
 			icon="codicon:cloud-download" />
 		<span>Download File</span>
@@ -212,6 +214,8 @@ import { Icon } from '@iconify/vue';
 import Workspace from '@/components/composed/Workspace.vue';
 import Modal from '@/components/atomic/Modal.vue';
 import FileList from '@/components/atomic/FileList.vue';
+import fileDownload from 'js-file-download';
+import { EditorViewMetadata } from '@/core/interfaces/EditorViewMetadata';
 
 const showModalLoadContractFromTX = ref(false);
 const showModalAddFolder = ref(false);
@@ -286,6 +290,7 @@ const openFileModal = (
 	content='') => {
 	const onlyInParent= false;
 	workspace.addEditor(inputEvent, onlyInParent, content, fileName, path);
+	txtOpenFileContent.value.value = '';
 	showModalOpenFile.value = false;
 };
 const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
@@ -301,6 +306,10 @@ const getProposedFileName = (workspace: Workspace): string => {
 	}
 	return `Untitled-${newEditorId}`;
 };
+
+const downloadFile = (doc: EditorViewMetadata) => {
+	fileDownload(doc.view.state.doc, doc.name);
+}
 
 const txtNewFileName = ref('');
 const txtNewFolderName = ref('');
