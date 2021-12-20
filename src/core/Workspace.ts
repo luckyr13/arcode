@@ -51,7 +51,7 @@ export class Workspace extends BaseWorkspace  {
     this.currentEditorId = editorId;
     window.setTimeout(() => {
       this.scrollEditor('right', 120 * editorId);
-    }, 300);
+    }, 200);
   }
 
   public selectEditor(editorId: number, event: Event): void {
@@ -62,7 +62,9 @@ export class Workspace extends BaseWorkspace  {
 
     this.editorActive(editorId, true);
     this.focusEditor(editorId);
-    this.scrollEditor('right', 120 * (this.currentEditorId - previousEditorId));
+    window.setTimeout(() => {
+      this.scrollEditor('right', 120 * (this.currentEditorId - previousEditorId));
+    }, 200);
   }
 
   public deleteEditor(editorId: number, event: Event): void {
