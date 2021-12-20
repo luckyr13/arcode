@@ -168,7 +168,7 @@
 
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { Icon } from '@iconify/vue';
 import Workspace from '@/components/composed/Workspace.vue';
 import Modal from '@/components/atomic/Modal.vue';
@@ -245,6 +245,12 @@ const getProposedFileName = (workspace: Workspace): string => {
 
 const txtNewFileName = ref('');
 const txtNewFolderName = ref('');
+
+watchEffect(() => {
+	const r = /(\/|\\)/g;
+	txtNewFileName.value = txtNewFileName.value.replace(r, '');
+	txtNewFolderName.value = txtNewFolderName.value.replace(r, '');
+});
 
 
 </script>
