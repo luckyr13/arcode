@@ -29,7 +29,7 @@ export class FileTree
 			return;
 		}
 		const firstRouteElem = path[0];
-		if (tree.name == firstRouteElem) {
+		if (tree.name == firstRouteElem && path.length === 1) {
 			// Is the name already taken?
 			const findName = this.findFolderInChildrenByName(newFolder.name, tree);
 			if (findName) {
@@ -85,7 +85,7 @@ export class FileTree
 			return;
 		}
 		const firstRouteElem = path[0];
-		if (tree.name == firstRouteElem) {
+		if (tree.name == firstRouteElem && path.length === 0) {
 			// Is the name already taken?
 			const findName = this.findFileInChildrenByName(newFile.name, tree);
 			if (findName) {
