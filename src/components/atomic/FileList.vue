@@ -1,9 +1,8 @@
 <template>
-
 <ul class="file-list" v-if="workspace">
 	<li 
 		class="folder" @click="showFiles = !showFiles">
-		<span :class="{ child: fileTree.name }">
+		<span :style="{ paddingLeft: `${level * 6}px` }">
 			<Icon v-if="showFiles"
 			class="fd-icon" 
 			icon="codicon:folder-opened" />
@@ -25,7 +24,7 @@
 	</li>
 	<template v-if="showFiles">
 		<li class="empty" v-if="!fileTree.children.length" >
-			<span>Empty folder</span> 
+			<span :style="{ paddingLeft: `${level * 6}px` }">Empty folder</span> 
 		</li>
 		<template v-for="editor in fileTree.children" :key="editor.id" >
 			<li 
@@ -34,16 +33,15 @@
 				:class="{ 
 					active: editor.id == workspace.getCurrentEditorId() && workspace.isEditorActive(editor.id) }"
 				@click="workspace.selectEditor(editor.id, $event)">
-				<span>{{ editor.name }}</span>
+				<span :style="{ paddingLeft: `${level * 10}px` }">{{ editor.name }}</span>
 				<Icon 
 					class="menu-icon" 
 					@click="workspace.deleteEditor(editor.id, $event)"
 					icon="codicon:trash" />
-				<Icon class="menu-icon"
-					icon="codicon:edit" />
 			</li>
 			<FileList 
 				v-if="editor.type=='FOLDER'" 
+				:level="level + 1"
 				:workspace="workspace" :fileTree="editor" />
 		</template>
 	</template>
@@ -57,7 +55,8 @@ import { ref } from 'vue';
 
 const props = defineProps({
 	workspace: Object,
-	fileTree: Object
+	fileTree: Object,
+	level: Number
 });
 const showFiles = ref(true);
 
@@ -109,16 +108,11 @@ const showFiles = ref(true);
 	color: #FFF;
 	cursor: pointer;
 }
-.file-list li.folder .child {
-	padding-left: 4px;
-}
 
 .file-list li.file {
-	padding-left: 10px;
 	cursor: pointer;
 }
 .file-list li.empty {
 	font-style: italic;
-	padding-left: 10px;
 }
 </style>

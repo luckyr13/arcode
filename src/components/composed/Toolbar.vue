@@ -26,7 +26,9 @@
 			</ul>
 		</div>
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
-			<FileExplorer v-if="options['primary']['file-explorer'].active" :workspace="workspace" />
+			<FileExplorer 
+					v-if="options['primary']['file-explorer'].active" 
+					:workspace="workspace" />
 			<RunAndDebug v-if="options['primary']['compile'].active" />
 			<Deploy v-if="options['primary']['deploy'].active" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />

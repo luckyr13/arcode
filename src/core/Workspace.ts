@@ -75,6 +75,7 @@ export class Workspace extends BaseWorkspace  {
   public deleteEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();
+    this.closeEditor(editorId, event);
     this.fileTree.removeFile(editorId)
     this.destroyEditor(editorId);
   }

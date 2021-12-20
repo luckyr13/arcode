@@ -28,6 +28,21 @@
 			icon="codicon:mirror" />
 		<span>Load Contract from TX</span>
 	</li>
+</ul>
+<div class="arcode-main-toolbar-panel-title panel-title">
+	Files In Workspace
+</div>
+<ul class="file-menu">
+	<li v-if="workspace.getCurrentEditorId() >= 0">
+		<Icon class="menu-icon"
+			icon="codicon:edit" />
+		<span>Edit File Name</span>
+	</li>
+	<li v-else class="disabled">
+		<Icon class="menu-icon"
+			icon="codicon:edit" />
+		<span>Edit File Name</span>
+	</li>
 	<li v-if="workspace.getCurrentEditorId() >= 0">
 		<Icon class="menu-icon"
 			icon="codicon:cloud-download" />
@@ -39,8 +54,12 @@
 		<span>Download File</span>
 	</li>
 </ul>
-<FileList v-if="workspace" :workspace="workspace" :fileTree="workspace.getFileTree()" />
-<transition name="modal1">
+<FileList 
+		v-if="workspace" 
+		:workspace="workspace" 
+		:level="0"
+		:fileTree="workspace.getFileTree()" />
+<transition name="fade">
 	<Modal v-if="showModalLoadContractFromTX" @close="showModalLoadContractFromTX = false">
 		<template v-slot:header>
 			<h3>Load Contract from TX</h3>
@@ -65,7 +84,7 @@
 		</template>
 	</Modal>
 </transition>
-<transition name="modal2">
+<transition name="fade">
 	<Modal v-if="showModalAddFolder" @close="showModalAddFolder = false">
 		<template v-slot:header>
 			<h3>Add Folder</h3>
@@ -105,7 +124,7 @@
 		</template>
 	</Modal>
 </transition>
-<transition name="modal2">
+<transition name="fade">
 	<Modal v-if="showModalNewFile" @close="showModalNewFile = false">
 		<template v-slot:header>
 			<h3>Create a New File</h3>
@@ -345,5 +364,16 @@ $title-height: 28px;
 	font-size: 12px;
 	margin-bottom: 4px;
 	display: block;
+}
+
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
