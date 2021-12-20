@@ -247,15 +247,26 @@ $workspace-tabs-height: 35px;
   text-align: right;
   padding-right: 10px;
   line-height: $workspace-tabs-height;
+  overflow: hidden;
 }
 
 
 @media(min-width: 600px) {
   .workspace .tabs .tabs-container{
-    width: 86%;
+    width: 70%;
   }
   .workspace .tabs .tabs-menu{
-    width: 12%;
+    width: 30%;
+  }
+}
+
+
+@media(min-width: 800px) {
+  .workspace .tabs .tabs-container{
+    width: 84%;
+  }
+  .workspace .tabs .tabs-menu{
+    width: 16%;
   }
 }
 
