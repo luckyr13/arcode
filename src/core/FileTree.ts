@@ -244,6 +244,10 @@ export class FileTree
 			if (tree.children[i].type === 'FILE') {
 				const c2: EditorMetadata = <EditorMetadata>tree.children[i];
 				if (c2.id === fileId) {
+					// Check if the name is already in use
+					if (this.findFileInChildrenByName(newName, tree)) {
+						throw Error(`Name ${newName} already taken!`);
+					}
 					tree.children[i].name = newName;
 					return;
 				}

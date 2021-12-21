@@ -77,6 +77,7 @@ import {
 import { Workspace } from '@/core/Workspace';
 import { Icon } from '@iconify/vue';
 import { appVersion } from '@/core/AppSettings';
+import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';
 
 const props = defineProps({
@@ -100,7 +101,12 @@ const addEditor = (
   try {
     workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value, active);
   } catch (err) {
-    alert(err);
+    createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
   }
   // emit('workspace-change', editors);
 };
@@ -139,7 +145,12 @@ const addFolder =  (path: string, folderName: string) => {
   try {
     workspace.fileTree.addFolder(path, folderName);
   } catch (err) {
-    alert(err);
+    createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
   }
 };
 
@@ -151,7 +162,16 @@ const getFileTreePaths = () => {
   return workspace.fileTree.getTreeAsPathStringArr();
 };
 const updateEditorName = (editorId: number, newName: string) => {
-  return workspace.updateEditorNameFull(editorId, newName);
+  try {
+    return workspace.updateEditorNameFull(editorId, newName);
+  } catch (err) {
+    createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+  }
 };
 
 

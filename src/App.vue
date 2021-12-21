@@ -28,6 +28,7 @@ import { lootContract } from '@/core/contracts/LootContract';
 import { token } from '@/core/contracts/Token';
 import { tokenPST } from '@/core/contracts/TokenPST';
 
+import 'mosha-vue-toastify/dist/style.css'
 import 'tippy.js/dist/tippy.css';
 import 'xterm/css/xterm.css';
 

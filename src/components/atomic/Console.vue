@@ -23,7 +23,6 @@ const fitAddon = new FitAddon();
 const showConsole = ref(false);
 
 const initConsole = () => {
-	const lineData = '';
 	terminal.loadAddon(fitAddon);
 	const containerElement = document.getElementById('arcode-console-container');
 	terminal.open(containerElement);
@@ -43,12 +42,14 @@ const initConsole = () => {
 			terminal.write('$ ');
 		}
 	})
+	/*
 	terminal.onData(data => {
 		// alert(data)
 	})
 	terminal.onLineFeed(data => {
 		// alert('line feed' + data)
 	})
+	*/
 };
 const fitConsole = () => {
 	//terminal.loadAddon(fitAddon);
