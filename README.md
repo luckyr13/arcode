@@ -1,8 +1,10 @@
 # arCode IDE: Smartweave editor and deployer
 
+Official page: https://arcode.studio
+
 Demo: https://luckyr13.github.io/arcode
 
-Demo (permaweb link): https://arweave.net/VPoy3nVNNiuMUYa2fNwrCMmcwPSDXG3V3WEwO9VlPV0
+Demo (permaweb link): https://arweave.net/WKOqcioSbVJacM8sJCXBIIQEtiQeOVlzBq7H8svUJ0
 
 Demo: https://arcode-g66weo.argoapp.io/
 
