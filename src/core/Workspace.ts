@@ -37,7 +37,7 @@ export class Workspace extends BaseWorkspace  {
     event.preventDefault();
     if(event.target !== event.currentTarget && onlyInParent) return;
 
-    const editorId = this.createEditor(content, theme, active);
+    const editorId = this.createEditor(content, active);
  
     // Add new editor
     fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
@@ -48,6 +48,7 @@ export class Workspace extends BaseWorkspace  {
     };
     try {
       this._fileTree.addFile(path, newEditor);
+      this.setTheme(editorId, theme);
     } catch(err) {
       this.destroyEditor(editorId);
       throw err;
