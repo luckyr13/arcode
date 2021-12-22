@@ -20,24 +20,27 @@ export class BaseWorkspace implements GenericWorkspace
 
 	constructor(theme = '') {
 		this._extensions.push(
-			keymap.of(defaultKeymap),
-      keymap.of([indentWithTab]),
+			lineNumbers(),
+			highlightActiveLine(),
 			history(),
-			autocompletion(),
 			bracketMatching(),
 			closeBrackets(),
-			highlightActiveLine(),
+			autocompletion(),
+      keymap.of([...defaultKeymap, indentWithTab]),
       keymap.of(historyKeymap),
-      keymap.of(completionKeymap),
+			keymap.of(completionKeymap),
 		);
-		this._extensions.push(this._themeExtension.of(this._getThemeExtension(theme)));
+		
+		this._extensions.push(
+			this._themeExtension.of(this._getThemeExtension(theme))
+		);
 
 		this._extensions.push(
 			javascript(),
-			lineNumbers(),
 			gutter({class: 'cm-arcode-gutter'}),
 			EditorView.lineWrapping,
 		);
+		
 
 	}
 
@@ -52,7 +55,7 @@ export class BaseWorkspace implements GenericWorkspace
 		return defaultHighlightStyle.fallback;
 	}
 
-	public createEditor(content: string, theme: string, active: boolean): number {
+	public createEditor(content: string, active: boolean): number {
     const startState = EditorState.create({
       doc: content,
       extensions: this._extensions
@@ -64,7 +67,6 @@ export class BaseWorkspace implements GenericWorkspace
       this._editors[this._editors.length - 1].id + 1 : 0;
     const metadata: EditorViewMetadata = {id: editorId, view, name: '', active: active};
     this._editors.push(metadata);
-    this.setTheme(editorId, theme);
     return editorId;
 	}
 
