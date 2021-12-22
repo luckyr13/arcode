@@ -1,21 +1,24 @@
 import { BaseWorkspace } from './BaseWorkspace';
 import { FileTree } from './FileTree';
 import { EditorMetadata } from './interfaces/EditorMetadata';
+import { 
+  ref, reactive
+} from 'vue';
 
 export class Workspace extends BaseWorkspace  {
-	private _currentEditorId = -1;
-	private _fileTree: FileTree = new FileTree();
+	private _currentEditorId = ref(-1);
+	private _fileTree = reactive<FileTree>(new FileTree());
 	private _tabsContainerId = '';
 
 	public get currentEditorId(): number {
-		return this._currentEditorId;
+		return this._currentEditorId.value;
 	}
 
 	public set currentEditorId(editorId: number) {
-		this._currentEditorId = editorId;
+		this._currentEditorId.value = editorId;
 	}
 
-	public get fileTree(): FileTree {
+	public get fileTree() {
 		return this._fileTree;
 	}
 

@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import { 
-  ref, onBeforeUpdate, watchEffect, onMounted, reactive
+  ref, onBeforeUpdate, watchEffect, onMounted
 } from 'vue';
 import { Workspace } from '@/core/Workspace';
 import { Icon } from '@iconify/vue';
@@ -87,9 +87,7 @@ const props = defineProps({
 
 const divs = ref([]);
 const baseTheme = ref(props.theme);
-const workspace = reactive<Workspace>(
-  new Workspace(baseTheme.value, 'arcode-editor-tabs-container')
-);
+const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container');
 const editors = workspace.editors;
 const addEditor = (
   event: Event, 

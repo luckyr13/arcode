@@ -11,11 +11,12 @@ import { history, historyKeymap } from "@codemirror/history";
 import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
 import { GenericWorkspace } from './interfaces/GenericWorkspace';
 import { EditorViewMetadata } from './interfaces/EditorViewMetadata';
+import { ref } from 'vue';
 
 export class BaseWorkspace implements GenericWorkspace
 {
 	private _extensions: Extension[] = [];
-	private _editors: EditorViewMetadata[] = [];
+	private _editors = ref<EditorViewMetadata[]>([]);
 	private _themeExtension: Compartment = new Compartment();
 
 	constructor(theme = '') {
@@ -44,8 +45,8 @@ export class BaseWorkspace implements GenericWorkspace
 
 	}
 
-	public get editors() : EditorViewMetadata[] {
-		return this._editors;
+	public get editors() {
+		return this._editors.value;
 	}
 
 	private _getThemeExtension(theme: string): Extension {
@@ -63,43 +64,42 @@ export class BaseWorkspace implements GenericWorkspace
     const view: EditorView = new EditorView({
       state: startState
     });
-    const editorId: number = this._editors[this._editors.length - 1] ? 
-      this._editors[this._editors.length - 1].id + 1 : 0;
+    const editorId: number = this.editors[this.editors.length - 1] ? 
+      this.editors[this.editors.length - 1].id + 1 : 0;
     const metadata: EditorViewMetadata = {id: editorId, view, name: '', active: active};
-    this._editors.push(metadata);
+    this.editors.push(metadata);
     return editorId;
 	}
 
 	public updateEditorName(editorId: number, newName: string): void {
-		const i = this._editors.findIndex(ed => ed.id == editorId);
-		this._editors[i].name = newName;
+		const i = this.editors.findIndex(ed => ed.id == editorId);
+		this.editors[i].name = newName;
 	}
 
 	public destroyEditor(editorId: number): void {
-		const i = this._editors.findIndex(ed => ed.id == editorId);
-		const removed: EditorView = this._editors[i].view;
-		removed.destroy();
-		this._editors.splice(i, 1);
+		const i = this.editors.findIndex(ed => ed.id == editorId);
+		this.editors[i].view.destroy();
+		this.editors.splice(i, 1);
 	}
 
 	public getEditorView(editorId: number): EditorView {
-		const i = this._editors.findIndex(ed => ed.id == editorId);
-		return this._editors[i].view;
+		const i = this.editors.findIndex(ed => ed.id == editorId);
+		return <EditorView>this.editors[i].view;
 	}
 
 
   public isEditorActive(editorId: number): boolean {
-		const i = this._editors.findIndex(ed => ed.id == editorId);
+		const i = this.editors.findIndex(ed => ed.id == editorId);
 		if (i >= 0) {
-			return this._editors[i].active;
+			return this.editors[i].active;
 		}
     return false;
   }
 
 	public editorActive(editorId: number, active: boolean): void {
-		const i = this._editors.findIndex(ed => ed.id == editorId);
+		const i = this.editors.findIndex(ed => ed.id == editorId);
 		if (i >= 0) {
-			this._editors[i].active = active;
+			this.editors[i].active = active;
 		}
 	}
 
