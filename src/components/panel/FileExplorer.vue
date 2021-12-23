@@ -23,7 +23,7 @@
 			icon="codicon:new-folder" />
 		<span>Add Folder</span>
 	</li>
-	<li @click="showModalLoadContractFromTX = true">
+	<li @click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = '';">
 		<Icon class="menu-icon"
 			icon="codicon:mirror" />
 		<span>Load Contract from TX</span>
@@ -68,16 +68,45 @@
 			<h3>Load Contract from TX</h3>
 		</template>
 		<template v-slot:body>
-			<p>Coming soon...</p>
+			<template v-if="!loadingContractTX">
+				<div class="form-input">
+					<label>Workspace Location</label>
+					<select v-model.trim="selLoadTXLocation">
+						<option value="/">/</option>
+						<template v-for="path of workspace.getFileTreePaths()" :key="path">
+							<option v-if="path" :value="path">{{ path }}</option>
+						</template>
+					</select>
+				</div>
+				<div class="form-input">
+					<label>TX ID</label>
+					<input 
+						v-model.trim="txtLoadTXFileName" 
+						@keyup.enter="txtLoadTXFileName != '' ? loadFromTXModal(txtLoadTXFileName, selLoadTXLocation, workspace) : false"
+						type="text">
+				</div>
+			</template>
+			<template v-if="loadingContractTX">
+				Loading ... Please hold on!
+			</template>
 		</template>
 		<template v-slot:footer>
 			<div class="modal-footer text-right">
 				<button 
-					class="modal-button modal-button-primary" 
-					v-if="workspace"
-					@click="loadFromTXModal($event, workspace)">
+					class="modal-button" 
+					:class="{ 'modal-button-primary': txtLoadTXFileName }"
+					:disabled="!txtLoadTXFileName"
+					v-if="workspace && !loadingContractTX"
+					@click="loadFromTXModal(txtLoadTXFileName, selLoadTXLocation, workspace)">
 					<span >Load files into Workspace</span >
 				</button>
+				<button 
+					class="modal-button" 
+					disabled
+					v-if="loadingContractTX">
+					<span >Loading ...</span >
+				</button>
+
 				<button 
 					class="modal-button" 
 					@click="showModalLoadContractFromTX = false">
@@ -259,12 +288,16 @@ import Modal from '@/components/atomic/Modal.vue';
 import FileList from '@/components/atomic/FileList.vue';
 import fileDownload from 'js-file-download';
 import { EditorViewMetadata } from '@/core/interfaces/EditorViewMetadata';
+import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { createToast } from 'mosha-vue-toastify';
 
 const showModalLoadContractFromTX = ref(false);
+const loadingContractTX = ref(false);
 const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
 const showModalOpenFile = ref(false);
 const showModalEditFile = ref(false);
+const arweave = new ArweaveHandler();
 
 const props = defineProps({
 	workspace: Object
@@ -303,7 +336,12 @@ const openFile_helper = (inputEvent: Event): Promise<string> => {
 			freader.readAsText(file);
      } catch (error) {
 			showModalOpenFile.value = false;
-			console.log('Error:', error);
+			createToast(`${error}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
 			reject(error);
      }
   });
@@ -345,10 +383,47 @@ const editFileModal = (
 	txtEditFileName.value = '';
 	showModalEditFile.value = false;
 };
-const loadFromTXModal = (inputEvent: Event, workspace: Workspace) => {
-	showModalNewFile.value = false;
+const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) => {
+	const res = await arweave.ardb.search('transaction').id(
+		tx
+	).findOne();
+	if (res) {
+		// Get data
+		const data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+		let filename = `${tx}`;
+		if (res.data.type === 'application/javascript') {
+			filename = `${tx}.js`;
+		} else if (res.data.type === 'application/json') {
+			filename = `${tx}.json`;
+		}
+		const onlyInParent= false;
+		const inputEvent = new Event('empty-event');
+		workspace.addEditor(inputEvent, onlyInParent, data, filename, path);
+
+		// Get contract if possible
+		res.tags.forEach(async tag => {
+			let key = tag.name;
+			let value = tag.value;
+			if (key === 'Contract-Src') {
+				await loadEditorFromTX(value, path, workspace);
+			}
+		});
+	}
+}
+const loadFromTXModal = async (tx: string, path: string, workspace: Workspace) => {
+	loadingContractTX.value = true;
+	try {
+		await loadEditorFromTX(tx, path, workspace);
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+	}
+	loadingContractTX.value = false;
 	showModalLoadContractFromTX.value = false;
-	console.log(inputEvent, workspace);
 };
 
 const getProposedFileName = (workspace: Workspace): string => {
@@ -369,6 +444,8 @@ const txtOpenFileName = ref('');
 const txtOpenFileContent = ref('');
 const selOpenFileLocation = ref('/');
 const txtEditFileName = ref('');
+const txtLoadTXFileName = ref('');
+const selLoadTXLocation = ref('');
 
 watchEffect(() => {
 	const r = /(\/|\\)/g;

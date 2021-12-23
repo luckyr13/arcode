@@ -9,7 +9,7 @@ module.exports = {
   },
   publicPath: './',
   pwa: {
-  	name: 'arCode Studio',
+  	name: 'ArCode Studio',
     workboxOptions: {
     	exclude: ['index.html', /\.map$/],
     	//navigateFallback: './'

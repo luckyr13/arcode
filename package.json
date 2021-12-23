@@ -20,6 +20,8 @@
     "@codemirror/state": "^0.19.6",
     "@codemirror/theme-one-dark": "^0.19.1",
     "@codemirror/view": "^0.19.37",
+    "ardb": "^1.1.8",
+    "arweave": "^1.10.18",
     "core-js": "^3.20.0",
     "js-file-download": "^0.4.12",
     "mosha-vue-toastify": "^1.0.23",
