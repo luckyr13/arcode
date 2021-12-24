@@ -23,7 +23,8 @@
 			icon="codicon:new-folder" />
 		<span>Add Folder</span>
 	</li>
-	<li @click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = '';">
+	<li 
+		@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false;">
 		<Icon class="menu-icon"
 			icon="codicon:mirror" />
 		<span>Load Contract from TX</span>
@@ -84,6 +85,13 @@
 						v-model.trim="txtLoadTXFileName" 
 						@keyup.enter="txtLoadTXFileName != '' ? loadFromTXModal(txtLoadTXFileName, selLoadTXLocation, workspace) : false"
 						type="text">
+				</div>
+				<div class="text-right form-radio">
+					<label class="">
+						<input 
+							v-model.trim="txtLoadTXGetLastState" 
+							type="checkbox"> Get latest state
+					</label>
 				</div>
 			</template>
 			<template v-if="loadingContractTX">
@@ -409,11 +417,32 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 			}
 		});
 	}
-}
+};
+
+const loadLatestContractStateFromTX = async (tx: string, path: string, workspace: Workspace) => {
+	const contract = await arweave.smartweave.contract(tx);
+	// Read state
+	const { state, validity } = await contract.readState();
+	const onlyInParent= false;
+	const inputEvent = new Event('empty-event');
+	const filename = `${tx}-latest.json`;
+	const replacer = undefined;
+	const space = 4;
+	workspace.addEditor(
+		inputEvent,
+		onlyInParent,
+		JSON.stringify(state, replacer, space),
+		filename, path);
+};
+
 const loadFromTXModal = async (tx: string, path: string, workspace: Workspace) => {
 	loadingContractTX.value = true;
 	try {
 		await loadEditorFromTX(tx, path, workspace);
+
+		if (txtLoadTXGetLastState.value) {
+			loadLatestContractStateFromTX(tx, path, workspace);
+		}
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -446,6 +475,7 @@ const selOpenFileLocation = ref('/');
 const txtEditFileName = ref('');
 const txtLoadTXFileName = ref('');
 const selLoadTXLocation = ref('');
+const txtLoadTXGetLastState = ref(false);
 
 watchEffect(() => {
 	const r = /(\/|\\)/g;
@@ -573,6 +603,24 @@ $title-height: 28px;
 	font-size: 12px;
 	margin-bottom: 4px;
 	display: block;
+}
+
+
+.form-radio {
+	padding: 10px;
+}
+.form-radio label {
+	font-size: 12px;
+	margin-bottom: 4px;
+	display: block;
+}
+.form-radio input
+ {
+	padding: 12px;
+	border-radius: 4px;
+	border: 1px solid var(--app-background-color);
+	background: inherit;
+	color: inherit;
 }
 
 
