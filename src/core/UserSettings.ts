@@ -8,7 +8,8 @@ interface ThemeColor {
 }
 
 export class UserSettings {
-	private _settings: Settings = { lang: 'en', theme: 'theme-dark'};
+	private _settings: Settings;
+	private _storage = window.localStorage;
 	private _menuThemes: Record<string, ThemeColor> = {
 		'': {
       primary: '#FEFEFF',
@@ -30,10 +31,35 @@ export class UserSettings {
     }
 	}
 
+	constructor() {
+		const lang: string = this._storage.getItem('defaultLang') !== null ? 
+			this._storage.getItem('defaultLang')! :
+			'en';
+		const theme: string = this._storage.getItem('defaultTheme') !== null ?
+			this._storage.getItem('defaultTheme')! :
+			'theme-dark';
+		this._settings = {
+			lang,
+			theme
+		};
+	}
+
 	public get settings() : Settings {
-		return this._settings;
+		const lang: string = this._storage.getItem('defaultLang') !== null ? 
+			this._storage.getItem('defaultLang')! :
+			this._settings.lang;
+		const theme: string = this._storage.getItem('defaultTheme') !== null ?
+			this._storage.getItem('defaultTheme')! :
+			this._settings.theme;
+		const res: Settings = {
+			lang,
+			theme
+		};
+		return res;
 	}
 	public set settings(v : Settings) {
+		this._storage.setItem('defaultLang', v.lang);
+		this._storage.setItem('defaultTheme', v.theme);		
 		this._settings = v;
 	}
 	public get menuTheme(): ThemeColor {
@@ -50,6 +76,7 @@ export class UserSettings {
 		const body = document.getElementsByTagName('body')[0];
 		body.className = theme;
 		this._settings.theme = theme;
+		this._storage.setItem('defaultTheme', theme);
 	}
 	
 }
