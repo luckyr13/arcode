@@ -57,6 +57,11 @@ const workspace = ref(null);
   padding: 0px;
 }
 
+
+button {
+  font-family: 'Open Sans', sans-serif;
+}
+
 .main-container {
   display: flex;
   flex-direction: column;

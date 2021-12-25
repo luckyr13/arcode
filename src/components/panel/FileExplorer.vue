@@ -3,59 +3,85 @@
 	File Explorer
 </div>
 <ul class="file-menu" v-if="workspace">
-	<li @click="showModalNewFile = true; selNewFileLocation = '/'; txtNewFileName = getProposedFileName(workspace);">
-		<Icon class="menu-icon"
-			icon="codicon-new-file" />
-		<span>New File</span>
+	<li>
+		<button
+			tabindex="0"
+			@click="showModalNewFile = true; selNewFileLocation = '/'; txtNewFileName = getProposedFileName(workspace);">
+			<Icon class="menu-icon"
+				icon="codicon-new-file" />
+			<span>New File</span>
+		</button>
 	</li>
-	<li @click="openFile('txt_file_openFile')">
-		<Icon class="menu-icon"
-			icon="codicon-folder-opened" />
-		<span>Open File...</span>
+	<li>
+		<button
+			tabindex="0"
+			@click="openFile('txt_file_openFile')">
+			<Icon class="menu-icon"
+				icon="codicon-folder-opened" />
+			<span>Open File...</span>
+		</button>
 		<input type="file" 
 			id="txt_file_openFile" 
 			style="display: none" 
 			accept=".json,application/json,.js,text/javascript" 
 			@change="openFile_helper($event, workspace)">
 	</li>
-	<li @click="showModalAddFolder = true; selNewFolderLocation = '/'; txtNewFolderName='';">
-		<Icon class="menu-icon"
-			icon="codicon-new-folder" />
-		<span>Add Folder</span>
+	<li>
+		<button
+			tabindex="0"
+			@click="showModalAddFolder = true; selNewFolderLocation = '/'; txtNewFolderName='';">
+			<Icon class="menu-icon"
+				icon="codicon-new-folder" />
+			<span>Add Folder</span>
+		</button>
 	</li>
-	<li 
-		@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false;">
-		<Icon class="menu-icon"
-			icon="codicon-mirror" />
-		<span>Load Contract from TX</span>
+	<li>
+		<button
+			tabindex="0"
+			@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false;">
+			<Icon class="menu-icon"
+				icon="codicon-mirror" />
+			<span>Load Contract from TX</span>
+		</button>
 	</li>
 </ul>
 <div class="arcode-main-toolbar-panel-title panel-title">
 	Files In Workspace
 </div>
 <ul class="file-menu">
-	<li v-if="workspace.getCurrentEditorId() >= 0"
-		@click="showModalEditFile = true; txtEditFileName = getEditorsFilename(workspace.getCurrentEditorId(), workspace)">
-		<Icon class="menu-icon"
+	<li 
+		v-if="workspace.getCurrentEditorId() >= 0">
+		<button 
+			tabindex="0" 
+			@click="showModalEditFile = true; txtEditFileName = getEditorsFilename(workspace.getCurrentEditorId(), workspace)">
+			<Icon class="menu-icon"
 			icon="codicon-edit" />
-		<span>Edit File Name</span>
+			<span>Edit File Name</span>
+		</button>
 	</li>
-	<li v-else class="disabled">
-		<Icon class="menu-icon"
+	<li v-else>
+		<button class="disabled">
+			<Icon class="menu-icon"
 			icon="codicon-edit" />
-		<span>Edit File Name</span>
+			<span>Edit File Name</span>
+		</button>
 	</li>
 	<li 
-		v-if="workspace.getCurrentEditorId() >= 0"
-		@click="downloadFile(getEditor(workspace.getCurrentEditorId(), workspace))">
-		<Icon class="menu-icon"
-			icon="codicon-cloud-download" />
-		<span>Download File</span>
+		v-if="workspace.getCurrentEditorId() >= 0">
+		<button
+			tabindex="0"
+			@click="downloadFile(getEditor(workspace.getCurrentEditorId(), workspace))">
+			<Icon class="menu-icon"
+				icon="codicon-cloud-download" />
+			<span>Download File</span>
+		</button>
 	</li>
-	<li v-else class="disabled">
-		<Icon class="menu-icon"
-			icon="codicon-cloud-download" />
-		<span>Download File</span>
+	<li v-else>
+		<button class="disabled">
+			<Icon class="menu-icon"
+				icon="codicon-cloud-download" />
+			<span>Download File</span>
+		</button>
 	</li>
 </ul>
 <FileList 
@@ -523,34 +549,49 @@ $title-height: 28px;
 }
 .menu-icon {
 	float: right;
-	cursor: pointer;
 	line-height: 15px;
 	font-size: 15px !important;
 	margin-left: 4px;
 	width: 10%;
 	display: inline;
 	text-align: right;
+	padding: 6px 0px;
 }
 .fd-icon {
 	margin-right: 6px;
 }
+
 .file-menu {
 	padding: 0px;
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
 .file-menu li {
-	padding: 10px;
-	font-size: 12px;
-	line-height: 12px;
+	padding: 0px;
+	height: 32px;
 	list-style: none;
+	width: 100%;
 }
-.file-menu li:hover {
-	background-color: rgba(0,0,0,0.3);
+
+.file-menu li button {
+	width: 100%;
+	height: 100%;
+	line-height: 32px;
+	border: 0;
 	cursor: pointer;
-	color: #FFF;
+	text-align: left;
+	font-size: 12px;
+	background-color: inherit;
+	color: inherit;
+	display: block;
+
 }
-.file-menu li.disabled {
+
+.file-menu li button:hover {
+	background-color: rgba(0,0,0,0.3);
+}
+
+.file-menu li button.disabled {
 	color: gray;
 	cursor: default;
 }

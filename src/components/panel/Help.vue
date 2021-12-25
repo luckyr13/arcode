@@ -6,22 +6,22 @@
 	<h4>Useful Links:</h4>
 	<ul class="links-menu">
 		<li>
-			<a href="https://github.com/luckyr13/arcode" target="_blank">ArCode GitHub</a>
+			<a tabindex="0" href="https://github.com/luckyr13/arcode" target="_blank">ArCode GitHub</a>
 		</li>
 		<li>
-			<a href="https://arweave.org" target="_blank">Arweave.org</a>
+			<a tabindex="0" href="https://arweave.org" target="_blank">Arweave.org</a>
 		</li>
 		<li>
-			<a href="https://github.com/redstone-finance/redstone-smartcontracts" target="_blank">RedStone SmartContracts SDK</a>
+			<a tabindex="0" href="https://github.com/redstone-finance/redstone-smartcontracts" target="_blank">RedStone SmartContracts SDK</a>
 		</li>
 		<li>
-			<a href="https://arweave.app" target="_blank">Arweave.app Wallet</a>
+			<a tabindex="0" href="https://arweave.app" target="_blank">Arweave.app Wallet</a>
 		</li>
 		<li>
-			<a href="https://arconnect.io" target="_blank">ArConnect Wallet</a>
+			<a tabindex="0" href="https://arconnect.io" target="_blank">ArConnect Wallet</a>
 		</li>
 		<li>
-			<a href="https://arwiki.wiki" target="_blank">ArWiki</a>
+			<a tabindex="0" href="https://arwiki.wiki" target="_blank">ArWiki</a>
 		</li>
 	</ul>
 </div>
@@ -49,13 +49,28 @@
 	margin-bottom: 0px;
 }
 .links-menu li {
-	padding: 10px;
-	font-size: 12px;
-	line-height: 12px;
+	padding: 0px;
+	height: 32px;
 	list-style: none;
-	cursor: pointer;
+	width: 100%;
 }
-.links-menu li:hover {
+
+.links-menu li a {
+	width: 100%;
+	height: 100%;
+	line-height: 32px;
+	border: 0;
+	cursor: pointer;
+	text-align: left;
+	font-size: 12px;
+	background-color: inherit;
+	color: inherit;
+	display: block;
+	padding-left: 10px;
+
+}
+
+.links-menu li a:hover {
 	background-color: rgba(0,0,0,0.3);
 }
 .close-icon {

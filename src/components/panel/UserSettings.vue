@@ -6,17 +6,18 @@
 	<h4>Select a theme:</h4>
 	<ul class="theme-menu">
 		<li 
-			v-for="t in themeNames" :key="t"
-			:class="{ active: t == theme }" 
-			@click="setTheme(t)">
-			<span>{{ t ? t : 'default' }}</span>
+			v-for="t in themeNames" :key="t">
+			<button 
+				tabindex="0" 
+				:class="{ active: t == theme }" 
+				@click="setTheme(t)">{{ t ? t : 'default' }}</button>
 		</li>
 	</ul>
 
 	<h4>Clear settings:</h4>
 	<ul class="theme-menu">
-		<li @click="clearSettings()">
-			<span>Reset Workspace</span>
+		<li>
+			<button tabindex="0" @click="clearSettings()">Reset Workspace</button>
 		</li>
 	</ul>
 </div>
@@ -74,16 +75,26 @@ const clearSettings = () => {
 	margin-bottom: 0px;
 }
 .theme-menu li {
-	padding: 10px;
-	font-size: 12px;
-	line-height: 12px;
+	padding: 0px;
+	height: 32px;
 	list-style: none;
-	cursor: pointer;
 }
-.theme-menu li:hover {
+.theme-menu li button {
+	width: 100%;
+	height: 100%;
+	line-height: 12px;
+	border: 0;
+	cursor: pointer;
+	text-align: left;
+	font-size: 12px;
+	background-color: inherit;
+	color: inherit;
+}
+.theme-menu li button:hover {
 	background-color: rgba(0,0,0,0.3);
 }
-.theme-menu li.active {
+
+.theme-menu li button.active {
 	background-color: rgba(0,0,0,0.3);
 }
 

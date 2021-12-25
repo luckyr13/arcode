@@ -6,13 +6,13 @@
 	<h4>Login option:</h4>
 	<ul class="accounts-menu">
 		<li>
-			<span>ArConnect</span>
+			<button>ArConnect</button>
 		</li>
 		<li>
-			<span>Arweave.app</span>
+			<button>Arweave.app</button>
 		</li>
 		<li>
-			<span>Upload your keyfile</span>
+			<button>Upload your keyfile</button>
 		</li>
 	</ul>
 </div>
@@ -40,13 +40,25 @@
 	margin-bottom: 0px;
 }
 .accounts-menu li {
-	padding: 10px;
-	font-size: 12px;
-	line-height: 12px;
+	padding: 0px;
+	height: 32px;
 	list-style: none;
-	cursor: pointer;
 }
-.accounts-menu li:hover {
+.accounts-menu li button {
+	width: 100%;
+	height: 100%;
+	line-height: 12px;
+	border: 0;
+	cursor: pointer;
+	text-align: left;
+	font-size: 12px;
+	background-color: inherit;
+	color: inherit;
+}
+.accounts-menu li button:hover {
+	width: 100%;
+	height: 100%;
+	line-height: 12px;
 	background-color: rgba(0,0,0,0.3);
 }
 .close-icon {
