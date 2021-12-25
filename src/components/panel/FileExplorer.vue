@@ -35,7 +35,7 @@
 </div>
 <ul class="file-menu">
 	<li v-if="workspace.getCurrentEditorId() >= 0"
-		@click="showModalEditFile = true; txtEditFileName = workspace.editors[workspace.getCurrentEditorId()].name;">
+		@click="showModalEditFile = true; txtEditFileName = getEditorsFilename(workspace.getCurrentEditorId(), wordkspace)">
 		<Icon class="menu-icon"
 			icon="codicon:edit" />
 		<span>Edit File Name</span>
@@ -47,7 +47,7 @@
 	</li>
 	<li 
 		v-if="workspace.getCurrentEditorId() >= 0"
-		@click="downloadFile(workspace.editors[workspace.getCurrentEditorId()])">
+		@click="downloadFile(getEditor(workspace.getCurrentEditorId()))">
 		<Icon class="menu-icon"
 			icon="codicon:cloud-download" />
 		<span>Download File</span>
@@ -456,12 +456,28 @@ const loadFromTXModal = async (tx: string, path: string, workspace: Workspace) =
 };
 
 const getProposedFileName = (workspace: Workspace): string => {
-	let newEditorId = workspace.editors.length;
-	if (newEditorId) {
-		newEditorId = workspace.editors[newEditorId - 1].id + 1;
+	let newEditorId = 0;
+	const ids = workspace.editors.map((v) => {
+		return parseInt(v.id)
+	});
+	if (ids.length) {
+		newEditorId = Math.max(...ids) + 1;
+
 	}
 	return `Untitled-${newEditorId}`;
 };
+
+const getEditorsFilename = (editorId: number, workspace: Workspace): string => {
+	const i = workspace.editors.findIndex(ed => ed.id == editorId);
+	return workspace.editors[i].name;
+};
+
+
+const getEditor = (editorId: number, workspace: Workspace): string => {
+	const i = workspace.editors.findIndex(ed => ed.id == editorId);
+	return workspace.editors[i];
+};
+
 
 const downloadFile = (doc: EditorViewMetadata) => {
 	fileDownload(doc.view.state.doc, doc.name);

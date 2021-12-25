@@ -27,7 +27,6 @@ export class Workspace extends BaseWorkspace  {
 		this._tabsContainerId = tabsContainerId;
 	}
 
-
 	public addEditor(
     event: Event,
     onlyInParent= false,
@@ -35,12 +34,14 @@ export class Workspace extends BaseWorkspace  {
     path='/',
     fileName='',
     theme='',
-    active=true): void {
+    active=true,
+    includedInTree=true,
+    newEditorId=-1): void {
     event.stopPropagation();
     event.preventDefault();
     if(event.target !== event.currentTarget && onlyInParent) return;
 
-    const editorId = this.createEditor(content, active);
+    const editorId = this.createEditor(content, active, newEditorId);
  
     // Add new editor
     fileName = fileName.trim() === '' ? `Untitled-${editorId}` : fileName.trim();
@@ -50,7 +51,9 @@ export class Workspace extends BaseWorkspace  {
       type: 'FILE' 
     };
     try {
-      this._fileTree.addFile(path, newEditor);
+      if (includedInTree) {
+        this._fileTree.addFile(path, newEditor);
+      }
       this.setTheme(editorId, theme);
     } catch(err) {
       this.destroyEditor(editorId);
@@ -63,6 +66,9 @@ export class Workspace extends BaseWorkspace  {
         this.scrollEditor('right', 120 * editorId);
       }, 200);
     }
+
+    // Store in cache 
+    this.updateCachedEditors(editorId);
   }
 
   public updateEditorNameFull(editorId: number, newName: string): void {
@@ -119,4 +125,10 @@ export class Workspace extends BaseWorkspace  {
       throw Error('Wrong direction :)');
     }
   }
+
+  getCachedContent(editorId: string) {
+    return this._cachedEditorsContent[editorId];
+  }
+
+
 }

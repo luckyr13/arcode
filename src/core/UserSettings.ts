@@ -32,12 +32,16 @@ export class UserSettings {
 	}
 
 	constructor() {
-		const lang: string = this._storage.getItem('defaultLang') !== null ? 
-			this._storage.getItem('defaultLang')! :
-			'en';
-		const theme: string = this._storage.getItem('defaultTheme') !== null ?
-			this._storage.getItem('defaultTheme')! :
-			'theme-dark';
+		let lang = 'en';
+		let theme = '';
+
+		if (this._storage.getItem('defaultLang')) {
+			lang = this._storage.getItem('defaultLang')!;
+		}
+		if (this._storage.getItem('defaultTheme')) {
+			theme = this._storage.getItem('defaultTheme')!;
+		}
+		
 		this._settings = {
 			lang,
 			theme
@@ -45,17 +49,7 @@ export class UserSettings {
 	}
 
 	public get settings() : Settings {
-		const lang: string = this._storage.getItem('defaultLang') !== null ? 
-			this._storage.getItem('defaultLang')! :
-			this._settings.lang;
-		const theme: string = this._storage.getItem('defaultTheme') !== null ?
-			this._storage.getItem('defaultTheme')! :
-			this._settings.theme;
-		const res: Settings = {
-			lang,
-			theme
-		};
-		return res;
+		return this._settings;
 	}
 	public set settings(v : Settings) {
 		this._storage.setItem('defaultLang', v.lang);

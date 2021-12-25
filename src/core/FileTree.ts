@@ -4,6 +4,7 @@ import { EditorMetadata } from './interfaces/EditorMetadata';
 export class FileTree
 {
 	private _tree: FileTreeFolder;
+	private _storage = window.localStorage;
 
 	constructor() {
 		this._tree = {
@@ -11,6 +12,9 @@ export class FileTree
 			children: [],
 			type: 'FOLDER'
 		};
+		if (this._storage.getItem('tree') !== null) {
+			this._tree = JSON.parse(this._storage.getItem('tree')!);
+		}
 	}
 
 	private _breakPath(path: string) {
@@ -77,6 +81,7 @@ export class FileTree
 
 		// Search in Tree 
 		this._addFolderHelper(this._tree, folders, newFolder);
+		this._storage.setItem('tree', JSON.stringify(this._tree));
 	}
 
 	private _addFileHelper(tree: FileTreeFolder, path: string[], newFile: EditorMetadata) {
@@ -128,11 +133,13 @@ export class FileTree
 		const folders = this._breakPath(path);
 		// Search in Tree 
 		this._addFileHelper(this._tree, folders, file);
+		this._storage.setItem('tree', JSON.stringify(this._tree));
 	}
 
 	
 	public removeFolder(): void {
 		console.log('...')
+		this._storage.setItem('tree', JSON.stringify(this._tree));
 	}
 
 	public findFileInChildrenById(fileId: number, tree: FileTreeFolder): EditorMetadata|null {
@@ -200,10 +207,15 @@ export class FileTree
 	public removeFile(fileId: number): void {
 		// Search in Tree 
 		this._removeFileHelper(this._tree, fileId);
+		this._storage.setItem('tree', JSON.stringify(this._tree));
 	}
 
-	public getTree(): FileTreeFolder {
+	public get tree(): FileTreeFolder {
 		return this._tree;
+	}
+
+	public set tree(_tree: FileTreeFolder) {
+		this._tree = _tree;
 	}
 
 	private _getTreeAsPathStringArrHelper(tree: FileTreeFolder, path: string): string[] {
@@ -264,5 +276,39 @@ export class FileTree
 	public updateFileById(fileId: number, name: string): void {
 		// Search in Tree 
 		this._updateFileByIdHelper(this._tree, fileId, name);
+		this._storage.setItem('tree', JSON.stringify(this._tree));
+	}
+
+	private _getTreeAsFilenameStringArrHelper(
+		tree: FileTreeFolder, path: string
+		): Record<string, string> {
+		if (tree.children.length === 0) {
+			return {};
+		}
+		let res: Record<string, string> = {};
+		
+		// Search in children
+		for (const i in tree.children) {
+			// If the element is a Folder, search recursively
+			if (tree.children[i].type === 'FOLDER') {
+				const c2: FileTreeFolder = <FileTreeFolder>tree.children[i];
+				const newPath2 = `${path}/${c2.name}`;
+				res = { ...res, ...this._getTreeAsFilenameStringArrHelper(c2, newPath2)};
+			}
+
+			// If the element is a Folder, search recursively
+			if (tree.children[i].type === 'FILE') {
+				const f2: EditorMetadata = <EditorMetadata>tree.children[i];
+				const filename = `${path}/${f2.name}`;
+				res[f2.id] = filename;
+			}
+		}
+		
+		return res;
+	}
+
+	public getTreeAsFilenameStringArr(): Record<string, string> {
+		// Search in Tree 
+		return this._getTreeAsFilenameStringArrHelper(this._tree, '');
 	}
 }

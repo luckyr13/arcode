@@ -24,9 +24,6 @@ import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
-import { lootContract } from '@/core/contracts/LootContract';
-import { token } from '@/core/contracts/Token';
-import { tokenPST } from '@/core/contracts/TokenPST';
 
 import 'mosha-vue-toastify/dist/style.css'
 import 'tippy.js/dist/tippy.css';
@@ -41,60 +38,9 @@ const workspaceChange = (data: Array<EditorMetadata>) => {
   console.log(data, 'workspace-change')
   // editors.value = data;
 };
-const loadExamples = () => {
-  workspace.value.addFolder('/', 'Contracts');
-  workspace.value.addFolder('/Contracts', 'loot-contract');
-  workspace.value.addFolder('/Contracts', 'token');
-  workspace.value.addFolder('/Contracts', 'token-pst');
-  const emptyEvent = new Event('emptyEvent');
-
-  workspace.value.addEditor(
-    emptyEvent,
-    false,
-    lootContract.state,
-    lootContract.stateName,
-    '/contracts/loot-contract',
-    false);
-  workspace.value.addEditor(
-    emptyEvent,
-    false,
-    lootContract.contract,
-    lootContract.name,
-    '/contracts/loot-contract',
-    false);
-  workspace.value.addEditor(
-    emptyEvent,
-    false,
-    token.contract,
-    token.name,
-    '/contracts/token',
-    false);
-  workspace.value.addEditor(
-    emptyEvent,
-    false,
-    token.state,
-    token.stateName,
-    '/contracts/token',
-    false);
-  workspace.value.addEditor(
-    emptyEvent,
-    false,
-    tokenPST.contract,
-    tokenPST.name,
-    '/contracts/token-pst',
-    false);
-  workspace.value.addEditor(
-    emptyEvent,
-    false,
-    tokenPST.state,
-    tokenPST.stateName,
-    '/contracts/token-pst',
-    false);
-};
 onMounted(() => {
-  // console.log(workspace.value, 'workspace-mounted');
-  // Load examples
-  loadExamples();
+  console.log(workspace.value, 'workspace-mounted');
+  
 })
 const workspace = ref(null);
 

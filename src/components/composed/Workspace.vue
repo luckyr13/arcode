@@ -79,6 +79,9 @@ import { Icon } from '@iconify/vue';
 import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';
+import { lootContract } from '@/core/contracts/LootContract';
+import { token } from '@/core/contracts/Token';
+import { tokenPST } from '@/core/contracts/TokenPST';
 
 const props = defineProps({
   theme: String
@@ -95,9 +98,14 @@ const addEditor = (
   content='', 
   fileName='', 
   path='/',
-  active=true) => {
+  active=true,
+  inFileTree=true,
+  editorId=-1) => {
   try {
-    workspace.addEditor(event, onlyInParent, content, path, fileName, baseTheme.value, active);
+    workspace.addEditor(
+      event, onlyInParent, content,
+      path, fileName, baseTheme.value,
+      active, inFileTree, editorId);
   } catch (err) {
     createToast(`${err}`,
       {
@@ -136,7 +144,7 @@ const getCurrentEditorId = () => {
 };
 
 const getFileTree = () => {
-  return workspace.fileTree.getTree();
+  return workspace.fileTree.tree;
 };
 
 const addFolder =  (path: string, folderName: string) => {
@@ -159,6 +167,10 @@ const isEditorActive = (editorId: number) => {
 const getFileTreePaths = () => {
   return workspace.fileTree.getTreeAsPathStringArr();
 };
+
+const getFileTreeFilenames = () => {
+  return workspace.fileTree.getTreeAsFilenameStringArr();
+};
 const updateEditorName = (editorId: number, newName: string) => {
   try {
     return workspace.updateEditorNameFull(editorId, newName);
@@ -169,6 +181,83 @@ const updateEditorName = (editorId: number, newName: string) => {
         showIcon: true,
         position: 'bottom-right',
       });
+  }
+};
+
+const loadExamples = () => {
+  addFolder('/', 'Contracts');
+  addFolder('/Contracts', 'loot-contract');
+  addFolder('/Contracts', 'token');
+  addFolder('/Contracts', 'token-pst');
+  const emptyEvent = new Event('emptyEvent');
+
+  addEditor(
+    emptyEvent,
+    false,
+    lootContract.state,
+    lootContract.stateName,
+    '/contracts/loot-contract',
+    false);
+  addEditor(
+    emptyEvent,
+    false,
+    lootContract.contract,
+    lootContract.name,
+    '/contracts/loot-contract',
+    false);
+  addEditor(
+    emptyEvent,
+    false,
+    token.contract,
+    token.name,
+    '/contracts/token',
+    false);
+  addEditor(
+    emptyEvent,
+    false,
+    token.state,
+    token.stateName,
+    '/contracts/token',
+    false);
+  addEditor(
+    emptyEvent,
+    false,
+    tokenPST.contract,
+    tokenPST.name,
+    '/contracts/token-pst',
+    false);
+  addEditor(
+    emptyEvent,
+    false,
+    tokenPST.state,
+    tokenPST.stateName,
+    '/contracts/token-pst',
+    false);
+};
+
+const loadTree = () => {
+  const filenames = getFileTreeFilenames();
+  const emptyEvent = new Event('emptyEvent');
+
+
+
+  for (const editorId in filenames) {
+    //alert(filenames[editorId] + editorId)
+    const explodePath = filenames[editorId].split('/');
+    const fname = explodePath[explodePath.length - 1];
+    const content = workspace.getCachedContent(editorId);
+    explodePath.pop();
+
+    addEditor(
+      emptyEvent,
+      false,
+      content,
+      fname,
+      `${explodePath.join('/')}/`,
+      false,
+      false,
+      editorId);
+    
   }
 };
 
@@ -217,8 +306,18 @@ onMounted(() => {
     content: (reference) => reference.getAttribute('data-tippy-workspace-content')
   });
 
+  const tree = getFileTree();
+  if (tree.children.length === 0) {
+    // Load examples
+    loadExamples();
+  } else {
+    loadTree();
+  }
 
 });
+
+
+
 
 </script>
 

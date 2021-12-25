@@ -12,6 +12,13 @@
 			<span>{{ t ? t : 'default' }}</span>
 		</li>
 	</ul>
+
+	<h4>Clear settings:</h4>
+	<ul class="theme-menu">
+		<li @click="clearSettings()">
+			<span>Reset Workspace</span>
+		</li>
+	</ul>
 </div>
 
 
@@ -40,6 +47,11 @@ const setTheme = (newTheme: string) => {
 		props.workspace.setTheme(e.id, newTheme);
 	}
 	
+};
+
+const clearSettings = () => {
+	window.localStorage.clear();
+	document.location.reload();
 };
 
 </script>

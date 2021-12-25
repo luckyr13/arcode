@@ -18,8 +18,16 @@ export class BaseWorkspace implements GenericWorkspace
 	private _extensions: Extension[] = [];
 	private _editors = ref<EditorViewMetadata[]>([]);
 	private _themeExtension: Compartment = new Compartment();
+  protected _cachedEditorsContent: Record<string, string> = {};
+	private _cachedEventExtension: Compartment = new Compartment();
+  private _storage = window.localStorage;
 
 	constructor(theme = '') {
+		// Save content in cache
+		this._extensions.push(
+			this._cachedEventExtension.of([])	
+		);
+
 		this._extensions.push(
 			lineNumbers(),
 			highlightActiveLine(),
@@ -42,6 +50,9 @@ export class BaseWorkspace implements GenericWorkspace
 			EditorView.lineWrapping,
 		);
 		
+    if (this._storage.getItem('cachedEditors') !== null) {
+      this._cachedEditorsContent = JSON.parse(this._storage.getItem('cachedEditors')!);
+    }
 
 	}
 
@@ -56,18 +67,31 @@ export class BaseWorkspace implements GenericWorkspace
 		return defaultHighlightStyle.fallback;
 	}
 
-	public createEditor(content: string, active: boolean): number {
+	public createEditor(content: string, active: boolean, newEditorId = -1): number {
+		let editorId = 0;
+		const ids = this.editors.map((v) => {
+			return v.id
+		});
+		if (ids.length) {
+			editorId = Math.max(...ids) + 1;
+		}
+
+    if (newEditorId >= 0) {
+			editorId = newEditorId;
+    }
     const startState = EditorState.create({
       doc: content,
       extensions: this._extensions
+
     });
     const view: EditorView = new EditorView({
-      state: startState
+      state: startState,
     });
-    const editorId: number = this.editors[this.editors.length - 1] ? 
-      this.editors[this.editors.length - 1].id + 1 : 0;
     const metadata: EditorViewMetadata = {id: editorId, view, name: '', active: active};
     this.editors.push(metadata);
+    view.dispatch({
+			effects: this._cachedEventExtension.reconfigure(EditorView.updateListener.of(() => this.updateCachedEditors(editorId)))
+		});
     return editorId;
 	}
 
@@ -80,6 +104,9 @@ export class BaseWorkspace implements GenericWorkspace
 		const i = this.editors.findIndex(ed => ed.id == editorId);
 		this.editors[i].view.destroy();
 		this.editors.splice(i, 1);
+		// Delete from cache 
+		delete this._cachedEditorsContent[editorId];
+    this._storage.setItem('cachedEditors', JSON.stringify(this._cachedEditorsContent));
 	}
 
 	public getEditorView(editorId: number): EditorView {
@@ -128,5 +155,11 @@ export class BaseWorkspace implements GenericWorkspace
 				effects: this._themeExtension.reconfigure(this._getThemeExtension(theme))
 			});
 		}
+	}
+
+	updateCachedEditors(editorId: number) {
+		// Store in cache 
+    this._cachedEditorsContent[editorId] = this.getEditorView(editorId).state.doc.toString();
+    this._storage.setItem('cachedEditors', JSON.stringify(this._cachedEditorsContent));
 	}
 }
