@@ -5,22 +5,22 @@
 		<span :style="{ paddingLeft: `${level * 6}px` }">
 			<Icon v-if="showFiles"
 			class="fd-icon" 
-			icon="codicon:folder-opened" />
+			icon="codicon-folder-opened" />
 			<Icon v-if="!showFiles"
 			class="fd-icon" 
-			icon="codicon:folder" />
+			icon="codicon-folder" />
 			{{ fileTree.name ? fileTree.name : '/' }}
 		</span>
 		
 		<Icon v-if="showFiles"
 			class="menu-icon" 
-			icon="codicon:chevron-up" />
+			icon="codicon-chevron-up" />
 		<Icon v-if="!showFiles"
 			class="menu-icon" 
-			icon="codicon:chevron-down" />
+			icon="codicon-chevron-down" />
 		<Icon v-if="fileTree.name"
 			class="menu-icon" 
-			icon="codicon:trash" />
+			icon="codicon-trash" />
 	</li>
 	<template v-if="showFiles">
 		<li class="empty" v-if="!fileTree.children.length" >
@@ -37,7 +37,7 @@
 				<Icon 
 					class="menu-icon" 
 					@click="workspace.deleteEditor(editor.id, $event)"
-					icon="codicon:trash" />
+					icon="codicon-trash" />
 			</li>
 			<FileList 
 				v-if="editor.type=='FOLDER'" 
@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
+import Icon from '@/components/atomic/Icon';
 import { ref, onMounted } from 'vue';
 
 const props = defineProps({
@@ -70,10 +70,14 @@ onMounted(() => {
 <style scoped lang="scss">
 .menu-icon {
 	float: right;
-	margin-left: 7px;
+	margin-left: 10px;
+	width: 5%;
+	font-size: 12px;
 }
 .fd-icon {
 	margin-right: 6px;
+	float: left;
+	width: 10%;
 }
 .file-list {
 	padding: 0px;
@@ -95,6 +99,7 @@ onMounted(() => {
 	float: left;
 	display: block;
 	overflow: hidden;
+	line-height: 16px;
 }
 
 .file-list li.active:hover,

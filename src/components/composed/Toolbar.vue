@@ -8,7 +8,7 @@
 						:class="{ active: option.active }"
 						@click="select(option.id, 'primary', $event)"
 						@keyup.enter="select(option.id, 'primary', $event)">
-							<Icon :icon="option.icon" />
+							<Icon class="icon-toolbar" :icon="option.icon" />
 					</a>
 				</li>
 			</ul>
@@ -20,7 +20,7 @@
 						:class="{ active: optionSec.active }"
 						@click="select(optionSec.id, 'secondary', $event)"
 						@keyup.enter="select(optionSec.id, 'secondary', $event)">
-							<Icon :icon="optionSec.icon" />
+							<Icon class="icon-toolbar" :icon="optionSec.icon" />
 					</a>
 				</li>
 			</ul>
@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { Icon } from '@iconify/vue';
 import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
 import FileExplorer from '@/components/panel/FileExplorer.vue';
 import RunAndDebug from '@/components/panel/RunAndDebug.vue';
@@ -50,6 +49,7 @@ import UserSettings from '@/components/panel/UserSettings.vue';
 import Accounts from '@/components/panel/Accounts.vue';
 import Deploy from '@/components/panel/Deploy.vue';
 import Help from '@/components/panel/Help.vue';
+import Icon from '@/components/atomic/Icon';
 import tippy from 'tippy.js';
 
 const props = defineProps({
@@ -61,19 +61,19 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 	'primary': {
 		'file-explorer': {
 			id: 'file-explorer',
-			icon: 'codicon:files',
+			icon: 'codicon-files',
 			label: 'File explorer',
 			active: false
 		}, 
 		'compile': {
 			id: 'compile',
-			icon: 'codicon:debug-alt',
+			icon: 'codicon-debug-alt',
 			label: 'Debug and testing',
 			active: false
 		},
 		'deploy': {
 			id: 'deploy',
-			icon: 'codicon:rocket',
+			icon: 'codicon-rocket',
 			label: 'Deploy',
 			active: false
 		}
@@ -81,19 +81,19 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 	'secondary': {
 		'accounts': {
 			id: 'accounts',
-			icon: 'codicon:account',
+			icon: 'codicon-account',
 			label: 'Accounts',
 			active: false
 		},
 		'settings': {
 			id: 'settings',
-			icon: 'codicon:gear',
+			icon: 'codicon-gear',
 			label: 'Settings',
 			active: false
 		},
 		'help': {
 			id: 'help',
-			icon: 'codicon:question',
+			icon: 'codicon-question',
 			label: 'Help',
 			active: false
 		}
@@ -264,6 +264,12 @@ $toolbar-container-width: 180px;
 .side-resize:hover {
 	width: 4px;
 	cursor: col-resize;
+}
+
+
+.icon-toolbar {
+	padding: 10px 0px;
+	font-size: 24px !important;
 }
 
 </style>

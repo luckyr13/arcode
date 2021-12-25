@@ -37,21 +37,21 @@
             type="button" 
             @click="addEditor($event)"
             data-tippy-workspace-content="New File">
-              <Icon icon="codicon:new-file" />
+              <Icon icon="codicon-new-file" />
           </button>
           <button 
             class="button" 
             type="button" 
             @click="scrollEditor('left')"
             data-tippy-workspace-content="Scroll left">
-              <Icon icon="codicon:chevron-left" />
+              <Icon icon="codicon-chevron-left" />
           </button>
           <button 
             class="button" 
             type="button" 
             @click="scrollEditor('right')"
             data-tippy-workspace-content="Scroll right">
-              <Icon icon="codicon:chevron-right" />
+              <Icon icon="codicon-chevron-right" />
           </button>
         </div>
       </div>
@@ -75,7 +75,7 @@ import {
   ref, onBeforeUpdate, watchEffect, onMounted
 } from 'vue';
 import { Workspace } from '@/core/Workspace';
-import { Icon } from '@iconify/vue';
+import Icon from '@/components/atomic/Icon';
 import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';

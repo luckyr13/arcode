@@ -28,6 +28,7 @@ import { EditorMetadata } from '@/core/interfaces/EditorMetadata';
 import 'mosha-vue-toastify/dist/style.css'
 import 'tippy.js/dist/tippy.css';
 import 'xterm/css/xterm.css';
+import '@vscode/codicons/dist/codicon.css';
 
 const us: UserSettings = new UserSettings();
 const settings = us.settings;

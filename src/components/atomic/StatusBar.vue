@@ -1,6 +1,6 @@
 <template>
 	<div class="arcode-status-bar">
-		<div v-if="workspace">
+		<div v-if="workspace && workspace.getCurrentEditorId() >= 0">
 			Current file: {{ getEditorsFilename(workspace.getCurrentEditorId(), workspace) }}, 
 			{{ workspace.getCurrentContent().length }} characters
 		</div>
@@ -9,11 +9,11 @@
 
 <script setup lang="ts">
 import Workspace from '@/components/composed/Workspace.vue';
+import { computed } from 'vue';
 
 const props = defineProps({
 	workspace: Object
 });
-
 
 const getEditorsFilename = (editorId: number, workspace: Workspace): string => {
 	const i = workspace.editors.findIndex(ed => ed.id == editorId);

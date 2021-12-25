@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import { Icon } from '@iconify/vue';
+import Icon from '@/components/atomic/Icon';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 

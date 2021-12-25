@@ -5,12 +5,12 @@
 <ul class="file-menu" v-if="workspace">
 	<li @click="showModalNewFile = true; selNewFileLocation = '/'; txtNewFileName = getProposedFileName(workspace);">
 		<Icon class="menu-icon"
-			icon="codicon:new-file" />
+			icon="codicon-new-file" />
 		<span>New File</span>
 	</li>
 	<li @click="openFile('txt_file_openFile')">
 		<Icon class="menu-icon"
-			icon="codicon:folder-opened" />
+			icon="codicon-folder-opened" />
 		<span>Open File...</span>
 		<input type="file" 
 			id="txt_file_openFile" 
@@ -20,13 +20,13 @@
 	</li>
 	<li @click="showModalAddFolder = true; selNewFolderLocation = '/'; txtNewFolderName='';">
 		<Icon class="menu-icon"
-			icon="codicon:new-folder" />
+			icon="codicon-new-folder" />
 		<span>Add Folder</span>
 	</li>
 	<li 
 		@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false;">
 		<Icon class="menu-icon"
-			icon="codicon:mirror" />
+			icon="codicon-mirror" />
 		<span>Load Contract from TX</span>
 	</li>
 </ul>
@@ -37,24 +37,24 @@
 	<li v-if="workspace.getCurrentEditorId() >= 0"
 		@click="showModalEditFile = true; txtEditFileName = getEditorsFilename(workspace.getCurrentEditorId(), wordkspace)">
 		<Icon class="menu-icon"
-			icon="codicon:edit" />
+			icon="codicon-edit" />
 		<span>Edit File Name</span>
 	</li>
 	<li v-else class="disabled">
 		<Icon class="menu-icon"
-			icon="codicon:edit" />
+			icon="codicon-edit" />
 		<span>Edit File Name</span>
 	</li>
 	<li 
 		v-if="workspace.getCurrentEditorId() >= 0"
 		@click="downloadFile(getEditor(workspace.getCurrentEditorId(), workspace))">
 		<Icon class="menu-icon"
-			icon="codicon:cloud-download" />
+			icon="codicon-cloud-download" />
 		<span>Download File</span>
 	</li>
 	<li v-else class="disabled">
 		<Icon class="menu-icon"
-			icon="codicon:cloud-download" />
+			icon="codicon-cloud-download" />
 		<span>Download File</span>
 	</li>
 </ul>
@@ -290,7 +290,7 @@
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
 import { ref, watchEffect } from 'vue';
-import { Icon } from '@iconify/vue';
+import Icon from '@/components/atomic/Icon';
 import Workspace from '@/components/composed/Workspace.vue';
 import Modal from '@/components/atomic/Modal.vue';
 import FileList from '@/components/atomic/FileList.vue';
@@ -422,7 +422,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 const loadLatestContractStateFromTX = async (tx: string, path: string, workspace: Workspace) => {
 	const contract = await arweave.smartweave.contract(tx);
 	// Read state
-	const { state, validity } = await contract.readState();
+	const { state } = await contract.readState();
 	const onlyInParent= false;
 	const inputEvent = new Event('empty-event');
 	const filename = `${tx}-latest.json`;
@@ -527,6 +527,9 @@ $title-height: 28px;
 	line-height: 15px;
 	font-size: 15px;
 	margin-left: 4px;
+	width: 10%;
+	display: inline;
+	text-align: right;
 }
 .fd-icon {
 	margin-right: 6px;
