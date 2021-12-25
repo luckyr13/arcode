@@ -75,12 +75,13 @@ onMounted(() => {
 	float: right;
 	margin-left: 10px;
 	width: 5%;
-	font-size: 12px;
+	font-size: 12px !important;
 }
 .fd-icon {
 	margin-right: 6px;
 	float: left;
 	width: 10%;
+	font-size: 12px !important;
 }
 .file-list {
 	padding: 0px;
@@ -102,7 +103,6 @@ onMounted(() => {
 	float: left;
 	display: block;
 	overflow: hidden;
-	line-height: 16px;
 }
 
 .file-list li.active:hover,

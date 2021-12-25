@@ -525,7 +525,7 @@ $title-height: 28px;
 	float: right;
 	cursor: pointer;
 	line-height: 15px;
-	font-size: 15px;
+	font-size: 15px !important;
 	margin-left: 4px;
 	width: 10%;
 	display: inline;
