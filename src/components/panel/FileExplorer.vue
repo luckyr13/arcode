@@ -35,7 +35,7 @@
 </div>
 <ul class="file-menu">
 	<li v-if="workspace.getCurrentEditorId() >= 0"
-		@click="showModalEditFile = true; txtEditFileName = getEditorsFilename(workspace.getCurrentEditorId(), wordkspace)">
+		@click="showModalEditFile = true; txtEditFileName = getEditorsFilename(workspace.getCurrentEditorId(), workspace)">
 		<Icon class="menu-icon"
 			icon="codicon-edit" />
 		<span>Edit File Name</span>

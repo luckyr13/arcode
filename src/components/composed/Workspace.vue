@@ -122,6 +122,10 @@ const selectEditor = (editorId: number, event: Event) => {
 const deleteEditor = (editorId: number, event: Event) => {
   workspace.deleteEditor(editorId, event);
 };
+
+const deleteFolder = (path: string) => {
+  workspace.deleteFolder(path);
+};
 const closeEditor = (editorId: number, event: Event) => {
   workspace.closeEditor(editorId, event);
 };
@@ -290,7 +294,8 @@ defineExpose({
   getFileTreePaths,
   closeEditor,
   updateEditorName,
-  getCurrentContent
+  getCurrentContent,
+  deleteFolder
 });
 
 // make sure to reset the refs before each update

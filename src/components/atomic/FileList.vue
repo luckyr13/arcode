@@ -18,8 +18,9 @@
 		<Icon v-if="!showFiles"
 			class="menu-icon" 
 			icon="codicon-chevron-down" />
-		<Icon v-if="fileTree.name"
+		<Icon v-if="fileTree.name && fileTree.children.length === 0"
 			class="menu-icon" 
+			@click="workspace.deleteFolder(`${path ? path : ''}`)"
 			icon="codicon-trash" />
 	</li>
 	<template v-if="showFiles">
@@ -42,6 +43,7 @@
 			<FileList 
 				v-if="editor.type=='FOLDER'" 
 				:level="level + 1"
+				:path="`${path ? path : ''}/${editor.name}`"
 				:workspace="workspace" :fileTree="editor" />
 		</template>
 	</template>
@@ -56,7 +58,8 @@ import { ref, onMounted } from 'vue';
 const props = defineProps({
 	workspace: Object,
 	fileTree: Object,
-	level: Number
+	level: Number,
+	path: String
 });
 const showFiles = ref(false);
 

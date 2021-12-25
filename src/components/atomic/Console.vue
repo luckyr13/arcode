@@ -2,7 +2,7 @@
 <div class="side-resize" v-if="showConsole" @mousedown="resize($event)">
 </div>
 <div class="arcode-console-tab" @click="toggleConsole()">
-	<Icon icon="codicon:terminal" /> <span>Console</span>
+	<Icon class="menu-icon" icon="codicon-terminal" /> <span>Console</span>
 </div>
 <transition name="fade" >
 		<div 
@@ -102,7 +102,7 @@ const resize = () => {
 .arcode-console-tab {
 	height: 24px;
 	line-height: 24px;
-	padding-left: 20px;
+	padding-left: 12px;
 	cursor: pointer;
 	z-index: 10;
 }
@@ -149,5 +149,13 @@ const resize = () => {
 	cursor: row-resize;
 }
 
+.menu-icon {
+	font-size: 14px !important;
+	margin-right: 4px;
+	display: inline;
+	width: 10px;
+	float: left;
+	padding: 6px 0px;
+}
 
 </style>

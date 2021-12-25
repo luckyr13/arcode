@@ -100,6 +100,10 @@ export class Workspace extends BaseWorkspace  {
     this.destroyEditor(editorId);
   }
 
+  public deleteFolder(path: string): void {
+    this.fileTree.removeFolder(path);
+  }
+
   public closeEditor(editorId: number, event: Event): void {
     event.stopPropagation();
     event.preventDefault();

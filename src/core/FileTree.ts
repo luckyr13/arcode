@@ -136,9 +136,38 @@ export class FileTree
 		this._storage.setItem('tree', JSON.stringify(this._tree));
 	}
 
-	
-	public removeFolder(): void {
-		console.log('...')
+	private _removeFolderHelper(tree: FileTreeFolder, path: string[]) {
+		// Base cases
+		if (path.length === 0) {
+			// throw Error(`Empty Path: ${JSON.stringify(path)} `);
+			return;
+		}
+		const firstRouteElem = path[0];
+		if (tree.children.length === 0) {
+			//throw Error(`No children: ${JSON.stringify(tree)}`);
+			return;
+		}
+		// Search in children
+		for (const i in tree.children) {
+			// Is this the element I'm looking for?
+			if (tree.children[i].name == firstRouteElem && 
+					tree.children[i].type === 'FOLDER' && path.length == 1) {
+				tree.children.splice(+i, 1);
+				return;
+			}
+
+			// If the element is a Folder, search recursively
+			if (tree.children[i].type === 'FOLDER') {
+				const c2: FileTreeFolder = <FileTreeFolder>tree.children[i];
+				this._removeFolderHelper(c2, path.slice(1));
+			}
+
+		}
+	}
+
+	public removeFolder(path: string): void {
+		const folders = this._breakPath(path);
+		this._removeFolderHelper(this._tree, folders);
 		this._storage.setItem('tree', JSON.stringify(this._tree));
 	}
 
