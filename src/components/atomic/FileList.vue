@@ -20,7 +20,7 @@
 			icon="codicon-chevron-down" />
 		<Icon v-if="fileTree.name && fileTree.children.length === 0"
 			class="menu-icon" 
-			@click="workspace.deleteFolder(`${path ? path : ''}`)"
+			@click="workspace.deleteFolder(`${path ? path : ''}`, $event)"
 			icon="codicon-trash" />
 	</li>
 	<template v-if="showFiles">

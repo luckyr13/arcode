@@ -123,7 +123,9 @@ const deleteEditor = (editorId: number, event: Event) => {
   workspace.deleteEditor(editorId, event);
 };
 
-const deleteFolder = (path: string) => {
+const deleteFolder = (path: string, event: Event) => {
+  event.stopPropagation();
+  event.preventDefault();
   workspace.deleteFolder(path);
 };
 const closeEditor = (editorId: number, event: Event) => {

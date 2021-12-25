@@ -35,5 +35,6 @@ const getEditorsFilename = (editorId: number, workspace: Workspace): string => {
 		font-size: 12px;
 		line-height: 22px;
 		width: 100%;
+		padding-left: 12px;
 	}
 </style>

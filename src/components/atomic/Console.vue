@@ -112,7 +112,7 @@ const resize = () => {
 }
 .arcode-console-tab span {
 	font-size: 10px;
-	margin-left: 2px;
+	margin-left: 4px;
 	line-height: 24px;
 }
 
