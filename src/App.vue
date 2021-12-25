@@ -12,7 +12,7 @@
         <Console />
       </div>
     </div>
-    <StatusBar/>
+    <StatusBar :workspace="workspace" />
   </div>
 </template>
 

@@ -87,6 +87,9 @@ export class Workspace extends BaseWorkspace  {
     window.setTimeout(() => {
       this.scrollEditor('right', 120 * (this.currentEditorId - previousEditorId));
     }, 200);
+
+    // Update current content tracker
+    this.currentContent = this.getEditorView(editorId).state.doc.toString()
   }
 
   public deleteEditor(editorId: number, event: Event): void {

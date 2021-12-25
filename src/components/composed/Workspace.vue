@@ -233,6 +233,10 @@ const loadExamples = () => {
     tokenPST.stateName,
     '/contracts/token-pst',
     false);
+
+  window.setTimeout(() => {
+    workspace.currentContent = '';
+  }, 400)
 };
 
 const loadTree = () => {
@@ -259,8 +263,16 @@ const loadTree = () => {
       editorId);
     
   }
+
+  window.setTimeout(() => {
+    workspace.currentContent = '';
+  }, 400)
+  
 };
 
+const getCurrentContent = () => {
+  return workspace.currentContent;
+};
 
 // Expose public methods
 defineExpose({
@@ -277,7 +289,8 @@ defineExpose({
   isEditorActive,
   getFileTreePaths,
   closeEditor,
-  updateEditorName
+  updateEditorName,
+  getCurrentContent
 });
 
 // make sure to reset the refs before each update

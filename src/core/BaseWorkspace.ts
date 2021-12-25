@@ -21,6 +21,7 @@ export class BaseWorkspace implements GenericWorkspace
   protected _cachedEditorsContent: Record<string, string> = {};
 	private _cachedEventExtension: Compartment = new Compartment();
   private _storage = window.localStorage;
+  private _currentContent = ref('');
 
 	constructor(theme = '') {
 		// Save content in cache
@@ -60,6 +61,15 @@ export class BaseWorkspace implements GenericWorkspace
 		return this._editors.value;
 	}
 
+
+	public get currentContent(): string {
+		return this._currentContent.value;
+	}
+
+	public set currentContent(content: string) {
+		this._currentContent.value = content;
+	}
+
 	private _getThemeExtension(theme: string): Extension {
 		if (theme == 'theme-dark' || theme == 'dark-blue') {
 			return oneDark;
@@ -90,7 +100,10 @@ export class BaseWorkspace implements GenericWorkspace
     const metadata: EditorViewMetadata = {id: editorId, view, name: '', active: active};
     this.editors.push(metadata);
     view.dispatch({
-			effects: this._cachedEventExtension.reconfigure(EditorView.updateListener.of(() => this.updateCachedEditors(editorId)))
+			effects: this._cachedEventExtension.reconfigure(EditorView.updateListener.of((upd) => {
+				this.updateCachedEditors(editorId);
+				this.currentContent = upd.state.doc.toString();
+			}))
 		});
     return editorId;
 	}

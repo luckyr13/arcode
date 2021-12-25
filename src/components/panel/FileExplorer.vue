@@ -47,7 +47,7 @@
 	</li>
 	<li 
 		v-if="workspace.getCurrentEditorId() >= 0"
-		@click="downloadFile(getEditor(workspace.getCurrentEditorId()))">
+		@click="downloadFile(getEditor(workspace.getCurrentEditorId(), workspace))">
 		<Icon class="menu-icon"
 			icon="codicon:cloud-download" />
 		<span>Download File</span>
@@ -480,7 +480,7 @@ const getEditor = (editorId: number, workspace: Workspace): string => {
 
 
 const downloadFile = (doc: EditorViewMetadata) => {
-	fileDownload(doc.view.state.doc, doc.name);
+	fileDownload(doc.view.state.doc.toString(), doc.name);
 }
 
 const txtNewFileName = ref('');
