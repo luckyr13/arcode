@@ -158,4 +158,7 @@ const resize = () => {
 	padding: 6px 0px;
 }
 
+.codicon {
+	height: 100%;
+}
 </style>
