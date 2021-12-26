@@ -21,7 +21,12 @@
 	</div>
 	<ul class="deploy-menu">
 		<li>
-			<button><Icon class="icon-btn" icon="codicon-rocket" /><span>Deploy Now</span></button>
+			<button
+				:class="{primary: selDeployFileStateLocation && selDeployFileContractLocation}" 
+				:disabled="!selDeployFileStateLocation || !selDeployFileContractLocation"
+				@click="deployContract()">
+				<Icon class="icon-btn" icon="codicon-rocket" /><span>Deploy Now</span>
+			</button>
 		</li>
 	</ul>
 </div>
@@ -37,6 +42,9 @@ const selDeployFileStateLocation = ref('');
 const props = defineProps({
 	workspace: Object
 });
+const deployContract = () => {
+	alert('Coming soon...')
+};
 
 
 </script>
@@ -73,11 +81,14 @@ const props = defineProps({
 	border: 0;
 	cursor: pointer;
 	font-size: 12px;
-	background-color: var(--app-toolbar-panel-title-bgcolor);
-  color: var(--app-toolbar-panel-title-color);
 	text-align: center;
         display: table-cell;
         vertical-align: middle;
+}
+
+.deploy-menu li button.primary {
+	background-color: var(--app-toolbar-panel-title-bgcolor);
+  color: var(--app-toolbar-panel-title-color);
 }
 
 .deploy-menu li button span {
