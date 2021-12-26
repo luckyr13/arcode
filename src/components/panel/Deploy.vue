@@ -82,13 +82,16 @@ const deployContract = () => {
 	cursor: pointer;
 	font-size: 12px;
 	text-align: center;
-        display: table-cell;
-        vertical-align: middle;
+  vertical-align: middle;
+	color: gray;
+	cursor: default;
+	background-color: rgba(0,0,0,0.1);
 }
 
 .deploy-menu li button.primary {
 	background-color: var(--app-toolbar-panel-title-bgcolor);
   color: var(--app-toolbar-panel-title-color);
+  cursor: pointer;
 }
 
 .deploy-menu li button span {
