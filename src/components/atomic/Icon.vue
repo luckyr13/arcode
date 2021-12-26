@@ -12,9 +12,4 @@ const props = defineProps({
 </script>
 
 <style scoped lang="scss">
-	.codicon {
-		height: 100%;
-		line-height: 100%;
-		width: 100%;
-	}
 </style>

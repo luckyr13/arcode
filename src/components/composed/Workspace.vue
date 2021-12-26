@@ -297,7 +297,8 @@ defineExpose({
   closeEditor,
   updateEditorName,
   getCurrentContent,
-  deleteFolder
+  deleteFolder,
+  getFileTreeFilenames
 });
 
 // make sure to reset the refs before each update

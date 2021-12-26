@@ -1,6 +1,10 @@
 import Arweave from 'arweave';
 import ArDB from 'ardb';
-import { SmartWeave, SmartWeaveWebFactory, LoggerFactory } from 'redstone-smartweave';
+import { 
+  SmartWeave, SmartWeaveWebFactory, 
+  LoggerFactory, ContractData, ArWallet,
+  FromSrcTxContractData
+ } from 'redstone-smartweave';
 
 
 export class ArweaveHandler {
@@ -18,6 +22,7 @@ export class ArweaveHandler {
     this._ardb = new ArDB(this._arweave);
     LoggerFactory.INST.logLevel('fatal');
     this._smartweave = SmartWeaveWebFactory.memCached(this._arweave);
+    
   }
 
   public get arweave(): Arweave {
@@ -30,6 +35,10 @@ export class ArweaveHandler {
 
   public get smartweave(): SmartWeave {
     return this._smartweave;
+  }
+
+  public async createContract(contract: ContractData) {
+    this._smartweave.createContract.deploy(contract);
   }
 
 }

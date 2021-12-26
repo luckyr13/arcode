@@ -29,8 +29,10 @@
 			<FileExplorer 
 					v-if="options['primary']['file-explorer'].active" 
 					:workspace="workspace" />
+			<!--
 			<RunAndDebug v-if="options['primary']['compile'].active" />
-			<Deploy v-if="options['primary']['deploy'].active" />
+			-->
+			<Deploy v-if="options['primary']['deploy'].active"  :workspace="workspace" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
 			<Accounts v-if="options['secondary']['accounts'].active" />
 			<Help v-if="options['secondary']['help'].active" />
@@ -65,12 +67,14 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 			label: 'File explorer',
 			active: false
 		}, 
+		/*
 		'compile': {
 			id: 'compile',
 			icon: 'codicon-debug-alt',
 			label: 'Debug and testing',
 			active: false
 		},
+		*/
 		'deploy': {
 			id: 'deploy',
 			icon: 'codicon-rocket',
