@@ -2,8 +2,7 @@ import Arweave from 'arweave';
 import ArDB from 'ardb';
 import { 
   SmartWeave, SmartWeaveWebFactory, 
-  LoggerFactory, ContractData, ArWallet,
-  FromSrcTxContractData
+  LoggerFactory, ContractData
  } from 'redstone-smartweave';
 
 
