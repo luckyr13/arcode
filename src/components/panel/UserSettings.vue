@@ -52,6 +52,7 @@ const setTheme = (newTheme: string) => {
 
 const clearSettings = () => {
 	window.localStorage.clear();
+	window.sessionStorage.clear();
 	document.location.reload();
 };
 

@@ -1,4 +1,5 @@
 export interface Settings {
 	lang: string,
-	theme: string
+	theme: string,
+	stayLoggedIn: boolean
 }

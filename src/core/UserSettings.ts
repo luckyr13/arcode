@@ -32,28 +32,21 @@ export class UserSettings {
 	}
 
 	constructor() {
-		let lang = 'en';
-		let theme = '';
-
-		if (this._storage.getItem('defaultLang')) {
-			lang = this._storage.getItem('defaultLang')!;
-		}
-		if (this._storage.getItem('defaultTheme')) {
-			theme = this._storage.getItem('defaultTheme')!;
-		}
-		
 		this._settings = {
-			lang,
-			theme
-		};
+			lang: 'en',
+			theme: '',
+			stayLoggedIn: false
+		}
+		if (this._storage.getItem('settings')) {
+			this._settings = JSON.parse(this._storage.getItem('settings')!);
+		}
 	}
 
 	public get settings() : Settings {
 		return this._settings;
 	}
 	public set settings(v : Settings) {
-		this._storage.setItem('defaultLang', v.lang);
-		this._storage.setItem('defaultTheme', v.theme);		
+		this._storage.setItem('settings', JSON.stringify(v));
 		this._settings = v;
 	}
 	public get menuTheme(): ThemeColor {
@@ -70,7 +63,12 @@ export class UserSettings {
 		const body = document.getElementsByTagName('body')[0];
 		body.className = theme;
 		this._settings.theme = theme;
-		this._storage.setItem('defaultTheme', theme);
+		this._storage.setItem('settings', JSON.stringify(this._settings));
+	}
+
+	public setStayLoggedIn(stayLoggedIn: boolean): void {
+		this._settings.stayLoggedIn = stayLoggedIn;
+		this._storage.setItem('settings', JSON.stringify(this._settings));
 	}
 	
 }

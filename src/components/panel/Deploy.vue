@@ -2,7 +2,7 @@
 <div class="arcode-main-toolbar-panel-title">
 	Deploy contract
 </div>
-<div class="deploy-container">
+<div class="deploy-container" v-if="mainAddress">
 	<div class="form-input">
 		<label>Contract</label>
 		<select v-model.trim="selDeployFileContractLocation">
@@ -19,6 +19,10 @@
 			</template>
 		</select>
 	</div>
+	<div class="form-input">
+		<label>Wallet</label>
+		<input type="text" disabled v-model.trim="mainAddress">
+	</div>
 	<ul class="deploy-menu">
 		<li>
 			<button
@@ -30,12 +34,21 @@
 		</li>
 	</ul>
 </div>
-
+<div class="deploy-container" v-else>
+	Please login first!
+</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Icon from '@/components/atomic/Icon';
+import { Login } from '@/core/Login';
+import { UserSettings } from '@/core/UserSettings';
+
+const userSettings = new UserSettings();
+const settings = userSettings.settings;
+const mainAddress = ref('');
+const login = new Login(settings.stayLoggedIn);
 
 const selDeployFileContractLocation = ref('');
 const selDeployFileStateLocation = ref('');
@@ -46,6 +59,9 @@ const deployContract = () => {
 	alert('Coming soon...')
 };
 
+onMounted(() => {
+	mainAddress.value = login.mainAddress;
+});
 
 </script>
 
