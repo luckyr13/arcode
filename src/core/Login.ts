@@ -63,31 +63,6 @@ export class Login {
     }
   }
 
-  async login(
-		walletOption: string, 
-		uploadInputEvent: HTMLInputElement|null = null,
-		stayLoggedIn = false): Promise<string> {
-		let res = '';
-
-    switch (walletOption) {
-      case 'upload_file':
-        res = await this.uploadKeyFile(uploadInputEvent!, stayLoggedIn)
-      break;
-      case 'arconnect':
-        
-      break;
-      case 'arweaveApp':
-        
-      break;
-
-      default:
-        throw Error('Wallet not supported');
-      break;
-    }
-
-    return res;
-  }
-
   logout() {
     this.removeAccountFromCache();
     this.mainAddress = '';
@@ -118,6 +93,12 @@ export class Login {
 		});
 	
 		return p;
+  }
+
+  async arConnect(stayLoggedIn: boolean): Promise<string> {
+		const address = await this._arweave.arweave.wallets.getAddress();
+		this.setAccount(address, null, stayLoggedIn);
+		return address;
   }
 
 

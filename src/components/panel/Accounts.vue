@@ -7,7 +7,7 @@
 		<h4>Login options:</h4>
 		<ul class="accounts-menu">
 			<li>
-				<button>
+				<button @click="arConnect(chkStayLoggedIn)">
 					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
 				</button>
 			</li>
@@ -72,7 +72,21 @@ const uploadKeyTrigger = () => {
 
 const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 	try {
-		const address = await login.login('upload_file', event.target, stayLoggedIn);
+		const address = await login.uploadKeyFile(event.target, stayLoggedIn);
+		mainAddress.value = address;
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+	}
+};
+
+const arConnect = async (stayLoggedIn: boolean) => {
+	try {
+		const address = await login.arConnect(stayLoggedIn);
 		mainAddress.value = address;
 	} catch (err) {
 		createToast(`${err}`,
