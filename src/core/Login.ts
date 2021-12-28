@@ -1,5 +1,6 @@
 import { ArweaveHandler } from './ArweaveHandler';
 import { ArWallet } from 'redstone-smartweave';
+import { ArweaveWebWallet } from 'arweave-wallet-connector';
 
 export class Login {
 	private _arweave: ArweaveHandler;
@@ -8,7 +9,10 @@ export class Login {
   private _storage: Storage;
   // User's arweave public address
   private _mainAddress = '';
-  private _cachedProperties = ['MAINADDRESS', 'KEY'];
+  private _cachedProperties = ['MAINADDRESS', 'KEY', 'METHOD'];
+  // ArweaveApp
+  private _arweaveWebWallet: ArweaveWebWallet;
+  private _method = '';
 
 	constructor(stayLoggedIn= false) {
 		this._arweave = new ArweaveHandler();
@@ -19,11 +23,19 @@ export class Login {
 		}
 		const mainAddress = this._storage.getItem(this._cachedProperties[0]);
 		const key = JSON.parse(this._storage.getItem(this._cachedProperties[1])!);
+		const method = this._storage.getItem(this._cachedProperties[2]);
 		
 		if (mainAddress) {
 			this._mainAddress = mainAddress;
 			this._key = key;
+			this._method = method!;
 		}
+
+		this._arweaveWebWallet = new ArweaveWebWallet({
+			name: 'ArweaveApp',
+			logo: 'https://jfbeats.github.io/ArweaveWalletConnector/placeholder.svg'
+		})
+
 
 	}
 
@@ -32,8 +44,8 @@ export class Login {
 	}
 
 	public set key(key: ArWallet|null) {
-    this._storage.setItem(this._cachedProperties[1], JSON.stringify(this.key))
 		this._key = key;
+    this._storage.setItem(this._cachedProperties[1], JSON.stringify(this._key))
 	}
 
 	public get mainAddress() {
@@ -44,6 +56,15 @@ export class Login {
 	public set mainAddress(address: string) {
 		this._mainAddress = address;
 		this._storage.setItem(this._cachedProperties[0], this._mainAddress);
+	}
+
+	public set method(method: string) {
+		this._method = method;
+		this._storage.setItem(this._cachedProperties[2], this._method);
+	}
+
+	public get method(): string {
+		return this._method;
 	}
 
 
@@ -69,7 +90,7 @@ export class Login {
 		this.key = null;
 	}
 
-	async uploadKeyFile(inputElement: HTMLInputElement, stayLoggedIn: boolean): Promise<string> {
+	uploadKeyFile(inputElement: HTMLInputElement, stayLoggedIn: boolean): Promise<string> {
 		const p = new Promise<string>((resolve, reject) => {
 			let address = '';
 			const file = inputElement.files!.length ? 
@@ -80,6 +101,7 @@ export class Login {
 				try {
 					address = await this._arweave.arweave.wallets.jwkToAddress(key);
 					this.setAccount(address, key, stayLoggedIn);
+					this.method = 'keyfile';
 					resolve(address);
 				} catch (error) {
 					reject(`Error loading key ${error}`);
@@ -98,8 +120,17 @@ export class Login {
   async arConnect(stayLoggedIn: boolean): Promise<string> {
 		const address = await this._arweave.arweave.wallets.getAddress();
 		this.setAccount(address, null, stayLoggedIn);
+		this.method = 'arconnect';
 		return address;
   }
+
+  async arweaveWebWallet(stayLoggedIn: boolean): Promise<string> {
+		this._arweaveWebWallet.setUrl('arweave.app')
+		const address = await this._arweaveWebWallet.connect();
+		this.setAccount(address, null, stayLoggedIn);
+		this.method = 'webwallet';
+		return address;
+  } 
 
 
 }

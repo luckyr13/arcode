@@ -12,7 +12,7 @@
 				</button>
 			</li>
 			<li>
-				<button >
+				<button @click="arweaveWebWallet(chkStayLoggedIn)">
 					<img class="logo" src="@/assets/img/logo.png"><span>Arweave.app</span>
 				</button>
 			</li>
@@ -87,6 +87,21 @@ const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 const arConnect = async (stayLoggedIn: boolean) => {
 	try {
 		const address = await login.arConnect(stayLoggedIn);
+		mainAddress.value = address;
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+	}
+};
+
+
+const arweaveWebWallet = async (stayLoggedIn: boolean) => {
+	try {
+		const address = await login.arweaveWebWallet(stayLoggedIn);
 		mainAddress.value = address;
 	} catch (err) {
 		createToast(`${err}`,
@@ -198,6 +213,7 @@ watchEffect(() => {
 	line-height: 12px;
 	font-size: 12px;
 	float: right;
+	padding: 6px 0;
 }
 .icon-menu-btn {
 	display: inline !important;

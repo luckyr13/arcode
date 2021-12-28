@@ -138,6 +138,10 @@ const getEditorData = (editorId: number) => {
   return workspace.getEditorView(editorId);
 };
 
+const findFileIdByName = (path: string, filename: string) => {
+  return workspace.fileTree.findFileIdByName(path, filename);
+};
+
 const setTheme = (editorId: number, theme: string) => {
   return workspace.setTheme(editorId, theme);
 };
@@ -298,7 +302,8 @@ defineExpose({
   updateEditorName,
   getCurrentContent,
   deleteFolder,
-  getFileTreeFilenames
+  getFileTreeFilenames,
+  findFileIdByName
 });
 
 // make sure to reset the refs before each update

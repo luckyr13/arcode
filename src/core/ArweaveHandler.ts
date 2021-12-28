@@ -19,7 +19,7 @@ export class ArweaveHandler {
       protocol: "https",
     });
     this._ardb = new ArDB(this._arweave);
-    LoggerFactory.INST.logLevel('fatal');
+    //LoggerFactory.INST.logLevel('fatal');
     this._smartweave = SmartWeaveWebFactory.memCached(this._arweave);
     
   }
@@ -36,8 +36,8 @@ export class ArweaveHandler {
     return this._smartweave;
   }
 
-  public async createContract(contract: ContractData) {
-    this._smartweave.createContract.deploy(contract);
+  public async createContract(contract: ContractData): Promise<string> {
+    return await this._smartweave.createContract.deploy(contract);
   }
 
 }

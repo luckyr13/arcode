@@ -23,6 +23,7 @@
     "@vscode/codicons": "0.0.27",
     "ardb": "^1.1.8",
     "arweave": "^1.10.19",
+    "arweave-wallet-connector": "0.0.17",
     "core-js": "^3.20.1",
     "js-file-download": "^0.4.12",
     "mosha-vue-toastify": "^1.0.23",

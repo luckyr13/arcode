@@ -340,4 +340,41 @@ export class FileTree
 		// Search in Tree 
 		return this._getTreeAsFilenameStringArrHelper(this._tree, '');
 	}
+
+	private _findFileIdByNameHelper(tree: FileTreeFolder, path: string[], filename: string): number {
+		if (path.length <= 0) {
+			return -1;
+		}
+		if (tree.children.length === 0) {
+			//throw Error(`No children: ${JSON.stringify(tree)}`);
+			return -1;
+		}
+		const firstRouteElem = path[0];
+		const nextRouteElem = path.length >= 2 ? path[1] : '';
+
+		// Search in children
+		for (const c of tree.children) {
+
+			// If the element is a File
+			if (c.type === 'FILE' && c.name == filename && path.length === 1) {
+				const c2: EditorMetadata = <EditorMetadata>c;
+				return c2.id;
+			}
+
+			
+			// If the element is a Folder, search recursively
+			if (c.type === 'FOLDER' && nextRouteElem && c.name === nextRouteElem) {
+				const c2: FileTreeFolder = <FileTreeFolder>c;
+				return this._findFileIdByNameHelper(c2, path.slice(1), filename);
+			}
+
+		}
+		return -3;
+	}
+
+	public findFileIdByName(filepath: string, filename: string): number {
+		const folders = [''].concat(this._breakPath(filepath));
+		// Search in Tree 
+		return this._findFileIdByNameHelper(this._tree, folders, filename);
+	}
 }
