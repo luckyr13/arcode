@@ -35,7 +35,8 @@
 	</ul>
 </div>
 <div class="deploy-container" v-else>
-	Please login first!
+	<Icon class="icon-deploy-login" icon="codicon-lock" />
+	<p class="text-center">Please login first!</p>
 </div>
 </template>
 
@@ -174,6 +175,12 @@ onMounted(() => {
 	line-height: 12px;
 	font-size: 12px;
 	float: right;
+}
+
+.icon-deploy-login {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-size: 32px !important;
 }
 
 </style>
