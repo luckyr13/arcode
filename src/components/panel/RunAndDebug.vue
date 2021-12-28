@@ -1,8 +1,15 @@
 <template>
 <div class="arcode-main-toolbar-panel-title">
-	Debug and Testing
+	Run and Debug
 </div>
-
+<div class="run-container">
+	<h5>
+		Contract Interactions
+	</h5>
+	<p>
+		Coming soon ...
+	</p>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -15,5 +22,8 @@
 	line-height: 28px;
 	font-size: 12px;
 	padding-left: 20px;
+}
+.run-container {
+	padding: 20px;
 }
 </style>

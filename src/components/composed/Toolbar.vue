@@ -29,9 +29,8 @@
 			<FileExplorer 
 					v-if="options['primary']['file-explorer'].active" 
 					:workspace="workspace" />
-			<!--
 			<RunAndDebug v-if="options['primary']['compile'].active" />
-			-->
+			<Search v-if="options['primary']['explore'].active" />
 			<Deploy v-if="options['primary']['deploy'].active"  :workspace="workspace" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
 			<Accounts v-if="options['secondary']['accounts'].active" />
@@ -51,6 +50,7 @@ import UserSettings from '@/components/panel/UserSettings.vue';
 import Accounts from '@/components/panel/Accounts.vue';
 import Deploy from '@/components/panel/Deploy.vue';
 import Help from '@/components/panel/Help.vue';
+import Search from '@/components/panel/Search.vue';
 import Icon from '@/components/atomic/Icon';
 import tippy from 'tippy.js';
 
@@ -64,23 +64,27 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 		'file-explorer': {
 			id: 'file-explorer',
 			icon: 'codicon-files',
-			label: 'File explorer',
-			active: false
-		}, 
-		/*
-		'compile': {
-			id: 'compile',
-			icon: 'codicon-debug-alt',
-			label: 'Debug and testing',
+			label: 'File Explorer',
 			active: false
 		},
-		*/
+		'explore': {
+			id: 'explore',
+			icon: 'codicon-search',
+			label: 'Arweave Explorer',
+			active: false
+		},
 		'deploy': {
 			id: 'deploy',
 			icon: 'codicon-rocket',
 			label: 'Deploy',
 			active: false
-		}
+		},
+		'compile': {
+			id: 'compile',
+			icon: 'codicon-debug-alt',
+			label: 'Run and Debug',
+			active: false
+		},
 	},
 	'secondary': {
 		'accounts': {
