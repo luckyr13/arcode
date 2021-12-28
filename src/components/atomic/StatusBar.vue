@@ -9,7 +9,6 @@
 
 <script setup lang="ts">
 import Workspace from '@/components/composed/Workspace.vue';
-import { computed } from 'vue';
 
 const props = defineProps({
 	workspace: Object

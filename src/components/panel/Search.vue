@@ -29,7 +29,7 @@
 	<template v-else-if="selSearchMethod == 'address'">
 		<div class="form-input">
 			<label>Arweave Address</label>
-			<input type="text" v-model.trim="txtAddress">
+			<input type="text" v-model.trim="txtAddress" @keyup.enter="searchByAddress(txtAddress)">
 		</div>
 		<div class="form-radio">
 			<label>

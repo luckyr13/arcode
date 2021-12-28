@@ -349,7 +349,6 @@ export class FileTree
 			//throw Error(`No children: ${JSON.stringify(tree)}`);
 			return -1;
 		}
-		const firstRouteElem = path[0];
 		const nextRouteElem = path.length >= 2 ? path[1] : '';
 
 		// Search in children
