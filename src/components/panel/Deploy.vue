@@ -71,13 +71,13 @@ const props = defineProps({
 	workspace: Object
 });
 const deployContract = async (statePath: string, contractSrcPath: string, workspace: Workspace) => {
-	if (login.method === 'webwallet') {
-		throw Error('Coming soon ...')
-	}
 	let contractSrc = ``;
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
+		if (login.method === 'webwallet') {
+			throw Error('Coming soon ...')
+		}
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		const statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		const stateFileId = workspace.findFileIdByName(statePath2, stateName2);
