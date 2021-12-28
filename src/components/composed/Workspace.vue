@@ -1,7 +1,7 @@
 <template>
   <div class="arcode-workspace">
     <div class="workspace-bg text-center" >
-      <img class="logo" alt="arCode" src="@/assets/logo.png">
+      <img class="logo" alt="arCode" src="@/assets/img/logo.png">
       <h4 class="text-center arcode-title" >
         ArCode Studio v{{ appVersion }}
       </h4>

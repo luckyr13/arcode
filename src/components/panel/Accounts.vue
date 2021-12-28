@@ -7,13 +7,20 @@
 		<h4>Login options:</h4>
 		<ul class="accounts-menu">
 			<li>
-				<button>ArConnect</button>
+				<button>
+					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
+				</button>
 			</li>
 			<li>
-				<button >Arweave.app</button>
+				<button >
+					<img class="logo" src="@/assets/img/logo.png"><span>Arweave.app</span>
+				</button>
 			</li>
 			<li>
-				<button @click="uploadKeyTrigger()">Upload your keyfile</button>
+				<button @click="uploadKeyTrigger()">
+					<Icon class="icon-menu-btn" icon="codicon-folder-opened" />
+						<span>Upload your keyfile</span>
+					</button>
 				<input
 					class="hidden"
 					id="txtFile_uploadKey"
@@ -140,7 +147,12 @@ watchEffect(() => {
 .accounts-menu li button span {
 	font-size: 12px;
 	margin-left: 6px;
-	line-height: 14px;
+	line-height: 30px;
+}
+
+.accounts-menu li button img {
+  width: 24px;
+	float: left;
 }
 
 .close-icon {
@@ -172,5 +184,23 @@ watchEffect(() => {
 	line-height: 12px;
 	font-size: 12px;
 	float: right;
+}
+.icon-menu-btn {
+	display: inline !important;
+	line-height: 16px;
+	font-size: 16px !important;
+	float: left;
+	padding: 6px 0;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+.accounts-container .logo {
+ -webkit-filter: Invert(var(--app-invert-img));
+  filter: Invert(var(--app-invert-img));
+  width: 20px;
+  margin-right: 2px;
+  margin-top: 2px;
+  margin-left: 2px;
 }
 </style>
