@@ -96,7 +96,6 @@
 			</a> 
 		</div>
 	</template>
-
 	<template v-if="resultsByAddress.length">
 		<div v-for="r of resultsByAddress" :key="r._id">
 			<table class="table" >
@@ -130,6 +129,12 @@
 			<hr>
 		</div>
 	</template>
+	<p 
+		class="no-results"
+		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && (!resultsByAddress || resultsByAddress.length <= 0)">
+		No results.
+	</p>
+
 </div>
 </template>
 
@@ -372,6 +377,10 @@ const searchByAddress = async (address: string, limit=100) => {
 }
 .link-container a {
 	color: inherit;
+}
+
+.no-results {
+	font-size: 12px;
 }
 
 </style>
