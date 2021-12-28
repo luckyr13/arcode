@@ -3,8 +3,8 @@
 	Wallet manager
 </div>
 <div v-if="login" class="accounts-container">
-	<h4>Login options:</h4>
 	<div v-if="!mainAddress">
+		<h4>Login options:</h4>
 		<ul class="accounts-menu">
 			<li>
 				<button>ArConnect</button>
@@ -19,7 +19,7 @@
 					id="txtFile_uploadKey"
 					accept=".json,application/json" 
 					type="file"
-					@change="uploadKey($event, false)">
+					@change="uploadKey($event, chkStayLoggedIn)">
 			</li>
 		</ul>
 		<div class="text-right form-radio">
