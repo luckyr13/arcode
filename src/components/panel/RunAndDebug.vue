@@ -2,7 +2,7 @@
 <div class="arcode-main-toolbar-panel-title">
 	Run and Debug
 </div>
-<div class="run-container" v-if="mainAddress && !contractInteractionTX">
+<div class="run-container" v-if="mainAddress">
 	<div class="form-input">
 		<label>Contract Address</label>
 		<input 
@@ -10,21 +10,68 @@
 			type="text" v-model.trim="txtContract">
 	</div>
 	<div class="form-input">
-		<label>Function</label>
-		<input 
-			:disabled="loadingTX"
-			type="text" v-model.trim="txtFunction">
-	</div>
-	<div class="form-input">
 		<label>Wallet</label>
 		<input type="text" disabled v-model.trim="mainAddress">
 	</div>
+	<h5 class="title-data">Input Data</h5>
+	<div class="data-input-list" v-for="(iL, index) of inputList" :key="index">
+		<div class="form-input col-key">
+			<label>Key</label>
+			<input 
+				:disabled="loadingTX"
+				type="text" v-model.trim="iL.key">
+		</div>
+		<div class="form-input col-value">
+			<label>Value</label>
+			<input 
+				:disabled="loadingTX"
+				type="text" v-model.trim="iL.value">
+		</div>
+		<div class="form-input col-action">
+			<Icon 
+				@click="removeInputAction(index)"
+				class="icon-action"
+				icon="codicon-trash" />
+		</div>
+	</div>
+	<div class="form-radio">
+		<label>
+			<input 
+				type="radio" 
+				:disabled="loadingTX" 
+				name="runFilter" value="viewState" v-model.trim="rdFilter">
+			View state
+		</label>
+		<label>
+			<input 
+				type="radio" 
+				:disabled="loadingTX" 
+				name="runFilter" value="writeInteractionDryRun" v-model.trim="rdFilter">
+			Write Interaction (Dry-run only)
+		</label>
+		<label>
+			<input 
+				type="radio" 
+				:disabled="loadingTX" 
+				name="runFilter" value="writeInteraction" v-model.trim="rdFilter">
+			Write Interaction (Create TX)
+		</label>
+	</div>
+	
 	<ul class="run-menu">
 		<li>
 			<button
-				:class="{primary: (txtContract && txtFunction) && !loadingTX}" 
-				:disabled="(!txtContract || !txtFunction) || loadingTX"
-				@click="runInteraction(txtContract, txtFunction)">
+				:class="{primary: !loadingTX}" 
+				:disabled="loadingTX"
+				@click="addInputData('', '')">
+				<Icon class="icon-btn" icon="codicon-add" /><span>Add Input Data</span>
+			</button>
+		</li>
+		<li>
+			<button
+				:class="{primary: (txtContract) && !loadingTX}" 
+				:disabled="(!txtContract) || loadingTX"
+				@click="runInteraction(txtContract, inputList, rdFilter)">
 				<Icon class="icon-btn" icon="codicon-debug-alt" /><span>Run Interaction</span>
 			</button>
 		</li>
@@ -32,58 +79,132 @@
 	<h5>Results:</h5>
 	<p 
 		class="no-results"
-		v-if="!response && !loadingTX">
+		v-if="!response || (response && Object.keys(response).length == 0) && !loadingTX">
 		No results.
+	</p>
+	<p 
+		class="no-results"
+		v-if="response && Object.keys(response).length > 0">
+		{{ response }}
 	</p>
 	<p 
 		class="no-results text-center"
 		v-if="loadingTX">
 		Loading ...
 	</p>
+	<div class="run-container" v-if="contractInteractionTX">
+		<Icon class="icon-run-panel success" icon="codicon-check" />
+		<h3>TX created successfully!</h3>
+		<p class="text-center">TX: {{ contractInteractionTX }}</p>
+	</div>
 </div>
-<div class="run-container" v-else-if="!mainAddress">
+<div class="run-container" v-else>
 	<Icon class="icon-run-panel" icon="codicon-lock" />
-	<p class="text-center">Please login first!</p>
-</div>
-<div class="run-container" v-else-if="contractInteractionTX">
-	<Icon class="icon-run-panel success" icon="codicon-check" />
-	<h3>TX created successfully!</h3>
-	<p class="text-center">TX: {{ contractInteractionTX }}</p>
+	<p class="text-center no-results">Please login first!</p>
 </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 
-  ContractData, ArWallet
+  ArWallet, Input, View
  } from 'redstone-smartweave';
 import { createToast } from 'mosha-vue-toastify';
-import { Workspace } from '@/components/composed/Workspace'
 
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
 const login = new Login(settings.stayLoggedIn);
 const arweave = new ArweaveHandler();
-
+const rdFilter = ref('viewState');
 const txtContract = ref('');
-const txtFunction = ref('');
-const response = ref('');
+const response = ref({});
 const contractInteractionTX = ref('');
 const loadingTX = ref(false);
+const inputList = reactive<Input[]>([{ key: 'function', value: '' }]);
 const props = defineProps({
 	workspace: Object
 });
-const runInteraction = async (contract: string) => {
+const runInteraction = async (
+	contractTX: string,
+	data: Input[],
+	interaction: string) => {
 	loadingTX.value = true;
 	try {
-		alert(contract);
+		let func = '';
+		const fullPayload = {};
+		response.value = {};
+		for (const d of data) {
+			let value = d.value;
+			if (!isNaN(value)) {
+				if (Number.isInteger(value)) {
+					value = parseInt(value);
+				} else {
+					value = parseFloat(value);
+				}
+			}
+			if (d.key === 'function') {
+				func = value;
+			}
+			fullPayload[d.key] = value;
+		}
+		if (!func) {
+			throw Error('Please provide a "function" input.');
+		}
+		const contract = arweave.smartweave.contract(
+				contractTX
+			).connect(
+				login.key
+			).setEvaluationOptions({
+				// with this flag set to true, the write will wait for the transaction to be confirmed
+				waitForConfirmation: false,
+			});
+
+		// Dry-run
+		const handlerResult = await contract.callContract<Input>(fullPayload);
+    if (handlerResult.type !== 'ok') {
+      throw Error(`Cannot create interaction: ${handlerResult.errorMessage}`);
+    }
+
+		// View interaction with user's key 
+		if (interaction === 'viewState') {			
+			const { state, result } = await contract.viewState<Input, View>(fullPayload);
+			response.value = result;
+		}
+		// Write interaction (Dry-run)
+		else if (interaction === 'writeInteractionDryRun') {
+      const { state, result } = await contract.dryWrite<Input>(fullPayload);
+			response.value = result;
+			createToast('Interaction executed successfully!',
+			{
+				type: 'success',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+		// Write interaction
+		else if (interaction === 'writeInteraction') {
+      contractInteractionTX.value = await contract.writeInteraction(fullPayload);
+			createToast('TX created successfully!',
+			{
+				type: 'success',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+
+		
 	} catch (err) {
-		createToast(`${err}`,
+		let error = `${err}`;
+		if (typeof(err) === 'object' &&
+				Object.prototype.hasOwnProperty.call(err, 'message')) {
+			error = err.message;
+		}
+		createToast(error,
     {
       type: 'danger',
       showIcon: true,
@@ -92,7 +213,13 @@ const runInteraction = async (contract: string) => {
 	}
 	loadingTX.value = false;
 };
+const addInputData = (key: string, value: string) => {
+	inputList.push({ key, value });
+};
 
+const removeInputAction = (index: number) => {
+	inputList.splice(index, 1);
+};
 onMounted(() => {
 	mainAddress.value = login.mainAddress;
 });
@@ -205,7 +332,6 @@ onMounted(() => {
 .icon-btn {
 	display: inline !important;
 	line-height: 12px;
-	font-size: 12px;
 	float: right;
 }
 
@@ -221,6 +347,33 @@ onMounted(() => {
 
 .no-results {
 	font-size: 12px;
+}
+
+.title-data {
+	margin: 0px 0px;
+}
+
+.col-key {
+	float: left;
+	width: 42%;
+}
+.col-value {
+	float: left;
+	width: 45%;
+}
+.col-action {
+	float: left;
+	width: 10%;
+	height: 32px;
+}
+.icon-action {
+	padding: 22px 0;
+	font-size: 16px !important;
+	cursor: pointer;
+}
+
+.data-input-list {
+	min-height: 76px;
 }
 
 </style>

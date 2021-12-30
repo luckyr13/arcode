@@ -40,7 +40,7 @@ export class Login {
 	}
 
 	public get key(): ArWallet|null {
-		return this._key;
+		return this._key ? this._key : 'use_wallet';
 	}
 
 	public set key(key: ArWallet|null) {

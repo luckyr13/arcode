@@ -63,34 +63,34 @@
 					:disabled="loadingSearch" 
 					type="radio" 
 					name="addressFilter" value="contracts" v-model.trim="rdFilter">
-				Only Smart Contracts
+				Smart Contracts
 			</label>
 			<label>
 				<input 
 					:disabled="loadingSearch" 
 					type="radio" 
 					name="addressFilter" value="nfts" v-model.trim="rdFilter">
-				Only NFT Atomic Assets
+				NFT Atomic Assets
 			</label>
 			<label>
 				<input 
 					:disabled="loadingSearch" 
 					type="radio" 
 					name="addressFilter" value="manifest" v-model.trim="rdFilter">
-				Only Manifest Files
+				Manifest Files
 			</label>
 			<label>
 				<input 
 					:disabled="loadingSearch" 
 					type="radio" 
 					name="addressFilter" value="textFiles" v-model.trim="rdFilter">
-				Only Text Files
+				Text Files
 			</label>
 			<label>
 				<input 
 					:disabled="loadingSearch" 
 					type="radio" name="addressFilter" value="mediaFiles" v-model.trim="rdFilter">
-				Only Media Files
+				Media Files
 			</label>
 		</div>
 

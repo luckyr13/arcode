@@ -19,7 +19,7 @@ export class ArweaveHandler {
       protocol: "https",
     });
     this._ardb = new ArDB(this._arweave);
-    LoggerFactory.INST.logLevel('fatal');
+    LoggerFactory.INST.logLevel('info');
     this._smartweave = SmartWeaveWebFactory.memCached(this._arweave);
     
   }
