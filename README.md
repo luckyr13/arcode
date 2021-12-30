@@ -4,7 +4,7 @@ Official page: https://arcode.studio
 
 Demo: https://luckyr13.github.io/arcode
 
-Demo (permaweb link - Last update: 25DEC2021): https://arweave.net/UIr3ZgiFwmDVJerQB595klzdi55Lf6hatvHRPI73_XE
+Demo (permaweb link - Last update: 30DEC2021): https://arweave.net/RU8VX7471wJ4OiXm8J7pScn2MnnhQjI644QTCBGvrYs
 
 Demo: https://arcode-g66weo.argoapp.io/
 
