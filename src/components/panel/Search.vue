@@ -5,7 +5,9 @@
 <div class="search-container">
 	<div class="form-input">
 		<label>Method</label>
-		<select v-model.trim="selSearchMethod">
+		<select 
+			:disabled="loadingSearch" 
+			v-model.trim="selSearchMethod">
 			<option value="tx">Search by TX</option>
 			<option value="address">Search by Address</option>
 		</select>
@@ -13,7 +15,9 @@
 	<template v-if="selSearchMethod == 'tx'">
 		<div class="form-input">
 			<label>TX ID</label>
-			<input type="text" v-model.trim="txtTxId" @keyup.enter="searchByTX(txtTxId)">
+			<input 
+				:disabled="loadingSearch" 
+				type="text" v-model.trim="txtTxId" @keyup.enter="searchByTX(txtTxId)">
 		</div>
 		<ul class="search-menu">
 			<li>
@@ -29,7 +33,11 @@
 	<template v-else-if="selSearchMethod == 'address'">
 		<div class="form-input">
 			<label>From Address</label>
-			<input type="text" v-model.trim="txtAddress" @keyup.enter="searchByAddress(txtAddress, txtResLimit)">
+			<input 
+				:disabled="loadingSearch" 
+				type="text" 
+				v-model.trim="txtAddress" 
+				@keyup.enter="searchByAddress(txtAddress, txtResLimit)">
 		</div>
 		<div class="form-input">
 			<label>Results limit</label>
@@ -37,27 +45,44 @@
 				type="number" 
 				max="100"
 				min="1"
-				v-model.trim="txtResLimit" @keyup.enter="searchByAddress(txtAddress, txtResLimit)">
+				:disabled="loadingSearch" 
+				v-model.trim="txtResLimit" 
+				@keyup.enter="searchByAddress(txtAddress, txtResLimit)">
 		</div>
 		<div class="form-radio">
 			<label>
-				<input type="radio" checked name="addressFilter" value="" v-model.trim="rdFilter">
+				<input 
+					type="radio" 
+					:disabled="loadingSearch" 
+					checked 
+					name="addressFilter" value="" v-model.trim="rdFilter">
 				All TXs
 			</label>
 			<label>
-				<input type="radio" name="addressFilter" value="contracts" v-model.trim="rdFilter">
+				<input 
+					:disabled="loadingSearch" 
+					type="radio" 
+					name="addressFilter" value="contracts" v-model.trim="rdFilter">
 				Only Smart Contracts
 			</label>
 			<label>
-				<input type="radio" name="addressFilter" value="manifest" v-model.trim="rdFilter">
+				<input 
+					:disabled="loadingSearch" 
+					type="radio" 
+					name="addressFilter" value="manifest" v-model.trim="rdFilter">
 				Only Manifest Files
 			</label>
 			<label>
-				<input type="radio" name="addressFilter" value="textFiles" v-model.trim="rdFilter">
+				<input 
+					:disabled="loadingSearch" 
+					type="radio" 
+					name="addressFilter" value="textFiles" v-model.trim="rdFilter">
 				Only Text Files
 			</label>
 			<label>
-				<input type="radio" name="addressFilter" value="mediaFiles" v-model.trim="rdFilter">
+				<input 
+					:disabled="loadingSearch" 
+					type="radio" name="addressFilter" value="mediaFiles" v-model.trim="rdFilter">
 				Only Media Files
 			</label>
 		</div>
@@ -65,8 +90,8 @@
 		<ul class="search-menu">
 			<li>
 				<button
-					:class="{primary: (txtAddress) && !loadingSearch}" 
-					:disabled="(!txtAddress || !selSearchMethod) || loadingSearch"
+					:class="{primary: (txtAddress && txtResLimit) && !loadingSearch}" 
+					:disabled="(!txtAddress || !selSearchMethod || !txtResLimit) || loadingSearch"
 					@click="searchByAddress(txtAddress, txtResLimit)">
 					<Icon class="icon-btn" icon="codicon-search" /><span>Search</span>
 				</button>
@@ -98,14 +123,18 @@
 			</tbody>
 		</table>
 		<div class="link-container text-left">
-			View more: 
-			<a :href="`https://viewblock.io/arweave/tx/${txtTxId}`" target="_blank">
-				{{ `https://viewblock.io/arweave/tx/${txtTxId}` }}
-			</a>
-			<br />
-			<a :href="`https://arweave.net/${txtTxId}`" target="_blank">
-				{{ `https://arweave.net/${txtTxId}` }}
-			</a> 
+			<p>
+				Viewblock link: 
+				<a :href="`https://viewblock.io/arweave/tx/${txtTxId}`" target="_blank">
+					{{ `https://viewblock.io/arweave/tx/${txtTxId}` }}
+				</a>
+			</p>
+			<p>
+				Arweave.net link: 
+				<a :href="`https://arweave.net/${txtTxId}`" target="_blank">
+					{{ `https://arweave.net/${txtTxId}` }}
+				</a>
+			</p>
 		</div>
 	</template>
 	<template v-if="resultsByAddress.length">
@@ -133,14 +162,21 @@
 				</tbody>
 			</table>
 			<div class="link-container text-left">
-				View more: 
-				<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
-					{{ `https://viewblock.io/arweave/tx/${r._id}` }}
-				</a>
-				<br />
-				<a :href="`https://arweave.net/${r._id}`" target="_blank">
-					{{ `https://arweave.net/${r._id}` }}
-				</a> 
+				<p>
+					Viewblock link: 
+					<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
+						{{ `https://viewblock.io/arweave/tx/${r._id}` }}
+					</a>
+				</p>
+				<p>
+					Arweave.net link: 
+					<a :href="`https://arweave.net/${r._id}`" target="_blank">
+						{{ `https://arweave.net/${r._id}` }}
+					</a>
+				</p>
+				<p v-if="rdFilter === 'contracts'">
+					--
+				</p>
 			</div>
 			<hr>
 		</div>
