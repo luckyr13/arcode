@@ -111,7 +111,7 @@ import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 
-  ArWallet, Input, View
+  Input, View
  } from 'redstone-smartweave';
 import { createToast } from 'mosha-vue-toastify';
 
