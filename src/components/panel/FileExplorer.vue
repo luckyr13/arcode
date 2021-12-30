@@ -422,26 +422,65 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 		tx
 	).findOne();
 	if (res) {
-		// Get data
-		const data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
-		let filename = `${tx}`;
-		if (res.data.type === 'application/javascript') {
-			filename = `${tx}.js`;
-		} else if (res.data.type === 'application/json') {
-			filename = `${tx}.json`;
-		}
-		const onlyInParent= false;
-		const inputEvent = new Event('empty-event');
-		workspace.addEditor(inputEvent, onlyInParent, data, filename, path);
-
+		const tags = {};
 		// Get contract if possible
 		res.tags.forEach(async tag => {
 			let key = tag.name;
 			let value = tag.value;
-			if (key === 'Contract-Src') {
-				await loadEditorFromTX(value, path, workspace);
-			}
+			tags[key] = value;
 		});
+		const datatype = res.data.type;
+		const onlyInParent= false;
+		const inputEvent = new Event('empty-event');
+		let data = '';
+		let filename = `${tx}`;
+		if (datatype === 'application/javascript') {
+			filename = `${tx}.js`;
+			data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+			createToast(`JS file found!`,
+				{
+					type: 'success',
+					showIcon: true,
+					position: 'bottom-right',
+				});
+		} else if (datatype === 'application/json') {
+			filename = `${tx}.json`;
+			data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+			createToast(`JSON file found!`,
+				{
+					type: 'success',
+					showIcon: true,
+					position: 'bottom-right',
+				});
+		} else {
+			data = Object.prototype.hasOwnProperty.call(tags, 'Init-State') ?
+			tags['Init-State'] : '';
+			if (data) {
+				filename = `${tx}.json`;
+				const replacer = undefined;
+				const space = 4;
+				data = JSON.stringify(JSON.parse(data), replacer, space);
+				createToast(`NFT Atomic Asset found! Loading state ...`,
+				{
+					type: 'success',
+					showIcon: true,
+					position: 'bottom-right',
+				});
+			} else {
+				throw Error('Invalid contract source!');
+			}
+		}
+
+		workspace.addEditor(inputEvent, onlyInParent, data, filename, path);
+		// Search if it has a contract src available
+		const contractSrc = Object.prototype.hasOwnProperty.call(tags, 'Contract-Src') ?
+			tags['Contract-Src'] : '';
+
+		if (contractSrc) {
+			await loadEditorFromTX(tags['Contract-Src'], path, workspace);
+		}
+
+		
 	}
 };
 
@@ -459,6 +498,12 @@ const loadLatestContractStateFromTX = async (tx: string, path: string, workspace
 		onlyInParent,
 		JSON.stringify(state, replacer, space),
 		filename, path);
+	createToast(`Contract latest state loaded!`,
+		{
+			type: 'success',
+			showIcon: true,
+			position: 'bottom-right',
+		});
 };
 
 const loadFromTXModal = async (tx: string, path: string, workspace: Workspace) => {
@@ -467,7 +512,7 @@ const loadFromTXModal = async (tx: string, path: string, workspace: Workspace) =
 		await loadEditorFromTX(tx, path, workspace);
 
 		if (txtLoadTXGetLastState.value) {
-			loadLatestContractStateFromTX(tx, path, workspace);
+			await loadLatestContractStateFromTX(tx, path, workspace);
 		}
 	} catch (err) {
 		createToast(`${err}`,
