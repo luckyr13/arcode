@@ -5,7 +5,15 @@
 <div class="run-container" v-if="mainAddress && !contractInteractionTX">
 	<div class="form-input">
 		<label>Contract Address</label>
-		<input type="text" v-model.trim="txtContract">
+		<input 
+			:disabled="loadingTX"
+			type="text" v-model.trim="txtContract">
+	</div>
+	<div class="form-input">
+		<label>Function</label>
+		<input 
+			:disabled="loadingTX"
+			type="text" v-model.trim="txtFunction">
 	</div>
 	<div class="form-input">
 		<label>Wallet</label>
@@ -14,17 +22,33 @@
 	<ul class="run-menu">
 		<li>
 			<button
-				:class="{primary: (txtContract) && !loadingDeployContract}" 
-				:disabled="(!txtContract) || loadingDeployContract"
-				@click="deployContract(txtContract, workspace)">
+				:class="{primary: (txtContract && txtFunction) && !loadingTX}" 
+				:disabled="(!txtContract || !txtFunction) || loadingTX"
+				@click="runInteraction(txtContract, txtFunction)">
 				<Icon class="icon-btn" icon="codicon-debug-alt" /><span>Run Interaction</span>
 			</button>
 		</li>
 	</ul>
+	<h5>Results:</h5>
+	<p 
+		class="no-results"
+		v-if="!response && !loadingTX">
+		No results.
+	</p>
+	<p 
+		class="no-results text-center"
+		v-if="loadingTX">
+		Loading ...
+	</p>
 </div>
 <div class="run-container" v-else-if="!mainAddress">
-	<Icon class="icon-deploy-login" icon="codicon-lock" />
+	<Icon class="icon-run-panel" icon="codicon-lock" />
 	<p class="text-center">Please login first!</p>
+</div>
+<div class="run-container" v-else-if="contractInteractionTX">
+	<Icon class="icon-run-panel success" icon="codicon-check" />
+	<h3>TX created successfully!</h3>
+	<p class="text-center">TX: {{ contractInteractionTX }}</p>
 </div>
 </template>
 
@@ -47,53 +71,17 @@ const login = new Login(settings.stayLoggedIn);
 const arweave = new ArweaveHandler();
 
 const txtContract = ref('');
+const txtFunction = ref('');
+const response = ref('');
 const contractInteractionTX = ref('');
-const loadingDeployContract = ref(false);
+const loadingTX = ref(false);
 const props = defineProps({
 	workspace: Object
 });
-const deployContract = async (statePath: string, contractSrcPath: string, workspace: Workspace) => {
-	let contractSrc = ``;
-	let initStateSrc = ``;
-	loadingDeployContract.value = true;
+const runInteraction = async (contract: string) => {
+	loadingTX.value = true;
 	try {
-		if (login.method === 'webwallet') {
-			throw Error('Coming soon ...')
-		}
-		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
-		const statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
-		const stateFileId = workspace.findFileIdByName(statePath2, stateName2);
-		const iState = workspace.editors.findIndex(ed => ed.id == stateFileId);
-	
-		const contractName2 = contractSrcPath.split('/')[contractSrcPath.split('/').length - 1];
-		const contractPath2 = contractSrcPath.split('/').splice(0, contractSrcPath.split('/').length - 1).join('/');
-		const contractFileId = workspace.findFileIdByName(contractPath2, contractName2);
-		const iContract = workspace.editors.findIndex(ed => ed.id == contractFileId);
-		
-		const wallet: ArWallet = login.key;
-		
-		if (iState < 0 || iContract < 0) {
-			throw Error(`Invalid state or contract id ${iState} ${iContract}`);
-		}
-		contractSrc = workspace.editors[iContract].view.state.doc.toString();
-		initStateSrc = workspace.editors[iState].view.state.doc.toString();
-			
-		const contract: ContractData = {
-			wallet: wallet,
-			initState: initStateSrc,
-			src: contractSrc
-		};
-		
-		
-		const tx = await arweave.createContract(contract);
-		
-		if (tx) {
-			contractInteractionTX.value = tx;
-		} else {
-			throw Error('Error creating tx', tx);
-		}
-		
-		
+		alert(contract);
 	} catch (err) {
 		createToast(`${err}`,
     {
@@ -102,9 +90,7 @@ const deployContract = async (statePath: string, contractSrcPath: string, worksp
       position: 'bottom-right',
     });
 	}
-	
-
-	loadingDeployContract.value = false;
+	loadingTX.value = false;
 };
 
 onMounted(() => {
@@ -123,7 +109,6 @@ onMounted(() => {
 
 .run-container {
 	padding: 10px;
-	font-size: 12px;
 }
 .run-menu {
 	padding: 0px;
@@ -224,7 +209,7 @@ onMounted(() => {
 	float: right;
 }
 
-.icon-deploy-login {
+.icon-run-panel {
 	margin-top: 20px;
 	margin-bottom: 20px;
 	font-size: 36px !important;
@@ -232,6 +217,10 @@ onMounted(() => {
 
 .success {
 	color: #58EB2B;
+}
+
+.no-results {
+	font-size: 12px;
 }
 
 </style>

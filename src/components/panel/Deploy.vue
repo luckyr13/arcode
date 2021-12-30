@@ -5,7 +5,9 @@
 <div class="deploy-container" v-if="mainAddress && !deployedContractTX">
 	<div class="form-input">
 		<label>Contract Source</label>
-		<select v-model.trim="selDeployFileContractLocation">
+		<select 
+			:disabled="loadingDeployContract"
+			v-model.trim="selDeployFileContractLocation">
 			<template v-for="path of workspace.getFileTreeFilenames()" :key="path">
 				<option v-if="path && path.search(/.js$/) >= 0" :value="path">{{ path }}</option>
 			</template>
@@ -13,7 +15,9 @@
 	</div>
 	<div class="form-input">
 		<label>Contract Initial State</label>
-		<select v-model.trim="selDeployFileStateLocation">
+		<select
+			:disabled="loadingDeployContract"
+			v-model.trim="selDeployFileStateLocation">
 			<template v-for="path of workspace.getFileTreeFilenames()" :key="path">
 				<option v-if="path && path.search(/.json$/) >= 0" :value="path">{{ path }}</option>
 			</template>
@@ -107,13 +111,24 @@ const deployContract = async (statePath: string, contractSrcPath: string, worksp
 		
 		if (tx) {
 			deployedContractTX.value = tx;
+			createToast('Contract deployed!',
+			{
+				type: 'success',
+				showIcon: true,
+				position: 'bottom-right',
+			});
 		} else {
 			throw Error('Error creating tx', tx);
 		}
 		
 		
 	} catch (err) {
-		createToast(`${err}`,
+		let error = `${err}`;
+		if (typeof(err) === 'object' &&
+				Object.prototype.hasOwnProperty.call(err, 'message')) {
+			error = err.message;
+		}
+		createToast(error,
     {
       type: 'danger',
       showIcon: true,
