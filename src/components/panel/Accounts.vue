@@ -17,6 +17,11 @@
 				</button>
 			</li>
 			<li>
+				<button @click="arConnect(chkStayLoggedIn)">
+					<img src="@/assets/img/koi.png"><span>Finnie Wallet</span>
+				</button>
+			</li>
+			<li>
 				<button @click="uploadKeyTrigger()">
 					<Icon class="icon-menu-btn" icon="codicon-folder-opened" />
 						<span>Upload your keyfile</span>
@@ -180,7 +185,7 @@ watchEffect(() => {
 }
 
 .accounts-menu li button img {
-  width: 24px;
+  width: 26px;
 	float: left;
 }
 
@@ -228,7 +233,7 @@ watchEffect(() => {
 .accounts-container .logo {
  -webkit-filter: Invert(var(--app-invert-img));
   filter: Invert(var(--app-invert-img));
-  width: 20px;
+  width: 22px;
   margin-right: 2px;
   margin-top: 2px;
   margin-left: 2px;

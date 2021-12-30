@@ -69,6 +69,13 @@
 				<input 
 					:disabled="loadingSearch" 
 					type="radio" 
+					name="addressFilter" value="nfts" v-model.trim="rdFilter">
+				Only NFT Atomic Assets
+			</label>
+			<label>
+				<input 
+					:disabled="loadingSearch" 
+					type="radio" 
 					name="addressFilter" value="manifest" v-model.trim="rdFilter">
 				Only Manifest Files
 			</label>
@@ -138,6 +145,7 @@
 		</div>
 	</template>
 	<template v-if="resultsByAddress.length">
+		<p class="no-results">{{ resultsByAddress.length }} results found.</p>
 		<div v-for="r of resultsByAddress" :key="r._id">
 			<table class="table" >
 				<thead>
@@ -258,6 +266,25 @@ const searchByAddress = async (address: string, limit: number) => {
         name: 'App-Name',
         values: ['SmartWeaveContract'],
       });
+		} else if (rdFilter.value === 'nfts') {
+			tags.push({
+        name: 'App-Name',
+        values: ['SmartWeaveContract'],
+      });
+      tags.push({
+        name: 'Content-Type',
+        values: [ 
+					// Images
+					'image/png', 'image/apng', 'image/avif',
+					'image/gif', 'image/jpeg', 'image/svg+xml',
+					'image/webp', 'image/jpg',
+					// Audio and video
+					'audio/wave', 'audio/wav', 'audio/x-wav',
+					'audio/x-pn-wav', 'audio/webm',
+					'video/webm', 'audio/ogg',
+					'video/ogg', 'application/ogg',
+					'video/mp4' ]
+      });
 		} else if (rdFilter.value === 'manifest') {
 			tags.push({
         name: 'Type',
@@ -267,7 +294,8 @@ const searchByAddress = async (address: string, limit: number) => {
         name: 'Content-Type',
         values: ['application/x.arweave-manifest+json'],
       });
-		} else if (rdFilter.value === 'textFiles') {
+		}
+		else if (rdFilter.value === 'textFiles') {
 			tags.push({
         name: 'Content-Type',
         values: [
@@ -283,7 +311,7 @@ const searchByAddress = async (address: string, limit: number) => {
 					// Images
 					'image/png', 'image/apng', 'image/avif',
 					'image/gif', 'image/jpeg', 'image/svg+xml',
-					'image/webp',
+					'image/webp', 'image/jpg',
 					// Audio and video
 					'audio/wave', 'audio/wav', 'audio/x-wav',
 					'audio/x-pn-wav', 'audio/webm',
