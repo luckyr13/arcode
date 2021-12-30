@@ -118,6 +118,9 @@ export class Login {
   }
 
   async arConnect(stayLoggedIn: boolean): Promise<string> {
+		if (!window.arweaveWallet) {
+			throw Error('ArConnect not found!');
+		}
 		const address = await this._arweave.arweave.wallets.getAddress();
 		this.setAccount(address, null, stayLoggedIn);
 		this.method = 'arconnect';
@@ -130,7 +133,17 @@ export class Login {
 		this.setAccount(address, null, stayLoggedIn);
 		this.method = 'webwallet';
 		return address;
-  } 
+  }
+
+  async finnie(stayLoggedIn: boolean): Promise<string> {
+		if (!window.arweaveWallet) {
+			throw Error('Finnie Wallet not found!');
+		}
+		const address = await this._arweave.arweave.wallets.getAddress();
+		this.setAccount(address, null, stayLoggedIn);
+		this.method = 'finnie';
+		return address;
+  }
 
 
 }

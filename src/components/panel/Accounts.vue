@@ -17,7 +17,7 @@
 				</button>
 			</li>
 			<li>
-				<button @click="arConnect(chkStayLoggedIn)">
+				<button @click="finnie(chkStayLoggedIn)">
 					<img src="@/assets/img/koi.png"><span>Finnie Wallet</span>
 				</button>
 			</li>
@@ -92,6 +92,20 @@ const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 const arConnect = async (stayLoggedIn: boolean) => {
 	try {
 		const address = await login.arConnect(stayLoggedIn);
+		mainAddress.value = address;
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+	}
+};
+
+const finnie = async (stayLoggedIn: boolean) => {
+	try {
+		const address = await login.finnie(stayLoggedIn);
 		mainAddress.value = address;
 	} catch (err) {
 		createToast(`${err}`,

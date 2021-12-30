@@ -4,7 +4,7 @@
 </div>
 <div class="deploy-container" v-if="mainAddress && !deployedContractTX">
 	<div class="form-input">
-		<label>Contract</label>
+		<label>Contract Source</label>
 		<select v-model.trim="selDeployFileContractLocation">
 			<template v-for="path of workspace.getFileTreeFilenames()" :key="path">
 				<option v-if="path && path.search(/.js$/) >= 0" :value="path">{{ path }}</option>
@@ -12,7 +12,7 @@
 		</select>
 	</div>
 	<div class="form-input">
-		<label>Contract State</label>
+		<label>Contract Initial State</label>
 		<select v-model.trim="selDeployFileStateLocation">
 			<template v-for="path of workspace.getFileTreeFilenames()" :key="path">
 				<option v-if="path && path.search(/.json$/) >= 0" :value="path">{{ path }}</option>
