@@ -28,8 +28,16 @@
 	</template>
 	<template v-else-if="selSearchMethod == 'address'">
 		<div class="form-input">
-			<label>Arweave Address</label>
-			<input type="text" v-model.trim="txtAddress" @keyup.enter="searchByAddress(txtAddress)">
+			<label>From Address</label>
+			<input type="text" v-model.trim="txtAddress" @keyup.enter="searchByAddress(txtAddress, txtResLimit)">
+		</div>
+		<div class="form-input">
+			<label>Results limit</label>
+			<input 
+				type="number" 
+				max="100"
+				min="1"
+				v-model.trim="txtResLimit" @keyup.enter="searchByAddress(txtAddress, txtResLimit)">
 		</div>
 		<div class="form-radio">
 			<label>
@@ -59,7 +67,7 @@
 				<button
 					:class="{primary: (txtAddress) && !loadingSearch}" 
 					:disabled="(!txtAddress || !selSearchMethod) || loadingSearch"
-					@click="searchByAddress(txtAddress)">
+					@click="searchByAddress(txtAddress, txtResLimit)">
 					<Icon class="icon-btn" icon="codicon-search" /><span>Search</span>
 				</button>
 			</li>
@@ -93,6 +101,10 @@
 			View more: 
 			<a :href="`https://viewblock.io/arweave/tx/${txtTxId}`" target="_blank">
 				{{ `https://viewblock.io/arweave/tx/${txtTxId}` }}
+			</a>
+			<br />
+			<a :href="`https://arweave.net/${txtTxId}`" target="_blank">
+				{{ `https://arweave.net/${txtTxId}` }}
 			</a> 
 		</div>
 	</template>
@@ -124,6 +136,10 @@
 				View more: 
 				<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
 					{{ `https://viewblock.io/arweave/tx/${r._id}` }}
+				</a>
+				<br />
+				<a :href="`https://arweave.net/${r._id}`" target="_blank">
+					{{ `https://arweave.net/${r._id}` }}
 				</a> 
 			</div>
 			<hr>
@@ -131,8 +147,13 @@
 	</template>
 	<p 
 		class="no-results"
-		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && (!resultsByAddress || resultsByAddress.length <= 0)">
+		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && (!resultsByAddress || resultsByAddress.length <= 0) && !loadingSearch">
 		No results.
+	</p>
+	<p 
+		class="no-results text-center"
+		v-if="loadingSearch">
+		Loading ...
 	</p>
 
 </div>
@@ -146,6 +167,7 @@ import { createToast } from 'mosha-vue-toastify';
 
 const txtTxId = ref('');
 const txtAddress = ref('');
+const txtResLimit = ref(10);
 const selSearchMethod = ref('');
 const loadingSearch = ref(false);
 const resultsTX = ref({});
@@ -180,15 +202,20 @@ const searchByTX = async (tx: string) => {
 };
 
 
-const searchByAddress = async (address: string, limit=100) => {
-	if (!address) {
-		return;
-	}
+const searchByAddress = async (address: string, limit: number) => {
+	limit = parseInt(limit);
 	resultsByAddress.value = [];
 	resultsTX.value = {};
 	loadingSearch.value = true;
 	try {
 		const tags = [];
+
+		if (!address) {
+			// throw Error('');
+			return;
+		} else if (limit <= 0 || limit > 100) {
+			throw Error('Limit must be between 1 - 100');
+		}
 
 		if (rdFilter.value === 'contracts') {
 			tags.push({
