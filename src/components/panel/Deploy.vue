@@ -158,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
@@ -174,8 +174,8 @@ import {
  
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
-const mainAddress = ref('');
 const login = new Login(settings.stayLoggedIn);
+const mainAddress = ref(login.mainAddress);
 const arweave = new ArweaveHandler();
 
 const selDeployFileContractLocation = ref('');
@@ -381,9 +381,6 @@ const addTag = (key: string, value: string, tags: Tags) => {
 	tags.push({ key, value });
 };
 
-onMounted(() => {
-	mainAddress.value = login.mainAddress;
-});
 
 </script>
 

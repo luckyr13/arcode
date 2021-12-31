@@ -40,7 +40,9 @@
 				:tokenState="tokenState" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
 			<Accounts v-if="options['secondary']['accounts'].active" />
-			<Help v-if="options['secondary']['help'].active" />
+			<Help
+				v-if="options['secondary']['help'].active" 
+				:tokenState="tokenState" />
 		</div>
 		<div class="side-resize" v-if="showPanel" @mousedown="resize($event)">
 		</div>

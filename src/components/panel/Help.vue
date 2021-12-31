@@ -27,12 +27,55 @@
 			<a tabindex="0" href="https://arwiki.wiki" target="_blank">ArWiki</a>
 		</li>
 	</ul>
+	<h4>dApp Usage cost:</h4>
+	<ul class="links-menu">
+		<li>
+			- Contract deployment fee: {{ appFeeInAr }} AR
+		</li>
+		<li>
+			- Contract write interaction fee: {{ appFeeInAr }} AR
+		</li>
+		<li>
+			- You can use this dApp for free as long as you have a minimum balance of {{ vipMinimumBalance }} $CODE tokens.
+		</li>
+	</ul>
+	<p><strong>Wallet:</strong> {{mainAddress}}</p>
+	<p><strong>Your balance:</strong> {{balance}} $CODE</p>
 </div>
 </template>
 
 <script setup lang="ts">
-// import { Icon } from '@iconify/vue';
+import { computed, ref } from 'vue';
+import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { Login } from '@/core/Login';
+import { UserSettings } from '@/core/UserSettings';
 
+const arweave = new ArweaveHandler();
+const userSettings = new UserSettings();
+const settings = userSettings.settings;
+const login = new Login(settings.stayLoggedIn);
+const mainAddress = ref(login.mainAddress);
+
+const props = defineProps({
+	tokenState: Object
+});
+const contractSettings = computed(() => {
+	return new Map(props.tokenState.settings);
+});
+const appFeeInWinston = computed(() => {
+	return contractSettings.value.get('appFeeInWinston');
+});
+const appFeeInAr = computed(() => {
+	return arweave.arweave.ar.winstonToAr(appFeeInWinston.value);
+});
+const vipMinimumBalance = computed(() => {
+	return parseInt(contractSettings.value.get('vipMinimumBalance'));
+});
+const balance = computed(() => {
+	const res = Object.prototype.hasOwnProperty.call(props.tokenState.balances, mainAddress.value) ? 
+		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
+	return res;
+});
 </script>
 
 <style scoped lang="scss">
@@ -49,7 +92,7 @@
 .links-menu {
 	padding: 0px;
 	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-bottom: 40px;
 }
 .links-menu li {
 	padding: 0px;
