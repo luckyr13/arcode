@@ -21,11 +21,11 @@ ArCode Studio is an online IDE for smartweave contracts.
 ## Links
 Official page: https://arcode.studio
 
-Demo: https://luckyr13.github.io/arcode
+GitHub pages backup: https://luckyr13.github.io/arcode
 
-Demo (permaweb link - Last update: 31DEC2021): https://arweave.net/8sc3ORdtYdoSZHbKMfXtD0jIFpVnSlblvNOI1lA5aSo
+Permaweb link - (Last update: 31DEC2021): https://arweave.net/8sc3ORdtYdoSZHbKMfXtD0jIFpVnSlblvNOI1lA5aSo
 
-Demo: https://arcode-g66weo.argoapp.io/
+ArGo domain demo: https://arcode-g66weo.argoapp.io/
 
 ## Project setup
 ```
