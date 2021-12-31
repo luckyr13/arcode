@@ -364,7 +364,10 @@ export class FileTree
 			// If the element is a Folder, search recursively
 			if (c.type === 'FOLDER' && nextRouteElem && c.name === nextRouteElem) {
 				const c2: FileTreeFolder = <FileTreeFolder>c;
-				return this._findFileIdByNameHelper(c2, path.slice(1), filename);
+				const res = this._findFileIdByNameHelper(c2, path.slice(1), filename);
+				if (res >= 0) {
+					return res;
+				}
 			}
 
 		}
@@ -372,7 +375,10 @@ export class FileTree
 	}
 
 	public findFileIdByName(filepath: string, filename: string): number {
-		const folders = [''].concat(this._breakPath(filepath));
+		let folders = this._breakPath(filepath);
+		if (folders.length !== 1 && folders[0] !== '') {
+			folders = [''].concat(folders);
+		}
 		// Search in Tree 
 		return this._findFileIdByNameHelper(this._tree, folders, filename);
 	}

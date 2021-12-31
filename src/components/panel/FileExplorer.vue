@@ -446,6 +446,9 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 		} else if (datatype === 'application/json') {
 			filename = `${tx}.json`;
 			data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+			const replacer = undefined;
+			const space = 4;
+			data = JSON.stringify(JSON.parse(data), replacer, space);
 			createToast(`JSON file found!`,
 				{
 					type: 'success',

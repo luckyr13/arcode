@@ -2,7 +2,7 @@ import Arweave from 'arweave';
 import ArDB from 'ardb';
 import { 
   SmartWeave, SmartWeaveWebFactory, 
-  LoggerFactory, ContractData
+  LoggerFactory, ContractData, FromSrcTxContractData
  } from 'redstone-smartweave';
 
 
@@ -38,6 +38,11 @@ export class ArweaveHandler {
 
   public async createContract(contract: ContractData): Promise<string> {
     return await this._smartweave.createContract.deploy(contract);
+  }
+
+  public async createContractFromTX(contract: FromSrcTxContractData): Promise<string> {
+    console.log('c', contract)
+    return await this._smartweave.createContract.deployFromSourceTx(contract);
   }
 
 }
