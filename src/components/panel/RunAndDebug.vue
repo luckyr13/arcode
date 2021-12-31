@@ -136,13 +136,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed} from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 
-  Input, View, Tags
+  Input, View, Tags, ArTransfer
  } from 'redstone-smartweave';
 import { createToast } from 'mosha-vue-toastify';
 
@@ -159,8 +159,45 @@ const loadingTX = ref(false);
 const inputList = reactive<Input[]>([{ key: 'function', value: '' }]);
 const tagsList = reactive<Tags>([]);
 const props = defineProps({
-	workspace: Object
+	workspace: Object,
+	tokenState: Object
 });
+
+const balances = computed(() => {
+	return props.tokenState.balances;
+});
+const contractSettings = computed(() => {
+	return new Map(props.tokenState.settings);
+});
+const appFeeInWinston = computed(() => {
+	return contractSettings.value.get('appFeeInWinston');
+});
+const vipMinimumBalance = computed(() => {
+	return parseInt(contractSettings.value.get('vipMinimumBalance'));
+});
+
+const getTransferData = (): ArTransfer|undefined => {
+	const balance = Object.prototype.hasOwnProperty.call(balances.value, mainAddress.value) ? 
+		parseInt(balances.value[mainAddress.value]) : 0;
+	if (balance >= vipMinimumBalance.value) {
+		return undefined;
+	}
+	
+	let attempts = 0;
+	const t: ArTransfer = { target: '', winstonQty: appFeeInWinston.value}
+	while ((!t.target || t.target == mainAddress.value) && attempts < 10) {
+		t.target = arweave.selectWeightedPstHolder(balances.value);
+		attempts++;
+	}
+
+	if (t.target) {
+		return t;
+	}
+
+	return undefined;
+};
+
+
 const runInteraction = async (
 	contractTX: string,
 	data: Input[],
@@ -196,9 +233,12 @@ const runInteraction = async (
 				// with this flag set to true, the write will wait for the transaction to be confirmed
 				waitForConfirmation: false,
 			});
+    const transfer = getTransferData();
 
 		// Dry-run
-		const handlerResult = await contract.callContract<Input>(fullPayload);
+		const handlerResult = await contract.callContract<Input>(
+			fullPayload, undefined, undefined, tags, transfer
+		);
     if (handlerResult.type !== 'ok') {
       throw Error(`Cannot create interaction: ${handlerResult.errorMessage}`);
     }
@@ -227,7 +267,7 @@ const runInteraction = async (
 		}
 		// Write interaction
 		else if (interaction === 'writeInteraction') {
-      contractInteractionTX.value = await contract.writeInteraction(fullPayload, tags);
+      contractInteractionTX.value = await contract.writeInteraction(fullPayload, tags, transfer);
 			createToast('TX created successfully!',
 			{
 				type: 'success',
@@ -235,7 +275,6 @@ const runInteraction = async (
 				position: 'bottom-right',
 			});
 		}
-
 		
 	} catch (err) {
 		let error = `${err}`;

@@ -148,7 +148,7 @@
 </div>
 <div class="deploy-container" v-else-if="!mainAddress">
 	<Icon class="icon-deploy-login" icon="codicon-lock" />
-	<p class="text-center">Please login first!</p>
+	<p class="text-center no-results">Please login first!</p>
 </div>
 <div class="deploy-container" v-else-if="deployedContractTX">
 	<Icon class="icon-deploy-login success" icon="codicon-check" />
@@ -158,13 +158,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive} from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 
-  ContractData, ArWallet, FromSrcTxContractData
+  ContractData, ArWallet, FromSrcTxContractData, ArTransfer
  } from 'redstone-smartweave';
 import { createToast } from 'mosha-vue-toastify';
 import { Workspace } from '@/components/composed/Workspace'
@@ -186,10 +186,47 @@ const deployedContractTX = ref('');
 const loadingDeployContract = ref(false);
 const selDeployMethod = ref('contract-src-file');
 const props = defineProps({
-	workspace: Object
+	workspace: Object,
+	tokenState: Object
 });
 const tagsList1 = reactive<Tags>([]);
 const tagsList2 = reactive<Tags>([]);
+
+const balances = computed(() => {
+	return props.tokenState.balances;
+});
+const contractSettings = computed(() => {
+	return new Map(props.tokenState.settings);
+});
+const appFeeInWinston = computed(() => {
+	return contractSettings.value.get('appFeeInWinston');
+});
+const vipMinimumBalance = computed(() => {
+	return parseInt(contractSettings.value.get('vipMinimumBalance'));
+});
+
+const getTransferData = (): ArTransfer|undefined => {
+	const balance = Object.prototype.hasOwnProperty.call(balances.value, mainAddress.value) ? 
+		parseInt(balances.value[mainAddress.value]) : 0;
+
+	if (balance >= vipMinimumBalance.value) {
+		return undefined;
+	}
+
+	
+	let attempts = 0;
+	const t: ArTransfer = { target: '', winstonQty: appFeeInWinston.value}
+	while ((!t.target || t.target == mainAddress.value) && attempts < 10) {
+		t.target = arweave.selectWeightedPstHolder(balances.value);
+		attempts++;
+	}
+
+	if (t.target) {
+		return t;
+	}
+
+	return undefined;
+};
 const deployContract = async (
 	statePath: string,
 	contractSrcPath: string,
@@ -225,15 +262,16 @@ const deployContract = async (
 		}
 		contractSrc = workspace.editors[iContract].view.state.doc.toString();
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
-			
+
+		const transfer = getTransferData();
 		const contract: ContractData = {
 			wallet: wallet,
 			initState: initStateSrc,
 			src: contractSrc,
-			tags: tags
+			tags: tags,
+			transfer: transfer
 		};
-		
-		
+
 		const tx = await arweave.createContract(contract);
 		
 		if (tx) {
@@ -292,12 +330,14 @@ const deployContractFromTX = async (
 			throw Error(`Invalid state or contract id ${iState} ${contractSrcTX}`);
 		}
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
-			
+		
+		const transfer = getTransferData();
 		const contract: FromSrcTxContractData = {
 			wallet: wallet,
 			initState: initStateSrc,
 			srcTxId: contractSrcTX,
-			tags: tags
+			tags: tags,
+			transfer: transfer
 		};
 		
 		const tx = await arweave.createContractFromTX(contract);

@@ -29,9 +29,15 @@
 			<FileExplorer 
 					v-if="options['primary']['file-explorer'].active" 
 					:workspace="workspace" />
-			<RunAndDebug v-if="options['primary']['compile'].active" :workspace="workspace" />
+			<RunAndDebug 
+				v-if="options['primary']['compile'].active" 
+				:workspace="workspace"
+				:tokenState="tokenState" />
 			<Search v-if="options['primary']['explore'].active" />
-			<Deploy v-if="options['primary']['deploy'].active" :workspace="workspace" />
+			<Deploy
+				v-if="options['primary']['deploy'].active"
+				:workspace="workspace" 
+				:tokenState="tokenState" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
 			<Accounts v-if="options['secondary']['accounts'].active" />
 			<Help v-if="options['secondary']['help'].active" />
@@ -55,7 +61,8 @@ import Icon from '@/components/atomic/Icon';
 import tippy from 'tippy.js';
 
 const props = defineProps({
-	workspace: Object
+	workspace: Object,
+	tokenState: Object
 });
 const showPanel = ref(false);
 const selectedOption = ref('');

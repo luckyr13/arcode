@@ -9,6 +9,9 @@
 			<a tabindex="0" href="https://github.com/luckyr13/arcode" target="_blank">ArCode GitHub</a>
 		</li>
 		<li>
+			<a tabindex="0" href="https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg" target="_blank">ArCode PSCommunity</a>
+		</li>
+		<li>
 			<a tabindex="0" href="https://arweave.org" target="_blank">Arweave.org</a>
 		</li>
 		<li>
