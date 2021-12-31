@@ -14,6 +14,7 @@
 		<input type="text" disabled v-model.trim="mainAddress">
 	</div>
 	<h5 class="title-data">Input Data</h5>
+	<p class="no-results" v-if="!inputList.length">No input data.</p>
 	<div class="data-input-list" v-for="(iL, index) of inputList" :key="index">
 		<div class="form-input col-key">
 			<label>Key</label>
@@ -30,6 +31,28 @@
 		<div class="form-input col-action">
 			<Icon 
 				@click="removeInputAction(index)"
+				class="icon-action"
+				icon="codicon-trash" />
+		</div>
+	</div>
+	<h5 class="title-data">Tags</h5>
+	<p class="no-results" v-if="!tagsList.length">No tags.</p>
+	<div class="data-input-list" v-for="(tL, indexTag) of tagsList" :key="indexTag">
+		<div class="form-input col-key">
+			<label>Name</label>
+			<input 
+				:disabled="loadingTX"
+				type="text" v-model.trim="tL.name">
+		</div>
+		<div class="form-input col-value">
+			<label>Value</label>
+			<input 
+				:disabled="loadingTX"
+				type="text" v-model.trim="tL.value">
+		</div>
+		<div class="form-input col-action">
+			<Icon 
+				@click="removeTag(indexTag)"
 				class="icon-action"
 				icon="codicon-trash" />
 		</div>
@@ -54,7 +77,7 @@
 				type="radio" 
 				:disabled="loadingTX" 
 				name="runFilter" value="writeInteraction" v-model.trim="rdFilter">
-			Write Interaction (Create TX)
+			Write Interaction (Create and Post TX)
 		</label>
 	</div>
 	
@@ -69,9 +92,17 @@
 		</li>
 		<li>
 			<button
+				:class="{primary: !loadingTX}" 
+				:disabled="loadingTX"
+				@click="addTag('', '')">
+				<Icon class="icon-btn" icon="codicon-add" /><span>Add Tag</span>
+			</button>
+		</li>
+		<li>
+			<button
 				:class="{primary: (txtContract) && !loadingTX}" 
 				:disabled="(!txtContract) || loadingTX"
-				@click="runInteraction(txtContract, inputList, rdFilter)">
+				@click="runInteraction(txtContract, inputList, rdFilter, tagsList)">
 				<Icon class="icon-btn" icon="codicon-debug-alt" /><span>Run Interaction</span>
 			</button>
 		</li>
@@ -105,20 +136,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, reactive } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 
-  Input, View
+  Input, View, Tags
  } from 'redstone-smartweave';
 import { createToast } from 'mosha-vue-toastify';
 
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
-const mainAddress = ref('');
 const login = new Login(settings.stayLoggedIn);
+const mainAddress = ref(login.mainAddress);
 const arweave = new ArweaveHandler();
 const rdFilter = ref('viewState');
 const txtContract = ref('');
@@ -126,13 +157,15 @@ const response = ref({});
 const contractInteractionTX = ref('');
 const loadingTX = ref(false);
 const inputList = reactive<Input[]>([{ key: 'function', value: '' }]);
+const tagsList = reactive<Tags>([]);
 const props = defineProps({
 	workspace: Object
 });
 const runInteraction = async (
 	contractTX: string,
 	data: Input[],
-	interaction: string) => {
+	interaction: string,
+	tags: Tags) => {
 	loadingTX.value = true;
 	try {
 		let func = '';
@@ -174,6 +207,12 @@ const runInteraction = async (
 		if (interaction === 'viewState') {			
 			const { state, result } = await contract.viewState<Input, View>(fullPayload);
 			response.value = result;
+			createToast('Success on viewState interaction!',
+			{
+				type: 'success',
+				showIcon: true,
+				position: 'bottom-right',
+			});
 		}
 		// Write interaction (Dry-run)
 		else if (interaction === 'writeInteractionDryRun') {
@@ -188,7 +227,7 @@ const runInteraction = async (
 		}
 		// Write interaction
 		else if (interaction === 'writeInteraction') {
-      contractInteractionTX.value = await contract.writeInteraction(fullPayload);
+      contractInteractionTX.value = await contract.writeInteraction(fullPayload, tags);
 			createToast('TX created successfully!',
 			{
 				type: 'success',
@@ -220,10 +259,14 @@ const addInputData = (key: string, value: string) => {
 const removeInputAction = (index: number) => {
 	inputList.splice(index, 1);
 };
-onMounted(() => {
-	mainAddress.value = login.mainAddress;
-});
 
+const addTag = (name: string, value: string) => {
+	tagsList.push({ name, value });
+};
+
+const removeTag = (index: number) => {
+	tagsList.splice(index, 1);
+};
 </script>
 
 <style scoped lang="scss">

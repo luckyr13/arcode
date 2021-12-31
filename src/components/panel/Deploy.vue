@@ -38,6 +38,7 @@
 			<input type="text" disabled v-model.trim="mainAddress">
 		</div>
 		<h5 class="title-tags">Tags</h5>
+		<p class="no-results" v-if="!tagsList1.length">No tags.</p>
 		<div class="data-input-list" v-for="(tL1, index1) of tagsList1" :key="index1">
 			<div class="form-input col-key">
 				<label>Name</label>
@@ -103,6 +104,7 @@
 			<input type="text" disabled v-model.trim="mainAddress">
 		</div>
 		<h5 class="title-tags">Tags</h5>
+		<p class="no-results" v-if="!tagsList2.length">No tags.</p>
 		<div class="data-input-list" v-for="(tL2, index2) of tagsList2" :key="index2">
 			<div class="form-input col-key">
 				<label>Name</label>
@@ -166,7 +168,10 @@ import {
  } from 'redstone-smartweave';
 import { createToast } from 'mosha-vue-toastify';
 import { Workspace } from '@/components/composed/Workspace'
-
+import { 
+  Tags
+ } from 'redstone-smartweave';
+ 
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
@@ -183,13 +188,13 @@ const selDeployMethod = ref('contract-src-file');
 const props = defineProps({
 	workspace: Object
 });
-const tagsList1 = reactive<Array<{name: string, value: string}>>([]);
-const tagsList2 = reactive<Array<{name: string, value: string}>>([]);
+const tagsList1 = reactive<Tags>([]);
+const tagsList2 = reactive<Tags>([]);
 const deployContract = async (
 	statePath: string,
 	contractSrcPath: string,
 	workspace: Workspace,
-	tags: Array<{name: string, value: string}>) => {
+	tags: Tags) => {
 	let contractSrc = ``;
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
@@ -268,7 +273,7 @@ const deployContractFromTX = async (
 	statePath: string, 
 	contractSrcTX: string,
 	workspace: Workspace,
-	tags: Array<{name: string, value: string}>) => {
+	tags: Tags) => {
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
@@ -328,11 +333,11 @@ const deployContractFromTX = async (
 	loadingDeployContract.value = false;
 };
 
-const removeTag = (index: number, tags: Array) => {
+const removeTag = (index: number, tags: Tags) => {
 	tags.splice(index, 1);
 };
 
-const addTag = (key: string, value: string, tags: Array) => {
+const addTag = (key: string, value: string, tags: Tags) => {
 	tags.push({ key, value });
 };
 
@@ -487,5 +492,8 @@ onMounted(() => {
 
 .data-input-list {
 	min-height: 76px;
+}
+.no-results {
+	font-size: 12px;
 }
 </style>
