@@ -12,6 +12,7 @@ module.exports = {
   	name: 'ArCode Studio',
     workboxOptions: {
     	exclude: ['index.html', /\.map$/],
+      include: ['./']
     	//navigateFallback: './'
 		}
 	}
