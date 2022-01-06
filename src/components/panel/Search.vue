@@ -162,10 +162,10 @@
 	<template v-if="resultsByAddress && resultsByAddress.length">
 		<p class="no-results">{{ resultsByAddress.length }} results found.</p>
 		<div v-for="r of resultsByAddress" :key="r._id">
-			<div class="link-container text-left">
-				<p>
-					TX: {{ r._id }}
-				</p>
+			<p>
+				TX: {{ r._id }}
+			</p>
+			<div v-if="selNetwork==='arweave-mainnet'" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
 					Open in RedStone Smartweave contracts explorer:
 					<a :href="`https://scanner.redstone.tools/#/app/contract/${r._id}`" target="_blank">
