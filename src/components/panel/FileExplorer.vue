@@ -38,7 +38,7 @@
 	<li>
 		<button
 			tabindex="0"
-			@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false;">
+			@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false; selNetwork = 'arweave-mainnet'">
 			<Icon class="menu-icon"
 				icon="codicon-mirror" />
 			<span>Load Contract from TX</span>
@@ -103,6 +103,13 @@
 						<template v-for="path of workspace.getFileTreePaths()" :key="path">
 							<option v-if="path" :value="path">{{ path }}</option>
 						</template>
+					</select>
+				</div>
+				<div class="form-input">
+					<label>Network</label>
+					<select 
+						v-model.trim="selNetwork">
+						<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
 					</select>
 				</div>
 				<div class="form-input">
@@ -315,7 +322,7 @@
 
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
-import { ref, watchEffect } from 'vue';
+import { ref, watchEffect, computed } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import Workspace from '@/components/composed/Workspace.vue';
 import Modal from '@/components/atomic/Modal.vue';
@@ -331,7 +338,12 @@ const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
 const showModalOpenFile = ref(false);
 const showModalEditFile = ref(false);
-const arweave = new ArweaveHandler();
+const globalArweaveHandler = new ArweaveHandler();
+const selNetwork = ref('arweave-mainnet');
+
+const networks = computed(() => {
+	return globalArweaveHandler.networks;
+});
 
 const props = defineProps({
 	workspace: Object
@@ -418,6 +430,7 @@ const editFileModal = (
 	showModalEditFile.value = false;
 };
 const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) => {
+	const arweave = new ArweaveHandler(selNetwork.value);
 	const res = await arweave.ardb.search('transaction').id(
 		tx
 	).findOne();
@@ -448,7 +461,9 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 			data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
 			const replacer = undefined;
 			const space = 4;
-			data = JSON.stringify(JSON.parse(data), replacer, space);
+			if (data) {
+				data = JSON.stringify(JSON.parse(data), replacer, space);
+			}
 			createToast(`JSON file found!`,
 				{
 					type: 'success',
@@ -488,6 +503,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 };
 
 const loadLatestContractStateFromTX = async (tx: string, path: string, workspace: Workspace) => {
+	const arweave = new ArweaveHandler(selNetwork.value);
 	const contract = await arweave.smartweave.contract(tx);
 	// Read state
 	const { state } = await contract.readState();
