@@ -109,7 +109,10 @@
 					<label>Network</label>
 					<select 
 						v-model.trim="selNetwork">
-						<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
+						<option 
+							v-for="(nItem, nIndex) in networks" 
+							v-bind:key="nIndex" 
+							:value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
 					</select>
 				</div>
 				<div class="form-input">
@@ -342,7 +345,7 @@ const globalArweaveHandler = new ArweaveHandler();
 const selNetwork = ref('arweave-mainnet');
 
 const networks = computed(() => {
-	return globalArweaveHandler.networks;
+	return { 'arweave-mainnet': globalArweaveHandler.networks['arweave-mainnet'] } ;
 });
 
 const props = defineProps({

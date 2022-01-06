@@ -82,9 +82,11 @@ import tippy from 'tippy.js';
 import { lootContract } from '@/core/contracts/LootContract';
 import { token } from '@/core/contracts/Token';
 import { tokenPST } from '@/core/contracts/TokenPST';
+import { ArweaveHandler } from '@/core/ArweaveHandler';
 
 const props = defineProps({
-  theme: String
+  theme: String,
+  tx: String
 });
 // const emit = defineEmits(['workspace-change']);
 
@@ -253,8 +255,6 @@ const loadTree = () => {
   const filenames = getFileTreeFilenames();
   const emptyEvent = new Event('emptyEvent');
 
-
-
   for (const editorId in filenames) {
     //alert(filenames[editorId] + editorId)
     const explodePath = filenames[editorId].split('/');
@@ -325,7 +325,7 @@ watchEffect(() => {
   flush: 'post'
 });
 
-onMounted(() => {
+onMounted(async () => {
   tippy('[data-tippy-workspace-content]', {
     arrow: true,
     placement: 'bottom',
@@ -340,10 +340,97 @@ onMounted(() => {
     loadTree();
   }
 
+  // Load contract from url
+  const tx = props.tx;
+  if (tx) {
+    try {
+      await loadEditorFromTX(tx, '/');
+    } catch (err) {
+      createToast(`${err}`,
+        {
+          type: 'danger',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+    }
+  }
+
 });
 
 
 
+const loadEditorFromTX = async (tx: string, path: string) => {
+  const arweave = new ArweaveHandler();
+  const res = await arweave.ardb.search('transaction').id(
+    tx
+  ).findOne();
+  if (res) {
+    const tags = {};
+    // Get contract if possible
+    res.tags.forEach(async tag => {
+      let key = tag.name;
+      let value = tag.value;
+      tags[key] = value;
+    });
+    const datatype = res.data.type;
+    const onlyInParent= false;
+    const inputEvent = new Event('empty-event');
+
+    let data = '';
+    let filename = `${tx}`;
+    if (datatype === 'application/javascript') {
+      filename = `${tx}.js`;
+      data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+      createToast(`JS file found!`,
+        {
+          type: 'success',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+    } else if (datatype === 'application/json') {
+      filename = `${tx}.json`;
+      data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+      const replacer = undefined;
+      const space = 4;
+      if (data) {
+        data = JSON.stringify(JSON.parse(data), replacer, space);
+      }
+      createToast(`JSON file found!`,
+        {
+          type: 'success',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+    } else {
+      data = Object.prototype.hasOwnProperty.call(tags, 'Init-State') ?
+      tags['Init-State'] : '';
+      if (data) {
+        filename = `${tx}.json`;
+        const replacer = undefined;
+        const space = 4;
+        data = JSON.stringify(JSON.parse(data), replacer, space);
+        createToast(`NFT Atomic Asset found! Loading state ...`,
+        {
+          type: 'success',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+      } else {
+        throw Error('Invalid contract source!');
+      }
+    }
+
+    addEditor(inputEvent, onlyInParent, data, filename, path);
+    // Search if it has a contract src available
+    const contractSrc = Object.prototype.hasOwnProperty.call(tags, 'Contract-Src') ?
+      tags['Contract-Src'] : '';
+
+    if (contractSrc) {
+      await loadEditorFromTX(tags['Contract-Src'], path);
+    }
+    
+  }
+};
 
 </script>
 
