@@ -8,6 +8,9 @@
       <h5 class="text-center arcode-instructions">
          Double Click to Start 
       </h5>
+      <h5 v-if="loadingFromTX" class="text-center">
+        Loading data ...
+      </h5>
     </div>
     <div class="workspace" @dblclick="addEditor($event, true)">
       <div class="tabs">
@@ -94,6 +97,7 @@ const divs = ref([]);
 const baseTheme = ref(props.theme);
 const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container');
 const editors = workspace.editors;
+const loadingFromTX = ref(false);
 const addEditor = (
   event: Event, 
   onlyInParent= false, 
@@ -343,6 +347,7 @@ onMounted(async () => {
   // Load contract from url
   const tx = props.tx;
   if (tx) {
+    loadingFromTX.value = true;
     try {
       await loadEditorFromTX(tx, '/');
     } catch (err) {
@@ -353,6 +358,7 @@ onMounted(async () => {
           position: 'bottom-right',
         });
     }
+    loadingFromTX.value = false;
   }
 
 });
