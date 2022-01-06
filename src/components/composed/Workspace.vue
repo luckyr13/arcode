@@ -426,7 +426,13 @@ const loadEditorFromTX = async (tx: string, path: string) => {
       }
     }
 
-    addEditor(inputEvent, onlyInParent, data, filename, path);
+    if (workspace.fileTree.findFileIdByName(path, filename) < 0) {
+      addEditor(inputEvent, onlyInParent, data, filename, path);
+    } else {
+      console.log(`${filename} already in workspace!`);
+    }
+    
+    
     // Search if it has a contract src available
     const contractSrc = Object.prototype.hasOwnProperty.call(tags, 'Contract-Src') ?
       tags['Contract-Src'] : '';
