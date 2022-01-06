@@ -120,8 +120,9 @@ const finnie = async (stayLoggedIn: boolean) => {
 
 const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await login.arweaveWebWallet(stayLoggedIn);
-		mainAddress.value = address;
+		throw Error('Coming soon!');
+		// const address = await login.arweaveWebWallet(stayLoggedIn);
+		// mainAddress.value = address;
 	} catch (err) {
 		createToast(`${err}`,
       {

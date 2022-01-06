@@ -10,7 +10,7 @@
 	<div class="form-input">
 		<label>Network</label>
 		<select 
-			:disabled="loadingSearch" 
+			:disabled="loadingTX" 
 			v-model.trim="selNetwork">
 			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
 		</select>
@@ -252,9 +252,6 @@ const runInteraction = async (
 	loadingTX.value = true;
 	try {
 		const arweave = new ArweaveHandler(selNetwork.value);
-		if (login.method === 'webwallet') {
-			throw Error('Coming soon ...')
-		}
 		let func = '';
 		const fullPayload = {};
 		response.value = {};

@@ -19,7 +19,7 @@
 	<div class="form-input">
 		<label>Network</label>
 		<select 
-			:disabled="loadingSearch" 
+			:disabled="loadingDeployContract" 
 			v-model.trim="selNetwork">
 			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
 		</select>
