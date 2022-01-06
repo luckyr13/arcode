@@ -4,12 +4,24 @@
 </div>
 <div class="deploy-container" v-if="mainAddress && !deployedContractTX">
 	<div class="form-input">
+		<label>Wallet</label>
+		<input type="text" disabled v-model.trim="mainAddress">
+	</div>
+	<div class="form-input">
 		<label>Method</label>
 		<select 
 			:disabled="loadingDeployContract" 
 			v-model.trim="selDeployMethod">
 			<option value="contract-src-file">Contract-Src from File</option>
 			<option value="contract-src-tx">Contract-Src from TX</option>
+		</select>
+	</div>
+	<div class="form-input">
+		<label>Network</label>
+		<select 
+			:disabled="loadingSearch" 
+			v-model.trim="selNetwork">
+			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
 		</select>
 	</div>
 	<template v-if="selDeployMethod === 'contract-src-file'">
@@ -32,10 +44,6 @@
 					<option v-if="path && path.search(/.json$/) >= 0" :value="path">{{ path }}</option>
 				</template>
 			</select>
-		</div>
-		<div class="form-input">
-			<label>Wallet</label>
-			<input type="text" disabled v-model.trim="mainAddress">
 		</div>
 		<h5 class="title-tags">Tags</h5>
 		<p class="no-results" v-if="!tagsList1.length">No tags.</p>
@@ -98,10 +106,6 @@
 					<option v-if="path && path.search(/.json$/) >= 0" :value="path">{{ path }}</option>
 				</template>
 			</select>
-		</div>
-		<div class="form-input">
-			<label>Wallet</label>
-			<input type="text" disabled v-model.trim="mainAddress">
 		</div>
 		<h5 class="title-tags">Tags</h5>
 		<p class="no-results" v-if="!tagsList2.length">No tags.</p>
@@ -176,8 +180,11 @@ const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const login = new Login(settings.stayLoggedIn);
 const mainAddress = ref(login.mainAddress);
-const arweave = new ArweaveHandler();
+const globalArweaveHandler = new ArweaveHandler();
 
+const networks = computed(() => {
+	return globalArweaveHandler.networks;
+});
 const selDeployFileContractLocation = ref('');
 const txtDeployFileContractLocationByTx = ref('');
 const selDeployFileStateLocation = ref('');
@@ -185,6 +192,7 @@ const selDeployFileStateLocation2 = ref('');
 const deployedContractTX = ref('');
 const loadingDeployContract = ref(false);
 const selDeployMethod = ref('contract-src-file');
+const selNetwork = ref('arweave-mainnet');
 const props = defineProps({
 	workspace: Object,
 	tokenState: Object
@@ -199,7 +207,7 @@ const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
 });
 const appFeeInAr = computed(() => {
-	return arweave.arweave.ar.winstonToAr(appFeeInWinston.value);
+	return globalArweaveHandler.arweave.ar.winstonToAr(appFeeInWinston.value);
 });
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
@@ -216,14 +224,14 @@ const balances = computed(() => {
 });
 
 const getTransferData = (): ArTransfer|undefined => {
-	if (balance.value >= vipMinimumBalance.value) {
+	if (balance.value >= vipMinimumBalance.value || selNetwork.value !== 'arweave-mainnet') {
 		return undefined;
 	}
 	
 	let attempts = 0;
 	const t: ArTransfer = { target: '', winstonQty: appFeeInWinston.value}
 	while ((!t.target || t.target == mainAddress.value) && attempts < 10) {
-		t.target = arweave.selectWeightedPstHolder(balances.value);
+		t.target = globalArweaveHandler.selectWeightedPstHolder(balances.value);
 		attempts++;
 	}
 
@@ -242,9 +250,7 @@ const deployContract = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
-		if (login.method === 'webwallet') {
-			throw Error('Coming soon ...')
-		}
+		const arweave = new ArweaveHandler(selNetwork.value);
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {
@@ -321,9 +327,7 @@ const deployContractFromTX = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
-		if (login.method === 'webwallet') {
-			throw Error('Coming soon ...')
-		}
+		const arweave = new ArweaveHandler(selNetwork.value);
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {

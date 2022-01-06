@@ -34,8 +34,7 @@ export class ArweaveHandler {
   public readonly gatewayUrl = `https://gateway.redstone.finance`;
   public readonly tokenContract = 'XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg';
 
-
-  constructor(useRedstoneGateway=true, network= 'arweave-mainnet', host='', port=0, protocol='') {
+  constructor(network= 'arweave-mainnet', host='', port=0, protocol='') {
     this._initSettings(network, host, port, protocol);
     this._arweave = Arweave.init({
       host: this.host,
@@ -45,7 +44,7 @@ export class ArweaveHandler {
     this._ardb = new ArDB(this._arweave);
     LoggerFactory.INST.logLevel('fatal');
     // Use gw?    
-    if (useRedstoneGateway) {
+    if (network === 'arweave-mainnet') {
       this._smartweave = SmartWeaveWebFactory.memCachedBased(this._arweave)
         .setInteractionsLoader(new RedstoneGatewayInteractionsLoader(this.gatewayUrl, {confirmed: true}))
         .build();

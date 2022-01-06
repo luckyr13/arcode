@@ -4,14 +4,22 @@
 </div>
 <div class="run-container" v-if="mainAddress">
 	<div class="form-input">
+		<label>Wallet</label>
+		<input type="text" disabled v-model.trim="mainAddress">
+	</div>
+	<div class="form-input">
+		<label>Network</label>
+		<select 
+			:disabled="loadingSearch" 
+			v-model.trim="selNetwork">
+			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
+		</select>
+	</div>
+	<div class="form-input">
 		<label>Contract Address</label>
 		<input 
 			:disabled="loadingTX"
 			type="text" v-model.trim="txtContract">
-	</div>
-	<div class="form-input">
-		<label>Wallet</label>
-		<input type="text" disabled v-model.trim="mainAddress">
 	</div>
 	<h5 class="title-data">Input Data</h5>
 	<p class="no-results" v-if="!inputList.length">No input data.</p>
@@ -173,8 +181,13 @@ const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const login = new Login(settings.stayLoggedIn);
 const mainAddress = ref(login.mainAddress);
-const arweave = new ArweaveHandler();
+const globalArweaveHandler = new ArweaveHandler();
+
+const networks = computed(() => {
+	return globalArweaveHandler.networks;
+});
 const rdFilter = ref('viewState');
+const selNetwork = ref('arweave-mainnet');
 const txtContract = ref('');
 const response = ref({});
 const contractInteractionTX = ref('');
@@ -191,7 +204,7 @@ const contractSettings = computed(() => {
 	return new Map(settings);
 });
 const appFeeInAr = computed(() => {
-	return arweave.arweave.ar.winstonToAr(appFeeInWinston.value);
+	return globalArweaveHandler.arweave.ar.winstonToAr(appFeeInWinston.value);
 });
 const balance = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
@@ -212,14 +225,14 @@ const vipMinimumBalance = computed(() => {
 });
 
 const getTransferData = (): ArTransfer|undefined => {
-	if (balance.value >= vipMinimumBalance.value) {
+	if (balance.value >= vipMinimumBalance.value || selNetwork.value !== 'arweave-mainnet') {
 		return undefined;
 	}
 	
 	let attempts = 0;
 	const t: ArTransfer = { target: '', winstonQty: appFeeInWinston.value}
 	while ((!t.target || t.target == mainAddress.value) && attempts < 10) {
-		t.target = arweave.selectWeightedPstHolder(balances.value);
+		t.target = globalArweaveHandler.selectWeightedPstHolder(balances.value);
 		attempts++;
 	}
 
@@ -238,6 +251,7 @@ const runInteraction = async (
 	tags: Tags) => {
 	loadingTX.value = true;
 	try {
+		const arweave = new ArweaveHandler(selNetwork.value);
 		if (login.method === 'webwallet') {
 			throw Error('Coming soon ...')
 		}

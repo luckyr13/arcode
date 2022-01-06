@@ -254,11 +254,7 @@ const searchByTX = async (tx: string) => {
 	resultsByAddress.value = [];
 	loadingSearch.value = true;
 	try {
-		let useRedstoneGateway = false;
-		if (selNetwork.value === 'arweave-mainnet') {
-			useRedstoneGateway = true;
-		}
-		const arweave = new ArweaveHandler(useRedstoneGateway, selNetwork.value);
+		const arweave = new ArweaveHandler(selNetwork.value);
 		resultsTX.value = await arweave.ardb.search('transaction').id(tx).findOne();
 		resultsTXIsContract.value = false;
 
@@ -288,11 +284,7 @@ const searchByAddress = async (address: string, limit: number) => {
 	loadingSearch.value = true;
 	try {
 		const tags = [];
-		let useRedstoneGateway = false;
-		if (selNetwork.value === 'arweave-mainnet') {
-			useRedstoneGateway = true;
-		}
-		const arweave = new ArweaveHandler(useRedstoneGateway, selNetwork.value);
+		const arweave = new ArweaveHandler(selNetwork.value);
 
 		if (!address) {
 			// throw Error('');
