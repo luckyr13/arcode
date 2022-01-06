@@ -115,6 +115,26 @@
 	</template>
 	<h5>Results:</h5>
 	<template v-if="resultsTX && Object.keys(resultsTX).length">
+		<div v-if="selNetwork==='arweave-mainnet'" class="link-container text-left">
+			<p v-if="resultsTXIsContract">
+				Open in RedStone Smartweave contracts explorer:
+				<a :href="`https://scanner.redstone.tools/#/app/contract/${txtTxId}`" target="_blank">
+					{{ `https://scanner.redstone.tools/#/app/contract/${txtTxId}` }}
+				</a>
+			</p>
+			<p>
+				Open in Viewblock: 
+				<a :href="`https://viewblock.io/arweave/tx/${txtTxId}`" target="_blank">
+					{{ `https://viewblock.io/arweave/tx/${txtTxId}` }}
+				</a>
+			</p>
+			<p>
+				Open in Arweave.net: 
+				<a :href="`https://arweave.net/${txtTxId}`" target="_blank">
+					{{ `https://arweave.net/${txtTxId}` }}
+				</a>
+			</p>
+		</div>
 		<table class="table">
 			<thead>
 				<tr>
@@ -137,24 +157,34 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="link-container text-left">
-			<p>
-				Viewblock link: 
-				<a :href="`https://viewblock.io/arweave/tx/${txtTxId}`" target="_blank">
-					{{ `https://viewblock.io/arweave/tx/${txtTxId}` }}
-				</a>
-			</p>
-			<p>
-				Arweave.net link: 
-				<a :href="`https://arweave.net/${txtTxId}`" target="_blank">
-					{{ `https://arweave.net/${txtTxId}` }}
-				</a>
-			</p>
-		</div>
+		
 	</template>
 	<template v-if="resultsByAddress && resultsByAddress.length">
 		<p class="no-results">{{ resultsByAddress.length }} results found.</p>
 		<div v-for="r of resultsByAddress" :key="r._id">
+			<div class="link-container text-left">
+				<p>
+					TX: {{ r._id }}
+				</p>
+				<p v-if="txIsContract(r._tags)">
+					Open in RedStone Smartweave contracts explorer:
+					<a :href="`https://scanner.redstone.tools/#/app/contract/${r._id}`" target="_blank">
+						{{ `https://scanner.redstone.tools/#/app/contract/${r._id}` }}
+					</a>
+				</p>
+				<p>
+					Viewblock link: 
+					<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
+						{{ `https://viewblock.io/arweave/tx/${r._id}` }}
+					</a>
+				</p>
+				<p>
+					Arweave.net link: 
+					<a :href="`https://arweave.net/${r._id}`" target="_blank">
+						{{ `https://arweave.net/${r._id}` }}
+					</a>
+				</p>
+			</div>
 			<table class="table" >
 				<thead>
 					<tr>
@@ -177,23 +207,6 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="link-container text-left">
-				<p>
-					Viewblock link: 
-					<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
-						{{ `https://viewblock.io/arweave/tx/${r._id}` }}
-					</a>
-				</p>
-				<p>
-					Arweave.net link: 
-					<a :href="`https://arweave.net/${r._id}`" target="_blank">
-						{{ `https://arweave.net/${r._id}` }}
-					</a>
-				</p>
-				<p v-if="rdFilter === 'contracts'">
-					--
-				</p>
-			</div>
 			<hr>
 		</div>
 	</template>
@@ -224,6 +237,7 @@ const selSearchMethod = ref('tx');
 const selNetwork = ref('arweave-mainnet');
 const loadingSearch = ref(false);
 const resultsTX = ref({});
+const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
 const rdFilter = ref('');
 const globalArweaveHandler = new ArweaveHandler();
@@ -246,6 +260,16 @@ const searchByTX = async (tx: string) => {
 		}
 		const arweave = new ArweaveHandler(useRedstoneGateway, selNetwork.value);
 		resultsTX.value = await arweave.ardb.search('transaction').id(tx).findOne();
+		resultsTXIsContract.value = false;
+
+		resultsTX.value._tags.forEach(tag => {
+			let key = tag.name ? tag.name : '';
+			let value = tag.value ? tag.value : '';
+			if (key == 'App-Name' && value == 'SmartWeaveContract') {
+				resultsTXIsContract.value = true;
+			}
+		});
+
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -354,6 +378,18 @@ const searchByAddress = async (address: string, limit: number) => {
 	}
 	loadingSearch.value = false;
 };
+
+const txIsContract = (tags) => {
+	let isContract = false;
+	tags.forEach(tag => {
+		let key = tag.name ? tag.name : '';
+		let value = tag.value ? tag.value : '';
+		if (key == 'App-Name' && value == 'SmartWeaveContract') {
+			isContract = true;
+		}
+	});
+	return isContract;
+}
 
 </script>
 
