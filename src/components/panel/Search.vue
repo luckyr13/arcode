@@ -12,6 +12,14 @@
 			<option value="address">Search by Address</option>
 		</select>
 	</div>
+	<div class="form-input">
+		<label>Network</label>
+		<select 
+			:disabled="loadingSearch" 
+			v-model.trim="selNetwork">
+			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
+		</select>
+	</div>
 	<template v-if="selSearchMethod == 'tx'">
 		<div class="form-input">
 			<label>TX ID</label>
@@ -144,7 +152,7 @@
 			</p>
 		</div>
 	</template>
-	<template v-if="resultsByAddress.length">
+	<template v-if="resultsByAddress && resultsByAddress.length">
 		<p class="no-results">{{ resultsByAddress.length }} results found.</p>
 		<div v-for="r of resultsByAddress" :key="r._id">
 			<table class="table" >
@@ -204,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted} from 'vue';
+import {ref, computed} from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
@@ -212,17 +220,16 @@ import { createToast } from 'mosha-vue-toastify';
 const txtTxId = ref('');
 const txtAddress = ref('');
 const txtResLimit = ref(10);
-const selSearchMethod = ref('');
+const selSearchMethod = ref('tx');
+const selNetwork = ref('arweave-mainnet');
 const loadingSearch = ref(false);
 const resultsTX = ref({});
 const resultsByAddress = ref([]);
-const arweave = new ArweaveHandler();
 const rdFilter = ref('');
+const globalArweaveHandler = new ArweaveHandler();
 
-onMounted(() => {
-	selSearchMethod.value = 'tx'
-	txtTxId.value = '';
-	txtAddress.value = '';
+const networks = computed(() => {
+	return globalArweaveHandler.networks;
 });
 
 const searchByTX = async (tx: string) => {
@@ -233,6 +240,11 @@ const searchByTX = async (tx: string) => {
 	resultsByAddress.value = [];
 	loadingSearch.value = true;
 	try {
+		let useRedstoneGateway = false;
+		if (selNetwork.value === 'arweave-mainnet') {
+			useRedstoneGateway = true;
+		}
+		const arweave = new ArweaveHandler(useRedstoneGateway, selNetwork.value);
 		resultsTX.value = await arweave.ardb.search('transaction').id(tx).findOne();
 	} catch (err) {
 		createToast(`${err}`,
@@ -245,7 +257,6 @@ const searchByTX = async (tx: string) => {
 	loadingSearch.value = false;
 };
 
-
 const searchByAddress = async (address: string, limit: number) => {
 	limit = parseInt(limit);
 	resultsByAddress.value = [];
@@ -253,6 +264,11 @@ const searchByAddress = async (address: string, limit: number) => {
 	loadingSearch.value = true;
 	try {
 		const tags = [];
+		let useRedstoneGateway = false;
+		if (selNetwork.value === 'arweave-mainnet') {
+			useRedstoneGateway = true;
+		}
+		const arweave = new ArweaveHandler(useRedstoneGateway, selNetwork.value);
 
 		if (!address) {
 			// throw Error('');

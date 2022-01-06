@@ -11,6 +11,11 @@ export class ArweaveHandler {
   private readonly _ardb: ArDB;
   private readonly _smartweave: SmartWeave;
   public readonly networks: Record<string, {host: string, port: number, protocol: string}> = {
+    'arlocal-localhost': {
+      host: 'localhost',
+      port: 1984,
+      protocol: 'http'
+    },
     'redstone-testnet': {
       host: 'ec2-13-49-228-21.eu-north-1.compute.amazonaws.com',
       port: 1984,
@@ -18,16 +23,6 @@ export class ArweaveHandler {
     },
     'arweave-mainnet': {
       host: 'arweave.net',
-      port: 443,
-      protocol: 'https'
-    },
-    'amplify-mainnet': {
-      host: 'gateway.amplify.host',
-      port: 443,
-      protocol: 'https'
-    },
-    'arweave-dev-mainnet': {
-      host: 'arweave.dev',
       port: 443,
       protocol: 'https'
     }
