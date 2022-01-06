@@ -25,9 +25,9 @@ Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkO
 
 GitHub pages backup: https://luckyr13.github.io/arcode
 
-Permaweb link - (Last update: 31DEC2021): https://arweave.net/8sc3ORdtYdoSZHbKMfXtD0jIFpVnSlblvNOI1lA5aSo
+Permaweb link - (Last update: 06JAN2022): https://arweave.net/ra91T0D-wVTrLWSWdpKX3I5OEGIIgGFmthKsSVO6SSs
 
-ArGo domain demo: https://arcode-g66weo.argoapp.io/
+ArGo domain demo: https://arcode-exs99r.argoapp.io
 
 ## Project setup
 ```
