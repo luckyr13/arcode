@@ -2,27 +2,105 @@ import Arweave from 'arweave';
 import ArDB from 'ardb';
 import { 
   SmartWeave, SmartWeaveWebFactory, 
-  LoggerFactory, ContractData, FromSrcTxContractData
+  LoggerFactory, ContractData, FromSrcTxContractData,
+  RedstoneGatewayInteractionsLoader
  } from 'redstone-smartweave';
-
 
 export class ArweaveHandler {
   private readonly _arweave: Arweave;
   private readonly _ardb: ArDB;
   private readonly _smartweave: SmartWeave;
-  public readonly baseURL = 'https://arweave.net/';
+  public readonly networks: Record<string, {host: string, port: number, protocol: string}> = {
+    'redstone-testnet': {
+      host: 'ec2-13-49-228-21.eu-north-1.compute.amazonaws.com',
+      port: 1984,
+      protocol: 'http'
+    },
+    'arweave-mainnet': {
+      host: 'arweave.net',
+      port: 443,
+      protocol: 'https'
+    },
+    'amplify-mainnet': {
+      host: 'gateway.amplify.host',
+      port: 443,
+      protocol: 'https'
+    },
+    'arweave-dev-mainnet': {
+      host: 'arweave.dev',
+      port: 443,
+      protocol: 'https'
+    }
+  };
+  private _host = '';
+  private _baseURL = '';
+  private _port = 0;
+  private _protocol = '';
+  public readonly gatewayUrl = `https://gateway.redstone.finance`;
   public readonly tokenContract = 'XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg';
 
-  constructor() {
+
+  constructor(useRedstoneGateway=true, network= 'arweave-mainnet', host='', port=0, protocol='') {
+    this._initSettings(network, host, port, protocol);
     this._arweave = Arweave.init({
-      host: "arweave.net",
-      port: 443,
-      protocol: "https",
+      host: this.host,
+      port: this.port,
+      protocol: this.protocol,
     });
     this._ardb = new ArDB(this._arweave);
-    LoggerFactory.INST.logLevel('info');
-    this._smartweave = SmartWeaveWebFactory.memCached(this._arweave);
-    
+    LoggerFactory.INST.logLevel('fatal');
+    // Use gw?    
+    if (useRedstoneGateway) {
+      this._smartweave = SmartWeaveWebFactory.memCachedBased(this._arweave)
+        .setInteractionsLoader(new RedstoneGatewayInteractionsLoader(this.gatewayUrl, {confirmed: true}))
+        .build();
+    } else {
+      this._smartweave = SmartWeaveWebFactory.memCached(this._arweave);
+    }
+  }
+
+  private _initSettings(network= 'arweave-mainnet', host='', port=0, protocol='') {
+    if (network) {
+      this.port = this.networks[network].port;
+      this.protocol = this.networks[network].protocol;
+      this.host = this.networks[network].host;
+    } else {
+      // Update host
+      if (!host || !port || !protocol) {
+        throw Error('Please provide host, port and protocol or a network!');
+      }
+      this.port = port;
+      this.protocol = protocol;
+      this.host = host;
+    }
+    this._baseURL = `${this.protocol}://${this._host}/`;
+  }
+
+  public get host(): string {
+    return this._host;
+  }
+
+  public set host(host: string) {
+    this._host = host;
+  }
+
+  public get port(): number {
+    return this._port;
+  }
+
+  public set port(port: number) {
+    this._port = port;
+  }
+  public get protocol(): string {
+    return this._protocol;
+  }
+
+  public set protocol(protocol: string) {
+    this._protocol = protocol;
+  }
+
+  public get baseURL(): string {
+    return this._baseURL;
   }
 
   public get arweave(): Arweave {

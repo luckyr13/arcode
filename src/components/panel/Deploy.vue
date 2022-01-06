@@ -191,28 +191,34 @@ const props = defineProps({
 });
 const tagsList1 = reactive<Tags>([]);
 const tagsList2 = reactive<Tags>([]);
-
-const balances = computed(() => {
-	return props.tokenState.balances;
-});
 const contractSettings = computed(() => {
-	return new Map(props.tokenState.settings);
+	const settings = props.tokenState.settings ? props.tokenState.settings : [];
+	return new Map(settings);
 });
 const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
 });
+const appFeeInAr = computed(() => {
+	return arweave.arweave.ar.winstonToAr(appFeeInWinston.value);
+});
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
+const balance = computed(() => {
+	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
+		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
+	return res;
+});
+const balances = computed(() => {
+	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	return balances;
+});
 
 const getTransferData = (): ArTransfer|undefined => {
-	const balance = Object.prototype.hasOwnProperty.call(balances.value, mainAddress.value) ? 
-		parseInt(balances.value[mainAddress.value]) : 0;
-
-	if (balance >= vipMinimumBalance.value) {
+	if (balance.value >= vipMinimumBalance.value) {
 		return undefined;
 	}
-
 	
 	let attempts = 0;
 	const t: ArTransfer = { target: '', winstonQty: appFeeInWinston.value}

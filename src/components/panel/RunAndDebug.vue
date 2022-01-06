@@ -113,11 +113,34 @@
 		v-if="!response || (response && Object.keys(response).length == 0) && !loadingTX">
 		No results.
 	</p>
-	<p 
+	<div 
 		class="no-results"
 		v-if="response && Object.keys(response).length > 0">
-		{{ response }}
-	</p>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						Key
+					</th>
+					<th>
+						Value
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="k of Object.keys(response)" :key="k">
+					<td style="width: 20%">
+						{{ k }}
+					</td>
+					<td>
+						{{ response[k] }}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h5>RAW JSON response:</h5>
+		<pre>{{ response }}</pre>
+	</div>
 	<p 
 		class="no-results text-center"
 		v-if="loadingTX">
@@ -163,11 +186,23 @@ const props = defineProps({
 	tokenState: Object
 });
 
-const balances = computed(() => {
-	return props.tokenState.balances;
-});
 const contractSettings = computed(() => {
-	return new Map(props.tokenState.settings);
+	const settings = props.tokenState.settings ? props.tokenState.settings : [];
+	return new Map(settings);
+});
+const appFeeInAr = computed(() => {
+	return arweave.arweave.ar.winstonToAr(appFeeInWinston.value);
+});
+const balance = computed(() => {
+	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
+		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
+	return res;
+});
+
+const balances = computed(() => {
+	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	return balances;
 });
 const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
@@ -177,9 +212,7 @@ const vipMinimumBalance = computed(() => {
 });
 
 const getTransferData = (): ArTransfer|undefined => {
-	const balance = Object.prototype.hasOwnProperty.call(balances.value, mainAddress.value) ? 
-		parseInt(balances.value[mainAddress.value]) : 0;
-	if (balance >= vipMinimumBalance.value) {
+	if (balance.value >= vipMinimumBalance.value) {
 		return undefined;
 	}
 	
@@ -205,6 +238,9 @@ const runInteraction = async (
 	tags: Tags) => {
 	loadingTX.value = true;
 	try {
+		if (login.method === 'webwallet') {
+			throw Error('Coming soon ...')
+		}
 		let func = '';
 		const fullPayload = {};
 		response.value = {};
@@ -288,6 +324,7 @@ const runInteraction = async (
       showIcon: true,
       position: 'bottom-right',
     });
+		console.error(err);
 	}
 	loadingTX.value = false;
 };
@@ -456,6 +493,18 @@ const removeTag = (index: number) => {
 
 .data-input-list {
 	min-height: 76px;
+}
+
+.table {
+	width: 100%;
+	font-size: 12px;
+  word-break: break-word;
+  margin-bottom: 12px;
+}
+
+.table th {
+	background-color: var(--app-toolbar-panel-title-bgcolor);
+	color: var(--app-toolbar-panel-title-color);
 }
 
 </style>

@@ -27,20 +27,25 @@
 			<a tabindex="0" href="https://arwiki.wiki" target="_blank">ArWiki</a>
 		</li>
 	</ul>
-	<h4>dApp Usage cost:</h4>
-	<ul class="links-menu">
-		<li>
-			- Contract deployment fee: {{ appFeeInAr }} AR
-		</li>
-		<li>
-			- Contract write interaction fee: {{ appFeeInAr }} AR
-		</li>
-		<li>
-			- You can use this dApp for free as long as you have a minimum balance of {{ vipMinimumBalance }} $CODE tokens.
-		</li>
-	</ul>
-	<p><strong>Wallet:</strong> {{mainAddress}}</p>
-	<p><strong>Your balance:</strong> {{balance}} $CODE</p>
+	<template v-if="Object.keys(tokenState).length > 0">
+		<h4>dApp Usage cost:</h4>
+		<ul class="links-menu">
+			<li>
+				- Contract deployment fee: {{ appFeeInAr }} AR
+			</li>
+			<li>
+				- Contract write interaction fee: {{ appFeeInAr }} AR
+			</li>
+			<li>
+				- You can use this dApp for free as long as you have a minimum balance of {{ vipMinimumBalance }} $CODE tokens.
+			</li>
+		</ul>
+		<p><strong>Wallet:</strong> {{mainAddress}}</p>
+		<p><strong>Your balance:</strong> {{balance}} $CODE</p>
+	</template>
+	<template  v-else>
+		Error loading Community contract!
+	</template>
 </div>
 </template>
 
@@ -60,7 +65,8 @@ const props = defineProps({
 	tokenState: Object
 });
 const contractSettings = computed(() => {
-	return new Map(props.tokenState.settings);
+	const settings = props.tokenState.settings ? props.tokenState.settings : [];
+	return new Map(settings);
 });
 const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
@@ -72,7 +78,8 @@ const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
 const balance = computed(() => {
-	const res = Object.prototype.hasOwnProperty.call(props.tokenState.balances, mainAddress.value) ? 
+	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
 		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
 	return res;
 });

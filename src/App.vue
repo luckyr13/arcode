@@ -65,6 +65,7 @@ onMounted(async () => {
       showIcon: true,
       position: 'bottom-right',
     });
+    loadingAppContract.value = false;
   }
 });
 </script>
