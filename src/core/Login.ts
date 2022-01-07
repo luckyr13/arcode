@@ -1,6 +1,12 @@
 import { ArweaveHandler } from './ArweaveHandler';
 import { ArWallet } from 'redstone-smartweave';
 import { ArweaveWebWallet } from 'arweave-wallet-connector';
+ import{
+  SignatureOptions,
+} from "arweave/web/lib/crypto/crypto-interface";
+import Transaction from "arweave/web//lib/transaction";
+import { JWKInterface } from "arweave/web//lib/wallet";
+import Arweave from 'arweave';
 
 export class Login {
 	private _arweave: ArweaveHandler;
@@ -14,8 +20,8 @@ export class Login {
   private _arweaveWebWallet: ArweaveWebWallet;
   private _method = '';
 
-	constructor(stayLoggedIn= false) {
-		this._arweave = new ArweaveHandler();
+	constructor(stayLoggedIn= false, network=undefined) {
+		this._arweave = new ArweaveHandler(network);
 		// Check storage 
 		this._storage = window.sessionStorage;
 		if (stayLoggedIn) {
@@ -23,20 +29,28 @@ export class Login {
 		}
 		const mainAddress = this._storage.getItem(this._cachedProperties[0]);
 		const key = JSON.parse(this._storage.getItem(this._cachedProperties[1])!);
-		const method = this._storage.getItem(this._cachedProperties[2]);
-		
-		if (mainAddress) {
-			this._mainAddress = mainAddress;
-			this._key = key;
-			this._method = method!;
-		}
+		const method = this._storage.getItem(this._cachedProperties[2])!;
 
 		this._arweaveWebWallet = new ArweaveWebWallet({
 			name: 'ArweaveApp',
 			logo: 'https://jfbeats.github.io/ArweaveWalletConnector/placeholder.svg'
 		})
+		
+		if (mainAddress) {
+			this._mainAddress = mainAddress;
+			this._key = key;
+			this._method = method;
+			if (this._method === 'webwallet') {
+				this.hijackArweave(this._arweave.arweave);
+				this._arweaveWebWallet.setUrl('arweave.app')
+			}
+		}
 
+		
+	}
 
+	public get arweave(): ArweaveHandler {
+		return this._arweave;
 	}
 
 	public get key(): ArWallet|null {
@@ -88,6 +102,7 @@ export class Login {
     this.removeAccountFromCache();
     this.mainAddress = '';
 		this.key = null;
+		this.method = '';
 	}
 
 	uploadKeyFile(inputElement: HTMLInputElement, stayLoggedIn: boolean): Promise<string> {
@@ -145,5 +160,21 @@ export class Login {
 		return address;
   }
 
+  public hijackArweave(arweave: Arweave) {
+    // Replace sign
+    arweave.transactions.sign = async (
+      transaction: Transaction,
+      jwk?: JWKInterface | "use_wallet",
+      options?: SignatureOptions
+    ): Promise<void> =>
+    {
+			await this._arweaveWebWallet.signTransaction(transaction);
+		}
 
+    arweave.wallets.getAddress = async (jwk?: JWKInterface | "use_wallet"): Promise<string> =>
+    {
+			return this.mainAddress;
+		}
+
+  }
 }

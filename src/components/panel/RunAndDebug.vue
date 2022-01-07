@@ -251,7 +251,8 @@ const runInteraction = async (
 	tags: Tags) => {
 	loadingTX.value = true;
 	try {
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const login = new Login(settings.stayLoggedIn, selNetwork.value);
+		const arweave = login.arweave;
 		let func = '';
 		const fullPayload = {};
 		response.value = {};

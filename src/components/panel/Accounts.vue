@@ -43,7 +43,9 @@
 		</div>
 	</div>
 	<div v-else>
-		<p>Welcome {{ mainAddress }}</p>
+		<h3>Welcome!</h3>
+		<p>{{ mainAddress }}</p>
+		<p>Method: {{ method }}</p>
 		<ul class="accounts-menu">
 			<li class="text-center">
 				<button class="primary" @click="logout()">
@@ -66,7 +68,8 @@ import Icon from '@/components/atomic/Icon';
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
-const login = new Login(settings.stayLoggedIn);
+const method = ref('');
+let login = new Login(settings.stayLoggedIn);
 const chkStayLoggedIn = ref(settings.stayLoggedIn);
 const uploadKeyTrigger = () => {
 	const txtFile_uploadKey = document.getElementById('txtFile_uploadKey');
@@ -78,7 +81,12 @@ const uploadKeyTrigger = () => {
 const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 	try {
 		const address = await login.uploadKeyFile(event.target, stayLoggedIn);
-		mainAddress.value = address;
+		if (address) {
+			mainAddress.value = address;
+			method.value = login.method;
+		} else {
+			throw Error('Error reading wallet address');
+		}
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -92,7 +100,12 @@ const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 const arConnect = async (stayLoggedIn: boolean) => {
 	try {
 		const address = await login.arConnect(stayLoggedIn);
-		mainAddress.value = address;
+		if (address) {
+			mainAddress.value = address;
+			method.value = login.method;
+		} else {
+			throw Error('Error reading wallet address');
+		}
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -106,7 +119,12 @@ const arConnect = async (stayLoggedIn: boolean) => {
 const finnie = async (stayLoggedIn: boolean) => {
 	try {
 		const address = await login.finnie(stayLoggedIn);
-		mainAddress.value = address;
+		if (address) {
+			mainAddress.value = address;
+			method.value = login.method;
+		} else {
+			throw Error('Error reading wallet address');
+		}
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -120,9 +138,14 @@ const finnie = async (stayLoggedIn: boolean) => {
 
 const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 	try {
-		throw Error('Coming soon!');
-		// const address = await login.arweaveWebWallet(stayLoggedIn);
-		// mainAddress.value = address;
+		const address = await login.arweaveWebWallet(stayLoggedIn);
+		if (address) {
+			mainAddress.value = address;
+			method.value = login.method;
+		} else {
+			throw Error('Error reading wallet address');
+		}
+		
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -136,10 +159,13 @@ const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 const logout = () => {
 	login.logout();
 	mainAddress.value = '';
+	method.value = '';
+	login = new Login(settings.stayLoggedIn);
 };
 
 onMounted(() => {
 	mainAddress.value = login.mainAddress;
+	method.value = login.method;
 });
 watchEffect(() => {
 	userSettings.setStayLoggedIn(chkStayLoggedIn.value);

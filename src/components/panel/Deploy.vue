@@ -250,7 +250,8 @@ const deployContract = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const login = new Login(settings.stayLoggedIn, selNetwork.value);
+		const arweave = login.arweave;
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {
@@ -327,7 +328,8 @@ const deployContractFromTX = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const login = new Login(settings.stayLoggedIn, selNetwork.value);
+		const arweave = login.arweave;
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {
