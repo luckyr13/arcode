@@ -426,10 +426,12 @@ const loadEditorFromTX = async (tx: string, path: string) => {
       }
     }
 
-    if (workspace.fileTree.findFileIdByName(path, filename) < 0) {
+    const fileId = workspace.fileTree.findFileIdByName(path, filename);
+    if (fileId < 0) {
       addEditor(inputEvent, onlyInParent, data, filename, path);
     } else {
       console.log(`${filename} already in workspace!`);
+      workspace.selectEditor(fileId, new Event('selectEditor'));
     }
     
     
