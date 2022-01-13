@@ -3,9 +3,8 @@ import ArDB from 'ardb';
 import { 
   SmartWeave, SmartWeaveWebFactory, 
   LoggerFactory, ContractData, FromSrcTxContractData,
-  RedstoneGatewayInteractionsLoader
+  RedstoneGatewayInteractionsLoader, ArTransfer
  } from 'redstone-smartweave';
-
 export class ArweaveHandler {
   private readonly _arweave: Arweave;
   private readonly _ardb: ArDB;
@@ -17,14 +16,19 @@ export class ArweaveHandler {
       protocol: 'http'
     },
     'redstone-testnet': {
-      host: 'ec2-13-49-228-21.eu-north-1.compute.amazonaws.com',
-      port: 1984,
-      protocol: 'http'
+      host: 'testnet.redstone.tools',
+      port: 443,
+      protocol: 'https'
     },
     'arweave-mainnet': {
       host: 'arweave.net',
       port: 443,
       protocol: 'https'
+    },
+    'arweave-dev': {
+      host: "arweave.dev",
+      protocol: "https",
+      port: 443,
     }
   };
   private _host = '';
@@ -146,5 +150,38 @@ export class ArweaveHandler {
     }
     throw new Error('Unable to select token holder');
   }
+
+  public getTransferData(
+    balance: number,
+    vipMinimumBalance: number,
+    network: string,
+    appFeeInWinston: string,
+    mainAddress: string,
+    balances: Record<string, number> 
+  ): ArTransfer|undefined {
+  const mainNets = [
+    'arweave-mainnet', 'arweave-dev'
+  ];
+  const maxAttempts = 10;
+  if (balance >= vipMinimumBalance ||
+    mainNets.indexOf(network) < 0 ||
+    Object.keys(balances).length === 0) {
+    return undefined;
+  }
+  
+  let attempts = 0;
+  const t: ArTransfer = { target: '', winstonQty: appFeeInWinston}
+  while ((!t.target || t.target == mainAddress) && attempts < maxAttempts) {
+    t.target = this.selectWeightedPstHolder(balances);
+    attempts++;
+  }
+
+  if (t.target) {
+    return t;
+  }
+
+  return undefined;
+}
+
 
 }

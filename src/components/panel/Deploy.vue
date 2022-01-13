@@ -223,24 +223,6 @@ const balances = computed(() => {
 	return balances;
 });
 
-const getTransferData = (): ArTransfer|undefined => {
-	if (balance.value >= vipMinimumBalance.value || selNetwork.value !== 'arweave-mainnet') {
-		return undefined;
-	}
-	
-	let attempts = 0;
-	const t: ArTransfer = { target: '', winstonQty: appFeeInWinston.value}
-	while ((!t.target || t.target == mainAddress.value) && attempts < 10) {
-		t.target = globalArweaveHandler.selectWeightedPstHolder(balances.value);
-		attempts++;
-	}
-
-	if (t.target) {
-		return t;
-	}
-
-	return undefined;
-};
 const deployContract = async (
 	statePath: string,
 	contractSrcPath: string,
@@ -276,7 +258,14 @@ const deployContract = async (
 		contractSrc = workspace.editors[iContract].view.state.doc.toString();
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
 
-		const transfer = getTransferData();
+		const transfer = arweave.getTransferData(
+			balance.value,
+			vipMinimumBalance.value,
+			selNetwork.value,
+			appFeeInWinston.value,
+			mainAddress.value,
+			balances.value
+		);
 		const contract: ContractData = {
 			wallet: wallet,
 			initState: initStateSrc,
@@ -343,7 +332,14 @@ const deployContractFromTX = async (
 		}
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
 		
-		const transfer = getTransferData();
+		const transfer = arweave.getTransferData(
+			balance.value,
+			vipMinimumBalance.value,
+			selNetwork.value,
+			appFeeInWinston.value,
+			mainAddress.value,
+			balances.value
+		);
 		const contract: FromSrcTxContractData = {
 			wallet: wallet,
 			initState: initStateSrc,

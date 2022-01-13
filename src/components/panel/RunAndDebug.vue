@@ -224,25 +224,6 @@ const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
 
-const getTransferData = (): ArTransfer|undefined => {
-	if (balance.value >= vipMinimumBalance.value || selNetwork.value !== 'arweave-mainnet') {
-		return undefined;
-	}
-	
-	let attempts = 0;
-	const t: ArTransfer = { target: '', winstonQty: appFeeInWinston.value}
-	while ((!t.target || t.target == mainAddress.value) && attempts < 10) {
-		t.target = globalArweaveHandler.selectWeightedPstHolder(balances.value);
-		attempts++;
-	}
-
-	if (t.target) {
-		return t;
-	}
-
-	return undefined;
-};
-
 
 const runInteraction = async (
 	contractTX: string,
@@ -281,7 +262,14 @@ const runInteraction = async (
 				// with this flag set to true, the write will wait for the transaction to be confirmed
 				waitForConfirmation: false,
 			});
-    const transfer = getTransferData();
+			const transfer = arweave.getTransferData(
+				balance.value,
+				vipMinimumBalance.value,
+				selNetwork.value,
+				appFeeInWinston.value,
+				mainAddress.value,
+				balances.value
+			);
 
 		// Dry-run
 		const handlerResult = await contract.callContract<Input>(
