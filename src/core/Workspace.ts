@@ -7,7 +7,7 @@ import {
 
 export class Workspace extends BaseWorkspace  {
 	private _currentEditorId = ref(-1);
-	private _fileTree = reactive<FileTree>(new FileTree());
+	private _fileTree: FileTree;
 	private _tabsContainerId = '';
 
 	public get currentEditorId(): number {
@@ -22,8 +22,9 @@ export class Workspace extends BaseWorkspace  {
 		return this._fileTree;
 	}
 
-	constructor(theme= '', tabsContainerId= '') {
-		super(theme);
+	constructor(theme= '', tabsContainerId= '', tx= '') {
+		super(theme, tx);
+    this._fileTree = <FileTree>reactive(new FileTree(tx));
 		this._tabsContainerId = tabsContainerId;
 	}
 

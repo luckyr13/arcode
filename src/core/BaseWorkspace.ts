@@ -22,8 +22,9 @@ export class BaseWorkspace implements GenericWorkspace
 	private _cachedEventExtension: Compartment = new Compartment();
   private _storage = window.localStorage;
   private _currentContent = ref('');
+  private _tx = '';
 
-	constructor(theme = '') {
+	constructor(theme = '', tx= '') {
 		// Save content in cache
 		this._extensions.push(
 			this._cachedEventExtension.of([])	
@@ -51,9 +52,11 @@ export class BaseWorkspace implements GenericWorkspace
 			EditorView.lineWrapping,
 		);
 		
-    if (this._storage.getItem('cachedEditors') !== null) {
+    if (this._storage.getItem('cachedEditors') !== null && !tx) {
       this._cachedEditorsContent = JSON.parse(this._storage.getItem('cachedEditors')!);
     }
+
+    this._tx = tx;
 
 	}
 
@@ -119,7 +122,9 @@ export class BaseWorkspace implements GenericWorkspace
 		this.editors.splice(i, 1);
 		// Delete from cache 
 		delete this._cachedEditorsContent[editorId];
-    this._storage.setItem('cachedEditors', JSON.stringify(this._cachedEditorsContent));
+		if (!this._tx) {
+			this._storage.setItem('cachedEditors', JSON.stringify(this._cachedEditorsContent));
+		}
 	}
 
 	public getEditorView(editorId: number): EditorView {
@@ -173,6 +178,8 @@ export class BaseWorkspace implements GenericWorkspace
 	updateCachedEditors(editorId: number) {
 		// Store in cache 
     this._cachedEditorsContent[editorId] = this.getEditorView(editorId).state.doc.toString();
-    this._storage.setItem('cachedEditors', JSON.stringify(this._cachedEditorsContent));
+		if (!this._tx) {
+			this._storage.setItem('cachedEditors', JSON.stringify(this._cachedEditorsContent));
+		}
 	}
 }

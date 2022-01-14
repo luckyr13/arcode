@@ -95,9 +95,10 @@ const props = defineProps({
 
 const divs = ref([]);
 const baseTheme = ref(props.theme);
-const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container');
+const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container', props.tx);
 const editors = workspace.editors;
 const loadingFromTX = ref(false);
+
 const addEditor = (
   event: Event, 
   onlyInParent= false, 
@@ -336,21 +337,16 @@ onMounted(async () => {
     content: (reference) => reference.getAttribute('data-tippy-workspace-content')
   });
 
-  const tree = getFileTree();
-  if (tree.children.length === 0) {
-    // Load examples
-    loadExamples();
-  } else {
-    loadTree();
-  }
-
   // Load contract from url
   const tx = props.tx;
+  // IF Single File Mode
   if (tx) {
     loadingFromTX.value = true;
     try {
-      await loadEditorFromTX(tx, '/');
+      addFolder('/', tx);
+      await loadEditorFromTX(tx, `/${tx}`);
     } catch (err) {
+      deleteFolder(`/${tx}`, new Event('Delete-folder'));
       createToast(`${err}`,
         {
           type: 'danger',
@@ -359,7 +355,17 @@ onMounted(async () => {
         });
     }
     loadingFromTX.value = false;
+  } else {
+    const tree = getFileTree();
+    if (tree.children.length === 0) {
+      // Load examples
+      loadExamples();
+    } else {
+     loadTree();
+    }
   }
+
+  
 
 });
 

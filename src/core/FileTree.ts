@@ -5,16 +5,18 @@ export class FileTree
 {
 	private _tree: FileTreeFolder;
 	private _storage = window.localStorage;
+	private _tx = '';
 
-	constructor() {
+	constructor(tx='') {
 		this._tree = {
 			name: '',
 			children: [],
 			type: 'FOLDER'
 		};
-		if (this._storage.getItem('tree') !== null) {
+		if (this._storage.getItem('tree') !== null && !tx) {
 			this._tree = JSON.parse(this._storage.getItem('tree')!);
 		}
+		this._tx = tx;
 	}
 
 	private _breakPath(path: string) {
@@ -81,7 +83,9 @@ export class FileTree
 
 		// Search in Tree 
 		this._addFolderHelper(this._tree, folders, newFolder);
-		this._storage.setItem('tree', JSON.stringify(this._tree));
+		if (!this._tx) {
+			this._storage.setItem('tree', JSON.stringify(this._tree));
+		}
 	}
 
 	private _addFileHelper(tree: FileTreeFolder, path: string[], newFile: EditorMetadata) {
@@ -127,13 +131,16 @@ export class FileTree
 			}
 
 		}
+		// throw Error('Error creating file!');
 	}
 
 	public addFile(path: string, file: EditorMetadata): void {
 		const folders = this._breakPath(path);
 		// Search in Tree 
 		this._addFileHelper(this._tree, folders, file);
-		this._storage.setItem('tree', JSON.stringify(this._tree));
+		if (!this._tx) {
+			this._storage.setItem('tree', JSON.stringify(this._tree));
+		}
 	}
 
 	private _removeFolderHelper(tree: FileTreeFolder, path: string[]) {
@@ -168,7 +175,9 @@ export class FileTree
 	public removeFolder(path: string): void {
 		const folders = this._breakPath(path);
 		this._removeFolderHelper(this._tree, folders);
-		this._storage.setItem('tree', JSON.stringify(this._tree));
+		if (!this._tx) {
+			this._storage.setItem('tree', JSON.stringify(this._tree));
+		}
 	}
 
 	public findFileInChildrenById(fileId: number, tree: FileTreeFolder): EditorMetadata|null {
@@ -236,7 +245,9 @@ export class FileTree
 	public removeFile(fileId: number): void {
 		// Search in Tree 
 		this._removeFileHelper(this._tree, fileId);
-		this._storage.setItem('tree', JSON.stringify(this._tree));
+		if (!this._tx) {
+			this._storage.setItem('tree', JSON.stringify(this._tree));
+		}
 	}
 
 	public get tree(): FileTreeFolder {
@@ -305,7 +316,9 @@ export class FileTree
 	public updateFileById(fileId: number, name: string): void {
 		// Search in Tree 
 		this._updateFileByIdHelper(this._tree, fileId, name);
-		this._storage.setItem('tree', JSON.stringify(this._tree));
+		if (!this._tx) {
+			this._storage.setItem('tree', JSON.stringify(this._tree));
+		}
 	}
 
 	private _getTreeAsFilenameStringArrHelper(
