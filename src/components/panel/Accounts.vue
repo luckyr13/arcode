@@ -7,7 +7,7 @@
 		<h4>Login options:</h4>
 		<ul class="accounts-menu">
 			<li>
-				<button @click="arConnect(chkStayLoggedIn)">
+				<button @click="arConnect(chkStayLoggedIn)" :disabled="iframe">
 					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
 				</button>
 			</li>
@@ -17,7 +17,7 @@
 				</button>
 			</li>
 			<li>
-				<button @click="finnie(chkStayLoggedIn)">
+				<button @click="finnie(chkStayLoggedIn)" :disabled="iframe">
 					<img src="@/assets/img/koi.png"><span>Finnie Wallet</span>
 				</button>
 			</li>
@@ -65,6 +65,9 @@ import { ref, onMounted, watchEffect } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
 import Icon from '@/components/atomic/Icon';
 
+const props = defineProps({
+	iframe: Boolean
+});
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
@@ -205,6 +208,14 @@ watchEffect(() => {
 	background-color: inherit;
 	color: inherit;
 }
+
+.accounts-menu li button:disabled,
+.accounts-menu li button[disabled],
+ {
+	color: gray;
+	cursor: default;
+}
+
 .accounts-menu li button:hover {
 	width: 100%;
 	height: 100%;

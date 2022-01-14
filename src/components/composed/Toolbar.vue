@@ -39,7 +39,7 @@
 				:workspace="workspace" 
 				:tokenState="tokenState" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
-			<Accounts v-if="options['secondary']['accounts'].active" />
+			<Accounts v-if="options['secondary']['accounts'].active" :iframe="iframe" />
 			<Help
 				v-if="options['secondary']['help'].active" 
 				:tokenState="tokenState" />
@@ -64,7 +64,8 @@ import tippy from 'tippy.js';
 
 const props = defineProps({
 	workspace: Object,
-	tokenState: Object
+	tokenState: Object,
+	iframe: Boolean
 });
 const showPanel = ref(false);
 const selectedOption = ref('');

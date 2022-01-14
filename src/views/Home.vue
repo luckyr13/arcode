@@ -13,7 +13,10 @@
     <div class="main-container" v-if="!loadingAppContract">
       <div class="toolbar-and-workspace">
         <div class="toolbar-container">
-          <Toolbar :workspace="workspace" :theme="theme" :tokenState="tokenState" />
+          <Toolbar 
+            :iframe="iframe"
+            :workspace="workspace" 
+            :theme="theme" :tokenState="tokenState" />
         </div>
         <div class="workspace-container">
           <Workspace 
@@ -50,7 +53,22 @@ const tokenState = ref({});
 
 const route = useRoute()
 const tx = ref(route.params.tx);
+const iframe = ref(false);
 
+// Page inside iframe
+if (window && window.self !== window.top) {
+  console.log('IFrame detected ...');
+  iframe.value = true;
+  window.top.postMessage({message: 'arCodeLoaded'}, '*');
+  window.addEventListener("message", (event, d) => {
+    // Do we trust the sender of this message?
+    if (event.origin !== 'http://localhost' &&
+        event.origin !== 'https://scanner.redstone.tools') {
+      return;
+    }
+    // TODO
+  }, false);
+}
 
 onMounted(async () => {
   try {
@@ -59,6 +77,7 @@ onMounted(async () => {
     const { state, validity } = await contract.readState();
     tokenState.value = state;
     loadingAppContract.value = false;
+
 
   } catch (err) {
     createToast(`${err}`,
