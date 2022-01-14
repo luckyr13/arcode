@@ -60,7 +60,7 @@ if (window && window.self !== window.top) {
   console.log('IFrame detected ...');
   iframe.value = true;
   window.top.postMessage({message: 'arCodeLoaded'}, '*');
-  window.addEventListener("message", (event, d) => {
+  window.addEventListener("message", (event) => {
     // Do we trust the sender of this message?
     if (event.origin !== 'http://localhost' &&
         event.origin !== 'https://scanner.redstone.tools') {
