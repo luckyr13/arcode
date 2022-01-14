@@ -27,6 +27,7 @@
 			<a tabindex="0" href="https://arwiki.wiki" target="_blank">ArWiki</a>
 		</li>
 	</ul>
+	
 	<template v-if="Object.keys(tokenState).length > 0">
 		<h4>dApp Usage cost:</h4>
 		<ul class="links-menu">
@@ -46,6 +47,13 @@
 	<template  v-else>
 		Error loading Community contract!
 	</template>
+	<h4 class="text-center">
+		No Warranty
+	</h4>
+	<p class="text-center">
+		"As-Is". The Software is provided "as is," with all faults, defects, bugs, and errors.
+	</p>
+
 </div>
 </template>
 
