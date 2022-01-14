@@ -23,7 +23,9 @@
             ref="workspace"
             :tx="tx"
             :theme="theme" />
-          <Console />
+          <!--
+            <Console />
+          -->
         </div>
       </div>
       <StatusBar :workspace="workspace" />
@@ -34,7 +36,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Workspace from '@/components/composed/Workspace.vue';
-import Console from '@/components/atomic/Console.vue';
+// import Console from '@/components/atomic/Console.vue';
 import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
