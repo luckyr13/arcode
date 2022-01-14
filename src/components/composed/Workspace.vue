@@ -341,6 +341,12 @@ onMounted(async () => {
   const tx = props.tx;
   // IF Single File Mode
   if (tx) {
+    createToast(`Running Single File mode ...`,
+      {
+        type: 'success',
+        showIcon: true,
+        position: 'bottom-right',
+      });
     loadingFromTX.value = true;
     try {
       addFolder('/', tx);
