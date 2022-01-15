@@ -27,7 +27,7 @@
     "core-js": "^3.20.2",
     "js-file-download": "^0.4.12",
     "mosha-vue-toastify": "^1.0.23",
-    "redstone-smartweave": "^0.4.13",
+    "redstone-smartweave": "^0.4.15",
     "register-service-worker": "^1.7.1",
     "tippy.js": "^6.3.7",
     "vue": "^3.2.26",
