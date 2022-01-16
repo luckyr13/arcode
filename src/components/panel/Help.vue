@@ -15,10 +15,13 @@
 			<a tabindex="0" href="https://arweave.org" target="_blank">Arweave.org</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://github.com/redstone-finance/redstone-smartcontracts" target="_blank">RedStone SmartContracts SDK</a>
+			<a tabindex="0" href="https://scanner.redstone.tools/" target="_blank">Redstone Smartweave Scanner</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://github.com/textury/arlocal" target="_blank">Arlocal</a>
+			<a tabindex="0" href="https://github.com/redstone-finance/redstone-smartcontracts" target="_blank">Redstone SmartContracts SDK</a>
+		</li>
+		<li>
+			<a tabindex="0" href="https://github.com/textury/arlocal" target="_blank">arlocal GitHub</a>
 		</li>
 		<li>
 			<a tabindex="0" href="https://arweave.app" target="_blank">Arweave.app Wallet</a>
@@ -27,7 +30,7 @@
 			<a tabindex="0" href="https://arconnect.io" target="_blank">ArConnect Wallet</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://arwiki.wiki" target="_blank">ArWiki</a>
+			<a tabindex="0" href="https://arwiki.wiki" target="_blank">Arweave wiki: ArWiki</a>
 		</li>
 	</ul>
 	<template v-if="Object.keys(tokenState).length > 0">

@@ -91,6 +91,9 @@
 	
 	<ul class="run-menu">
 		<li>
+			Balance: {{ balance }} AR
+		</li>
+		<li>
 			<button
 				:class="{primary: !loadingTX}" 
 				:disabled="loadingTX"
@@ -103,7 +106,7 @@
 				:class="{primary: !loadingTX}" 
 				:disabled="loadingTX"
 				@click="addTag('', '')">
-				<Icon class="icon-btn" icon="codicon-add" /><span>Add Tag</span>
+				<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 			</button>
 		</li>
 		<li>
@@ -167,7 +170,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed} from 'vue';
+import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
@@ -188,6 +191,7 @@ const networks = computed(() => {
 });
 const rdFilter = ref('viewState');
 const selNetwork = ref('arweave-mainnet');
+const prevNetwork = ref(selNetwork.value);
 const txtContract = ref('');
 const response = ref({});
 const contractInteractionTX = ref('');
@@ -206,12 +210,13 @@ const contractSettings = computed(() => {
 const appFeeInAr = computed(() => {
 	return globalArweaveHandler.arweave.ar.winstonToAr(appFeeInWinston.value);
 });
-const balance = computed(() => {
+const pstBalance = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
 		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
 	return res;
 });
+const balance = ref('0');
 
 const balances = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
@@ -263,7 +268,7 @@ const runInteraction = async (
 				waitForConfirmation: false,
 			});
 			const transfer = arweave.getTransferData(
-				balance.value,
+				pstBalance.value,
 				vipMinimumBalance.value,
 				selNetwork.value,
 				appFeeInWinston.value,
@@ -343,6 +348,49 @@ const addTag = (name: string, value: string) => {
 const removeTag = (index: number) => {
 	tagsList.splice(index, 1);
 };
+
+onMounted(async () => {
+	// Balance for Method 1
+	if (mainAddress.value) {
+		balance.value = 0;
+		try {
+			const login = new Login(settings.stayLoggedIn, selNetwork.value);
+			const arweave = login.arweave;
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+			prevNetwork.value = selNetwork.value;
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+	}
+});
+
+watchEffect(async () => {
+	// Balance for Method 1
+	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
+		balance.value = 0;
+		try {
+			const login = new Login(settings.stayLoggedIn, selNetwork.value);
+			const arweave = login.arweave;
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+			prevNetwork.value = selNetwork.value;
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+	}
+});
+
 </script>
 
 <style scoped lang="scss">
@@ -364,6 +412,7 @@ const removeTag = (index: number) => {
 .run-menu li {
 	padding: 0px;
 	height: 36px;
+	font-size: 12px;
 	list-style: none;
 	text-align: center;
 	margin-top: 10px;

@@ -69,7 +69,7 @@
 		</div>
 		<ul class="deploy-menu">
 			<li>
-				Balance: {{ balance1 }} AR
+				Balance: {{ balance }} AR
 			</li>
 			<li>
 				<button
@@ -134,7 +134,7 @@
 		</div>
 		<ul class="deploy-menu">
 			<li>
-				Balance: {{ balance1 }} AR
+				Balance: {{ balance }} AR
 			</li>
 			<li>
 				<button
@@ -168,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watchEffect } from 'vue';
+import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
@@ -229,7 +229,7 @@ const balances = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
 	return balances;
 });
-const balance1 = ref('0');
+const balance = ref('0');
 
 const deployContract = async (
 	statePath: string,
@@ -379,7 +379,7 @@ const deployContractFromTX = async (
 				showIcon: true,
 				position: 'bottom-right',
 			});
-			
+
 			if (!arweave.onMainnet()) {
 				// Call mine 
 				const miningRes = await arweave.arlocalMine();
@@ -423,15 +423,15 @@ const addTag = (key: string, value: string, tags: Tags) => {
 	tags.push({ key, value });
 };
 
-watchEffect(async () => {
+onMounted(async () => {
 	// Balance for Method 1
-	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
-		balance1.value = 0;
+	if (mainAddress.value) {
+		balance.value = 0;
 		try {
 			const login = new Login(settings.stayLoggedIn, selNetwork.value);
 			const arweave = login.arweave;
-			balance1.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance1.value = arweave.arweave.ar.winstonToAr(balance1.value);
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
 		} catch (err) {
 			createToast(`${err}`,
@@ -444,8 +444,26 @@ watchEffect(async () => {
 	}
 });
 
-
-
+watchEffect(async () => {
+	// Balance for Method 1
+	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
+		balance.value = 0;
+		try {
+			const login = new Login(settings.stayLoggedIn, selNetwork.value);
+			const arweave = login.arweave;
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+			prevNetwork.value = selNetwork.value;
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+	}
+});
 
 </script>
 
