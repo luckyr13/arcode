@@ -112,7 +112,6 @@
 				Media Files
 			</label>
 		</div>
-
 		<ul class="search-menu">
 			<li>
 				<button
@@ -125,11 +124,60 @@
 		</ul>
 	</template>
 	<template v-if="selSearchMethod == 'tags'">
-		Coming soon ...
+		<div class="form-input">
+			<label>Results limit</label>
+			<input 
+				type="number" 
+				max="100"
+				min="1"
+				:disabled="loadingSearch" 
+				v-model.trim="txtResLimitTags" 
+				@keyup.enter="searchByTags(tagsList, txtResLimitTags)">
+		</div>
+		<h5 class="title-tags">Tags</h5>
+		<p class="no-results" v-if="!tagsList.length">No tags.</p>
+		<div class="data-input-list" v-for="(tL1, index1) of tagsList" :key="index1">
+			<div class="form-input col-key">
+				<label>Name</label>
+				<input 
+					:disabled="loadingSearch"
+					type="text" v-model.trim="tL1.name">
+			</div>
+			<div class="form-input col-value">
+				<label>Value</label>
+				<input 
+					:disabled="loadingSearch"
+					type="text" v-model.trim="tL1.values">
+			</div>
+			<div class="form-input col-action">
+				<Icon 
+					@click="removeTag(index1, tagsList)"
+					class="icon-action"
+					icon="codicon-trash" />
+			</div>
+		</div>
+		<ul class="search-menu">
+			<li>
+				<button
+					:class="{primary: !loadingSearch}" 
+					:disabled="loadingSearch"
+					@click="addTag('', '', tagsList)">
+					<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
+				</button>
+			</li>
+			<li>
+				<button
+					:class="{primary: (tagsList.length) && !loadingSearch}" 
+					:disabled="(!tagsList.length) || loadingSearch"
+					@click="searchByTags(tagsList, txtResLimitTags)">
+					<Icon class="icon-btn" icon="codicon-search" /><span>Search</span>
+				</button>
+			</li>
+		</ul>
 	</template>
 	<h5>Results:</h5>
 	<template v-if="resultsTX && Object.keys(resultsTX).length">
-		<div v-if="selNetwork==='arweave-mainnet'" class="link-container text-left">
+		<div v-if="isMainnet" class="link-container text-left">
 			<p v-if="resultsTXIsContract">
 				Open in RedStone Smartweave contracts explorer:
 				<a :href="`https://scanner.redstone.tools/#/app/contract/${txtTxId}`" target="_blank">
@@ -171,7 +219,6 @@
 				</tr>
 			</tbody>
 		</table>
-		
 	</template>
 	<template v-if="resultsByAddress && resultsByAddress.length">
 		<p class="no-results">{{ resultsByAddress.length }} results found.</p>
@@ -179,7 +226,7 @@
 			<p>
 				TX: {{ r._id }}
 			</p>
-			<div v-if="selNetwork==='arweave-mainnet'" class="link-container text-left">
+			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
 					Open in RedStone Smartweave contracts explorer:
 					<a :href="`https://scanner.redstone.tools/#/app/contract/${r._id}`" target="_blank">
@@ -224,6 +271,58 @@
 			<hr>
 		</div>
 	</template>
+	<template v-if="resultsByTags && resultsByTags.length">
+		<p class="no-results">{{ resultsByTags.length }} results found.</p>
+		<div v-for="r of resultsByTags" :key="r._id">
+			<p>
+				TX: {{ r._id }}
+			</p>
+			<div v-if="isMainnet" class="link-container text-left">
+				<p v-if="txIsContract(r._tags)">
+					Open in RedStone Smartweave contracts explorer:
+					<a :href="`https://scanner.redstone.tools/#/app/contract/${r._id}`" target="_blank">
+						{{ `https://scanner.redstone.tools/#/app/contract/${r._id}` }}
+					</a>
+				</p>
+				<p>
+					Viewblock link: 
+					<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
+						{{ `https://viewblock.io/arweave/tx/${r._id}` }}
+					</a>
+				</p>
+				<p>
+					Arweave.net link: 
+					<a :href="`https://arweave.net/${r._id}`" target="_blank">
+						{{ `https://arweave.net/${r._id}` }}
+					</a>
+				</p>
+			</div>
+			<table class="table" >
+				<thead>
+					<tr>
+						<th>
+							Key
+						</th>
+						<th>
+							Value
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="k of Object.keys(r)" :key="k">
+						<td style="width: 20%">
+							{{ k }}
+						</td>
+						<td>
+							{{ r[k] }}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+		</div>
+	</template>
+	
 	<p 
 		class="no-results"
 		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && (!resultsByAddress || resultsByAddress.length <= 0) && !loadingSearch">
@@ -239,7 +338,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed} from 'vue';
+import {ref, computed, reactive} from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
@@ -249,17 +348,20 @@ import { UserSettings } from '@/core/UserSettings';
 const txtTxId = ref('');
 const txtAddress = ref('');
 const txtResLimit = ref(10);
+const txtResLimitTags = ref(10);
 const selSearchMethod = ref('tx');
 const selNetwork = ref('arweave-mainnet');
 const loadingSearch = ref(false);
 const resultsTX = ref({});
 const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
+const resultsByTags = ref([]);
 const rdFilter = ref('');
 const globalArweaveHandler = new ArweaveHandler();
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 let login = new Login(settings.stayLoggedIn);
+const tagsList = reactive<Array<{name: string, values: string}>>([]);
 const mainAddress = computed(() => {
 	return login.mainAddress;
 });
@@ -275,6 +377,7 @@ const searchByTX = async (tx: string) => {
 	}
 	resultsTX.value = {};
 	resultsByAddress.value = [];
+	resultsByTags.value = [];
 	loadingSearch.value = true;
 	try {
 		const arweave = new ArweaveHandler(selNetwork.value);
@@ -304,6 +407,7 @@ const searchByAddress = async (address: string, limit: number) => {
 	limit = parseInt(limit);
 	resultsByAddress.value = [];
 	resultsTX.value = {};
+	resultsByTags.value = [];
 	loadingSearch.value = true;
 	try {
 		const tags = [];
@@ -411,6 +515,62 @@ const txIsContract = (tags) => {
 	return isContract;
 }
 
+const removeTag = (index: number, tags: Array<{name: string, values: string[]}>) => {
+	tags.splice(index, 1);
+};
+
+const addTag = (key: string, values: string, tags: Array<{name: string, values: string[]}>) => {
+	tags.push({ key, values });
+};
+
+
+const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, limit: number) => {
+	limit = parseInt(limit);
+	resultsByAddress.value = [];
+	resultsTX.value = {};
+	resultsByTags.value = [];
+	loadingSearch.value = true;
+	try {
+		const tags = [];
+		const arweave = new ArweaveHandler(selNetwork.value);
+
+		if (!tagsList.length) {
+			throw Error('Please provide tags');
+		} else if (limit <= 0 || limit > 100) {
+			throw Error('Limit must be between 1 - 100');
+		}
+
+		for (const t of tagsList) {
+			const tname = t.name;
+			const tvalues = t.values;
+			if (!tname || !tvalues) {
+				throw Error('Empty tags');
+			}
+			tags.push({
+        name: tname,
+        values: tvalues.split(','),
+      });
+		}
+
+		resultsByTags.value = await arweave.ardb.search(
+				'transactions'
+			).limit(limit).tags(tags).find();
+
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+	}
+	loadingSearch.value = false;
+};
+
+const isMainnet = () => {
+	const arweave = new ArweaveHandler(selNetwork.value);
+	return arweave.onMainnet();
+};
 </script>
 
 <style scoped lang="scss">
@@ -550,6 +710,31 @@ const txIsContract = (tags) => {
 	font-size: 12px;
 	cursor: pointer;
 	text-decoration: underline;
+}
+.title-tags {
+	margin: 0px 0px;
+}
+
+.col-key {
+	float: left;
+	width: 42%;
+}
+.col-value {
+	float: left;
+	width: 45%;
+}
+.col-action {
+	float: left;
+	width: 10%;
+	height: 32px;
+}
+.icon-action {
+	padding: 22px 0;
+	font-size: 16px !important;
+	cursor: pointer;
+}
+.data-input-list {
+	min-height: 76px;
 }
 
 </style>

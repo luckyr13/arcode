@@ -428,8 +428,7 @@ onMounted(async () => {
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
-			const login = new Login(settings.stayLoggedIn, selNetwork.value);
-			const arweave = login.arweave;
+			const arweave = new ArweaveHandler(selNetwork.value);
 			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
 			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
@@ -449,8 +448,7 @@ watchEffect(async () => {
 	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
 		balance.value = 0;
 		try {
-			const login = new Login(settings.stayLoggedIn, selNetwork.value);
-			const arweave = login.arweave;
+			const arweave = new ArweaveHandler(selNetwork.value);
 			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
 			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
