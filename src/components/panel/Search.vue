@@ -10,6 +10,7 @@
 			v-model.trim="selSearchMethod">
 			<option value="tx">Search by TX</option>
 			<option value="address">Search by Address</option>
+			<option value="tags">Search by Tags</option>
 		</select>
 	</div>
 	<div class="form-input">
@@ -46,6 +47,9 @@
 				type="text" 
 				v-model.trim="txtAddress" 
 				@keyup.enter="searchByAddress(txtAddress, txtResLimit)">
+			<div class="text-right">
+				<a v-if="mainAddress" class="link" @click="txtAddress = mainAddress">Use my wallet address</a>
+			</div>
 		</div>
 		<div class="form-input">
 			<label>Results limit</label>
@@ -72,6 +76,13 @@
 					type="radio" 
 					name="addressFilter" value="contracts" v-model.trim="rdFilter">
 				Smart Contracts
+			</label>
+			<label>
+				<input 
+					:disabled="loadingSearch" 
+					type="radio" 
+					name="addressFilter" value="contractSources" v-model.trim="rdFilter">
+				Contract Sources
 			</label>
 			<label>
 				<input 
@@ -112,6 +123,9 @@
 				</button>
 			</li>
 		</ul>
+	</template>
+	<template v-if="selSearchMethod == 'tags'">
+		Coming soon ...
 	</template>
 	<h5>Results:</h5>
 	<template v-if="resultsTX && Object.keys(resultsTX).length">
@@ -229,6 +243,8 @@ import {ref, computed} from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
+import { Login } from '@/core/Login';
+import { UserSettings } from '@/core/UserSettings';
 
 const txtTxId = ref('');
 const txtAddress = ref('');
@@ -241,6 +257,13 @@ const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
 const rdFilter = ref('');
 const globalArweaveHandler = new ArweaveHandler();
+const userSettings = new UserSettings();
+const settings = userSettings.settings;
+let login = new Login(settings.stayLoggedIn);
+const mainAddress = computed(() => {
+	return login.mainAddress;
+});
+
 
 const networks = computed(() => {
 	return globalArweaveHandler.networks;
@@ -297,6 +320,11 @@ const searchByAddress = async (address: string, limit: number) => {
 			tags.push({
         name: 'App-Name',
         values: ['SmartWeaveContract'],
+      });
+		} else if (rdFilter.value === 'contractSources') {
+			tags.push({
+        name: 'App-Name',
+        values: ['SmartWeaveContractSource'],
       });
 		} else if (rdFilter.value === 'nfts') {
 			tags.push({
@@ -516,6 +544,11 @@ const txIsContract = (tags) => {
 
 .no-results {
 	font-size: 12px;
+}
+
+.link {
+	font-size: 12px;
+	cursor: pointer;
 }
 
 </style>
