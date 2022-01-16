@@ -3,7 +3,7 @@
 	Help and info
 </div>
 <div class="links-container">
-	<h4>Useful Links:</h4>
+	<h4>Useful Links</h4>
 	<ul class="links-menu">
 		<li>
 			<a tabindex="0" href="https://github.com/luckyr13/arcode" target="_blank">ArCode GitHub</a>
@@ -31,7 +31,7 @@
 		</li>
 	</ul>
 	<template v-if="Object.keys(tokenState).length > 0">
-		<h4>Usage fees:</h4>
+		<h4>Usage fees</h4>
 		<ul class="instructions sm-text">
 			<li>
 				Contract deployment/write interaction: {{ appFeeInAr }} AR
@@ -48,7 +48,10 @@
 		Common ArCode Problems
 	</h4>
 	<p class="sm-text">
-		<strong>Brave Browser and AdBlock users.</strong> Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT). To solve this, please do the next steps:
+		<strong>Brave Browser and AdBlock users.</strong> Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT).
+	</p>
+	<p class="sm-text">
+		To solve this, please follow the next steps:
 	</p>
 	<ul class="instructions sm-text">
 		<li>Navigate to: brave://adblock/</li>
@@ -162,6 +165,6 @@ a {
 	padding: 10px;
 }
 .sm-text {
-	font-size: 12px;
+	font-size: 11px;
 }
 </style>

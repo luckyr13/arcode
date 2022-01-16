@@ -102,6 +102,10 @@ export class Login {
     this.removeAccountFromCache();
     this.mainAddress = '';
 		this.key = null;
+		if ((this.method === 'arconnect' || this.method === 'finnie') &&
+				window.arweaveWallet) {
+			window.arweaveWallet.disconnect();
+		}
 		this.method = '';
 	}
 

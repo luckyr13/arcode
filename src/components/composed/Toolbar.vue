@@ -39,7 +39,10 @@
 				:workspace="workspace" 
 				:tokenState="tokenState" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
-			<Accounts v-if="options['secondary']['accounts'].active" :iframe="iframe" />
+			<Accounts 
+				v-if="options['secondary']['accounts'].active"
+				:iframe="iframe"
+				:tokenState="tokenState" />
 			<Help
 				v-if="options['secondary']['help'].active" 
 				:tokenState="tokenState" />

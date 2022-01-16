@@ -43,9 +43,14 @@
 		</div>
 	</div>
 	<div v-else>
-		<h3>Welcome!</h3>
-		<p>{{ mainAddress }}</p>
-		<p>Method: {{ method }}</p>
+		<h4>Wallet Address</h4>
+		<p class="address">{{ mainAddress }}</p>
+		<h4>Balance</h4>
+		<p class="text-center">{{ pstBalance }} $CODE</p>
+		<p class="text-center">{{ balance }} AR</p>
+		<h4>Method</h4>
+		<p>{{ method }}</p>
+		<br>
 		<ul class="accounts-menu">
 			<li class="text-center">
 				<button class="primary" @click="logout()">
@@ -61,13 +66,16 @@
 <script setup lang="ts">
 import { Login } from '@/core/Login';
 import { createToast } from 'mosha-vue-toastify';
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watchEffect, computed } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
 import Icon from '@/components/atomic/Icon';
+import { ArweaveHandler } from '@/core/ArweaveHandler';
 
 const props = defineProps({
-	iframe: Boolean
+	iframe: Boolean,
+	tokenState: Object
 });
+const arweave = new ArweaveHandler();
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
@@ -170,9 +178,30 @@ onMounted(() => {
 	mainAddress.value = login.mainAddress;
 	method.value = login.method;
 });
-watchEffect(() => {
+watchEffect(async () => {
 	userSettings.setStayLoggedIn(chkStayLoggedIn.value);
-})
+	if (mainAddress.value) {
+		balance.value = 0;
+		try {
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+	}
+});
+const pstBalance = computed(() => {
+	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
+		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
+	return res;
+});
+const balance = ref('0');
 
 </script>
 
@@ -190,7 +219,6 @@ watchEffect(() => {
 .accounts-menu {
 	padding: 0px;
 	margin-top: 0px;
-	margin-bottom: 0px;
 }
 .accounts-menu li {
 	padding: 0px;
@@ -267,8 +295,6 @@ watchEffect(() => {
 }
 .icon-btn {
 	display: inline !important;
-	line-height: 12px;
-	font-size: 12px;
 	float: right;
 	padding: 6px 0;
 }
@@ -289,5 +315,13 @@ watchEffect(() => {
   margin-right: 2px;
   margin-top: 2px;
   margin-left: 2px;
+}
+
+
+.address {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: " [..]";
 }
 </style>
