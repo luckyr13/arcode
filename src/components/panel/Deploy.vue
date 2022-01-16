@@ -69,11 +69,14 @@
 		</div>
 		<ul class="deploy-menu">
 			<li>
+				Balance: {{ balance1 }} AR
+			</li>
+			<li>
 				<button
 					:class="{primary: !loadingDeployContract}" 
 					:disabled="loadingDeployContract"
 					@click="addTag('', '', tagsList1)">
-					<Icon class="icon-btn" icon="codicon-add" /><span>Add Tag</span>
+					<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 				</button>
 			</li>
 			<li>
@@ -98,7 +101,7 @@
 				v-model.trim="txtDeployFileContractLocationByTx">
 		</div>
 		<div class="form-input">
-			<label>Contract Initial State</label>
+			<label>New Contract Initial State</label>
 			<select
 				:disabled="loadingDeployContract"
 				v-model.trim="selDeployFileStateLocation2">
@@ -131,11 +134,14 @@
 		</div>
 		<ul class="deploy-menu">
 			<li>
+				Balance: {{ balance1 }} AR
+			</li>
+			<li>
 				<button
 					:class="{primary: !loadingDeployContract}" 
 					:disabled="loadingDeployContract"
 					@click="addTag('', '', tagsList2)">
-					<Icon class="icon-btn" icon="codicon-add" /><span>Add Tag</span>
+					<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 				</button>
 			</li>
 			<li>
@@ -162,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watchEffect } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
@@ -193,6 +199,7 @@ const deployedContractTX = ref('');
 const loadingDeployContract = ref(false);
 const selDeployMethod = ref('contract-src-file');
 const selNetwork = ref('arweave-mainnet');
+const prevNetwork = ref(selNetwork.value);
 const props = defineProps({
 	workspace: Object,
 	tokenState: Object
@@ -212,7 +219,7 @@ const appFeeInAr = computed(() => {
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
-const balance = computed(() => {
+const pstBalance = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
 		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
@@ -222,6 +229,7 @@ const balances = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
 	return balances;
 });
+const balance1 = ref('0');
 
 const deployContract = async (
 	statePath: string,
@@ -259,7 +267,7 @@ const deployContract = async (
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
 
 		const transfer = arweave.getTransferData(
-			balance.value,
+			pstBalance.value,
 			vipMinimumBalance.value,
 			selNetwork.value,
 			appFeeInWinston.value,
@@ -284,6 +292,19 @@ const deployContract = async (
 				showIcon: true,
 				position: 'bottom-right',
 			});
+
+			if (!arweave.onMainnet()) {
+				// Call mine 
+				const miningRes = await arweave.arlocalMine();
+				console.log('Confirmed tx: ', miningRes);
+				createToast('Transaction confirmed!',
+				{
+					type: 'success',
+					showIcon: true,
+					position: 'bottom-right',
+				});
+			}
+
 		} else {
 			throw Error('Error creating tx', tx);
 		}
@@ -333,7 +354,7 @@ const deployContractFromTX = async (
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
 		
 		const transfer = arweave.getTransferData(
-			balance.value,
+			pstBalance.value,
 			vipMinimumBalance.value,
 			selNetwork.value,
 			appFeeInWinston.value,
@@ -358,6 +379,19 @@ const deployContractFromTX = async (
 				showIcon: true,
 				position: 'bottom-right',
 			});
+			
+			if (!arweave.onMainnet()) {
+				// Call mine 
+				const miningRes = await arweave.arlocalMine();
+				console.log('Confirmed tx: ', miningRes);
+				createToast('Transaction confirmed!',
+				{
+					type: 'success',
+					showIcon: true,
+					position: 'bottom-right',
+				});
+			}
+
 		} else {
 			throw Error('Error creating tx', tx);
 		}
@@ -389,6 +423,29 @@ const addTag = (key: string, value: string, tags: Tags) => {
 	tags.push({ key, value });
 };
 
+watchEffect(async () => {
+	// Balance for Method 1
+	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
+		balance1.value = 0;
+		try {
+			const login = new Login(settings.stayLoggedIn, selNetwork.value);
+			const arweave = login.arweave;
+			balance1.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance1.value = arweave.arweave.ar.winstonToAr(balance1.value);
+			prevNetwork.value = selNetwork.value;
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+	}
+});
+
+
+
 
 </script>
 
@@ -407,6 +464,7 @@ const addTag = (key: string, value: string, tags: Tags) => {
 	padding: 0px;
 	margin-top: 0px;
 	margin-bottom: 0px;
+	font-size: 12px;
 }
 .deploy-menu li {
 	padding: 0px;
@@ -422,7 +480,6 @@ const addTag = (key: string, value: string, tags: Tags) => {
 	line-height: 12px;
 	border: 0;
 	cursor: pointer;
-	font-size: 12px;
 	text-align: center;
   vertical-align: middle;
 	color: gray;

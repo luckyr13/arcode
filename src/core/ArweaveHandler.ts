@@ -187,4 +187,10 @@ export class ArweaveHandler {
      return this._mainNets.indexOf(this._arweave.api.config.host!) >= 0;
   }
 
+  public async arlocalMine() {
+    const endpoint = `${this._arweave.api.config.protocol}://${this._arweave.api.config.host}:${this._arweave.api.config.port}/mine`;
+    const res = await fetch(endpoint);
+    return res;
+  }
+
 }
