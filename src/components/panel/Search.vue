@@ -549,6 +549,7 @@ const txIsContract = (tags) => {
 .link {
 	font-size: 12px;
 	cursor: pointer;
+	text-decoration: underline;
 }
 
 </style>

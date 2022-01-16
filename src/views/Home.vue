@@ -15,6 +15,7 @@
         <div class="toolbar-container">
           <Toolbar 
             :iframe="iframe"
+            :tx="tx"
             :workspace="workspace" 
             :theme="theme" :tokenState="tokenState" />
         </div>

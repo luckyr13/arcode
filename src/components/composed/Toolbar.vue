@@ -27,7 +27,8 @@
 		</div>
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
 			<FileExplorer 
-					v-if="options['primary']['file-explorer'].active" 
+					v-if="options['primary']['file-explorer'].active"
+					:tx="tx"
 					:workspace="workspace" />
 			<RunAndDebug 
 				v-if="options['primary']['compile'].active" 
@@ -68,7 +69,8 @@ import tippy from 'tippy.js';
 const props = defineProps({
 	workspace: Object,
 	tokenState: Object,
-	iframe: Boolean
+	iframe: Boolean,
+	tx: String
 });
 const showPanel = ref(false);
 const selectedOption = ref('');

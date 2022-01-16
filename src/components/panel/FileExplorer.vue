@@ -121,6 +121,7 @@
 						v-model.trim="txtLoadTXFileName" 
 						@keyup.enter="txtLoadTXFileName != '' ? loadFromTXModal(txtLoadTXFileName, selLoadTXLocation, workspace) : false"
 						type="text">
+					<a v-if="tx" class="link" @click="txtLoadTXFileName = tx">Use TX address from URL</a>
 				</div>
 				<div class="text-right form-radio">
 					<label class="">
@@ -349,7 +350,8 @@ const networks = computed(() => {
 });
 
 const props = defineProps({
-	workspace: Object
+	workspace: Object,
+	tx: String
 });
 
 const openFile = (inputId: string) => {
@@ -759,5 +761,10 @@ $title-height: 28px;
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+.link {
+	font-size: 12px;
+	cursor: pointer;
+	text-decoration: underline;
 }
 </style>
