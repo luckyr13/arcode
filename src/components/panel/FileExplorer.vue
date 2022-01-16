@@ -345,10 +345,7 @@ const globalArweaveHandler = new ArweaveHandler();
 const selNetwork = ref('arweave-mainnet');
 
 const networks = computed(() => {
-	return { 
-		'arweave-mainnet': globalArweaveHandler.networks['arweave-mainnet'],
-		'arweave-dev': globalArweaveHandler.networks['arweave-dev'],
-	};
+	return globalArweaveHandler.networks;
 });
 
 const props = defineProps({

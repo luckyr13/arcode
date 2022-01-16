@@ -18,6 +18,9 @@
 			<a tabindex="0" href="https://github.com/redstone-finance/redstone-smartcontracts" target="_blank">RedStone SmartContracts SDK</a>
 		</li>
 		<li>
+			<a tabindex="0" href="https://github.com/textury/arlocal" target="_blank">Arlocal</a>
+		</li>
+		<li>
 			<a tabindex="0" href="https://arweave.app" target="_blank">Arweave.app Wallet</a>
 		</li>
 		<li>
@@ -27,30 +30,43 @@
 			<a tabindex="0" href="https://arwiki.wiki" target="_blank">ArWiki</a>
 		</li>
 	</ul>
-	
 	<template v-if="Object.keys(tokenState).length > 0">
-		<h4>dApp Usage cost:</h4>
-		<ul class="links-menu">
+		<h4>Usage fees:</h4>
+		<ul class="instructions sm-text">
 			<li>
-				- Contract deployment fee: {{ appFeeInAr }} AR
+				Contract deployment/write interaction: {{ appFeeInAr }} AR
 			</li>
 			<li>
-				- Contract write interaction fee: {{ appFeeInAr }} AR
-			</li>
-			<li>
-				- You can use this dApp for free as long as you have a minimum balance of {{ vipMinimumBalance }} $CODE tokens.
+				VIP users: Use ArCode without extra fees holding a minimum {{ vipMinimumBalance }} $CODE balance.
 			</li>
 		</ul>
-		<p><strong>Wallet:</strong> {{mainAddress}}</p>
-		<p><strong>Your balance:</strong> {{balance}} $CODE</p>
 	</template>
 	<template  v-else>
 		Error loading Community contract!
 	</template>
+	<h4>
+		Common ArCode Problems
+	</h4>
+	<p class="sm-text">
+		<strong>Brave Browser and AdBlock users.</strong> Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT). To solve this, please do the next steps:
+	</p>
+	<ul class="instructions sm-text">
+		<li>Navigate to: brave://adblock/</li>
+		<li>
+			Add the next filter:
+		</li>
+		<li style="list-style: none">
+			@@||localhost^$domain=arcode.studio
+		</li>
+	</ul>
+
+	<h4>
+		ArCode Warranty Info
+	</h4>
 	<h4 class="text-center">
 		No Warranty
 	</h4>
-	<p class="text-center">
+	<p class="text-center sm-text">
 		"As-Is". The Software is provided "as is," with all faults, defects, bugs, and errors.
 	</p>
 
@@ -80,10 +96,10 @@ const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
 });
 const appFeeInAr = computed(() => {
-	return arweave.arweave.ar.winstonToAr(appFeeInWinston.value);
+	return parseFloat(arweave.arweave.ar.winstonToAr(appFeeInWinston.value));
 });
 const vipMinimumBalance = computed(() => {
-	return parseInt(contractSettings.value.get('vipMinimumBalance'));
+	return contractSettings.value.get('vipMinimumBalance');
 });
 const balance = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
@@ -141,5 +157,11 @@ const balance = computed(() => {
 }
 a {
 	color: inherit;
+}
+.instructions  {
+	padding: 10px;
+}
+.sm-text {
+	font-size: 12px;
 }
 </style>

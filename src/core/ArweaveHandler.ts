@@ -9,6 +9,9 @@ export class ArweaveHandler {
   private readonly _arweave: Arweave;
   private readonly _ardb: ArDB;
   private readonly _smartweave: SmartWeave;
+  private readonly _mainNets = [
+    'arweave-mainnet', 'arweave-dev-mainnet', 'arweave.net', 'arweave.dev'
+  ];
   public readonly networks: Record<string, {host: string, port: number, protocol: string}> = {
     'arlocal-localhost': {
       host: 'localhost',
@@ -25,7 +28,7 @@ export class ArweaveHandler {
       port: 443,
       protocol: 'https'
     },
-    'arweave-dev': {
+    'arweave-dev-mainnet': {
       host: "arweave.dev",
       protocol: "https",
       port: 443,
@@ -159,29 +162,29 @@ export class ArweaveHandler {
     mainAddress: string,
     balances: Record<string, number> 
   ): ArTransfer|undefined {
-  const mainNets = [
-    'arweave-mainnet', 'arweave-dev'
-  ];
-  const maxAttempts = 10;
-  if (balance >= vipMinimumBalance ||
-    mainNets.indexOf(network) < 0 ||
-    Object.keys(balances).length === 0) {
+    const maxAttempts = 10;
+    if (balance >= vipMinimumBalance ||
+      !this.onMainnet() ||
+      Object.keys(balances).length === 0) {
+      return undefined;
+    }
+    
+    let attempts = 0;
+    const t: ArTransfer = { target: '', winstonQty: appFeeInWinston}
+    while ((!t.target || t.target == mainAddress) && attempts < maxAttempts) {
+      t.target = this.selectWeightedPstHolder(balances);
+      attempts++;
+    }
+
+    if (t.target) {
+      return t;
+    }
+
     return undefined;
   }
-  
-  let attempts = 0;
-  const t: ArTransfer = { target: '', winstonQty: appFeeInWinston}
-  while ((!t.target || t.target == mainAddress) && attempts < maxAttempts) {
-    t.target = this.selectWeightedPstHolder(balances);
-    attempts++;
+
+  public onMainnet() {
+     return this._mainNets.indexOf(this._arweave.api.config.host!) >= 0;
   }
-
-  if (t.target) {
-    return t;
-  }
-
-  return undefined;
-}
-
 
 }
