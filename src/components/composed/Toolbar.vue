@@ -14,6 +14,14 @@
 			</ul>
 			
 			<ul class="toolbar-menu bottom-menu">
+				<li v-if="iframe">
+					<a tabindex="0" 
+						class="icon-toolbar-link"
+						data-tippy-content="Open in a New tab"
+						:href="arcodeExternalTab" target="_blank">
+							<Icon class="icon-toolbar" icon="codicon-link-external" />
+					</a>
+				</li>
 				<li v-for="optionSec in options['secondary']" :key="optionSec.id">
 					<a tabindex="0" 
 						:data-tippy-content="optionSec.label"
@@ -54,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
 import FileExplorer from '@/components/panel/FileExplorer.vue';
 import RunAndDebug from '@/components/panel/RunAndDebug.vue';
@@ -127,6 +135,9 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 
 const initialContainerWidth = 220;
 const sideContainerWidth = ref(initialContainerWidth);
+const arcodeExternalTab = computed(() => {
+	return `#/${props.tx}`;
+});
 
 const select = (optionId: string, optionType: string, event: Event) => {
 	let target: HTMLAnchorElement = event.currentTarget as HTMLAnchorElement;
@@ -196,7 +207,7 @@ onMounted(() => {
 		var x = window.matchMedia("(min-width: 700px)")
 		responsiveToolbar(x);
 	}
-	
+
 });
 
 </script>
@@ -294,6 +305,9 @@ $toolbar-container-width: 180px;
 	cursor: col-resize;
 }
 
+.icon-toolbar-link {
+	text-decoration: none;
+}
 
 .icon-toolbar {
 	padding: 10px 0px;
