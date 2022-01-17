@@ -70,7 +70,8 @@ const props = defineProps({
 	workspace: Object,
 	tokenState: Object,
 	iframe: Boolean,
-	tx: String
+	tx: String,
+	hideToolbar: Boolean
 });
 const showPanel = ref(false);
 const selectedOption = ref('');
@@ -190,8 +191,12 @@ onMounted(() => {
 		}
 	}
 
-	var x = window.matchMedia("(min-width: 700px)")
-	responsiveToolbar(x)
+	// Collapse/show toolbar 
+	if (!props.hideToolbar) {
+		var x = window.matchMedia("(min-width: 700px)")
+		responsiveToolbar(x);
+	}
+	
 });
 
 </script>

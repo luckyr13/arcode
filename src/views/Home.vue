@@ -16,7 +16,8 @@
           <Toolbar 
             :iframe="iframe"
             :tx="tx"
-            :workspace="workspace" 
+            :workspace="workspace"
+            :hideToolbar="hideToolbar"
             :theme="theme" :tokenState="tokenState" />
         </div>
         <div class="workspace-container">
@@ -45,17 +46,23 @@ import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
 import { useRoute } from 'vue-router'
 
+const props = defineProps({
+  tx: String,
+  hideToolbar: Boolean,
+  theme: String
+});
+
 const us: UserSettings = new UserSettings();
 const settings = us.settings;
 const theme = ref(settings.theme);
-us.setAppTheme(theme.value);
 const arweave = new ArweaveHandler();
 const workspace = ref(null);
 const loadingAppContract = ref(true);
 const tokenState = ref({});
 
 const route = useRoute()
-const tx = ref(route.params.tx);
+// const tx = ref(route.params.tx);
+// const tx = ref(props.tx);
 const iframe = ref(false);
 
 // Page inside iframe
@@ -75,12 +82,26 @@ if (window && window.self !== window.top) {
 
 onMounted(async () => {
   try {
+    // Set theme 
+    // Check first URL parameter
+    if (props.theme) {
+      try {
+        const t = props.theme === 'default' ? '' : props.theme;
+        us.setAppTheme(t);
+        theme.value = t;
+      } catch (err) {
+        console.error(`Theme: ${err}`)
+      }
+    } else {
+      us.setAppTheme(theme.value);
+    }
+
+    // Load contract state
     loadingAppContract.value = true;
     const contract = arweave.smartweave.contract(arweave.tokenContract);
     const { state, validity } = await contract.readState();
     tokenState.value = state;
     loadingAppContract.value = false;
-
 
   } catch (err) {
     createToast(`${err}`,

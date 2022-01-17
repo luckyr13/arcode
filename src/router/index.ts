@@ -1,16 +1,18 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, RouteRecordRaw, RouteLocation} from 'vue-router'
 import Home from '../views/Home.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/:tx',
+    path: '/:tx?',
     name: 'HomeLoadContract',
-    component: Home
+    component: Home,
+    props: route => {
+      return { 
+        tx: route.params.tx,
+        hideToolbar: !!route.query.hideToolbar,
+        theme: route.query.theme
+      }
+    }
   }
 ]
 
