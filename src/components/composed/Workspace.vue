@@ -1,7 +1,7 @@
 <template>
   <div class="arcode-workspace">
     <div class="workspace-bg text-center" >
-      <img class="logo" alt="arCode" src="@/assets/img/logo.png">
+      <Logo />
       <h4 class="text-center arcode-title" >
         ArCode Studio v{{ appVersion }}
       </h4>
@@ -78,6 +78,7 @@ import {
   ref, onBeforeUpdate, watchEffect, onMounted
 } from 'vue';
 import { Workspace } from '@/core/Workspace';
+import Logo from '@/components/atomic/Logo';
 import Icon from '@/components/atomic/Icon';
 import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
@@ -371,8 +372,6 @@ onMounted(async () => {
     }
   }
 
-  
-
 });
 
 
@@ -462,9 +461,6 @@ const loadEditorFromTX = async (tx: string, path: string) => {
 
 <style scoped lang="scss">
 $workspace-tabs-height: 35px;
-.logo {
-  width: 20%;
-}
 
 .arcode-workspace {
   height: 100%;
