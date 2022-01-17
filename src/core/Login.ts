@@ -41,7 +41,6 @@ export class Login {
 			this._key = key;
 			this._method = method;
 			if (this._method === 'webwallet') {
-				this.hijackArweave(this._arweave.arweave);
 				this._arweaveWebWallet.setUrl('arweave.app')
 			}
 		}
@@ -102,7 +101,7 @@ export class Login {
     this.removeAccountFromCache();
     this.mainAddress = '';
 		this.key = null;
-		if ((this.method === 'arconnect' || this.method === 'finnie') &&
+		if ((this.method === 'arconnect' || this.method === 'finnie' || this.method === 'webwallet') &&
 				window.arweaveWallet) {
 			window.arweaveWallet.disconnect();
 		}
