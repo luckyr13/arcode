@@ -51,7 +51,7 @@
 		Common ArCode Problems
 	</h4>
 	<p class="sm-text">
-		<strong>Brave Browser and AdBlock users.</strong> Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT).
+		<strong style="color: red">Brave Browser and AdBlock users.</strong> Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT).
 	</p>
 	<p class="sm-text">
 		To solve this, please follow the next steps:
