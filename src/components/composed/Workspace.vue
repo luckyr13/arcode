@@ -341,9 +341,9 @@ onMounted(async () => {
   const tx = props.tx;
   // IF Single File Mode
   if (tx) {
-    createToast(`Running Single File mode ...`,
+    createToast(`Running Single File mode.`,
       {
-        type: 'success',
+        type: 'warning',
         showIcon: true,
         position: 'bottom-right',
       });
