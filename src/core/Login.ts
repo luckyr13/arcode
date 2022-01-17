@@ -32,8 +32,8 @@ export class Login {
 		const method = this._storage.getItem(this._cachedProperties[2])!;
 
 		this._arweaveWebWallet = new ArweaveWebWallet({
-			name: 'ArweaveApp',
-			logo: 'https://jfbeats.github.io/ArweaveWalletConnector/placeholder.svg'
+			name: 'Arcode Studio',
+			logo: 'https://arweave.net/wJGdli6nMQKCyCdtCewn84ba9-WsJ80-GS-KtKdkCLg'
 		})
 		
 		if (mainAddress) {
