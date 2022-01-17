@@ -57,10 +57,15 @@ onMounted(() => {
   // Animations
   anime({
     targets: '#arcode-workspace-logo path',
-    strokeDashoffset: [anime.setDashoffset, 0],
+    keyframes: [
+      { strokeDashoffset: [anime.setDashoffset, 0], duration: 5000, delay: 4000 },
+      { filter: 'invert(1)', delay: 8000, duration: 4000 },
+      { filter: 'invert(0.5)', delay: 5000, duration: 1000 },
+      
+    ],
     easing: 'easeInOutSine',
     duration: 9000,
-    delay: function(el, i) { return  4000 },
+    delay: function(el, i) { return  3000 },
     direction: 'alternate',
     loop: true
   });
