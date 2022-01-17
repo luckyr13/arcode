@@ -21,6 +21,7 @@
     "@codemirror/theme-one-dark": "^0.19.1",
     "@codemirror/view": "^0.19.39",
     "@vscode/codicons": "0.0.27",
+    "animejs": "^3.2.1",
     "ardb": "^1.1.8",
     "arweave": "^1.10.23",
     "arweave-wallet-connector": "^0.0.18",
