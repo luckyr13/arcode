@@ -389,7 +389,7 @@ export class FileTree
 
 	public findFileIdByName(filepath: string, filename: string): number {
 		let folders = this._breakPath(filepath);
-		if (folders.length !== 1 && folders[0] !== '') {
+		if (folders[0] !== '') {
 			folders = [''].concat(folders);
 		}
 		// Search in Tree 
