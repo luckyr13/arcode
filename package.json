@@ -24,7 +24,7 @@
     "animejs": "^3.2.1",
     "ardb": "^1.1.8",
     "arweave": "^1.10.23",
-    "arweave-wallet-connector": "^0.0.18",
+    "arweave-wallet-connector": "^0.0.19",
     "core-js": "^3.20.2",
     "js-file-download": "^0.4.12",
     "mosha-vue-toastify": "^1.0.23",
