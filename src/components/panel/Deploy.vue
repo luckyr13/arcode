@@ -5,7 +5,7 @@
 <div class="deploy-container" v-if="mainAddress && !deployedContractTX">
 	<div class="form-input">
 		<label>Wallet</label>
-		<input type="text" disabled v-model.trim="mainAddress">
+		<input type="text" disabled :value="mainAddress">
 	</div>
 	<div class="form-input">
 		<label>Method</label>
@@ -170,8 +170,8 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import Icon from '@/components/atomic/Icon';
-import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
+import { Login } from '@/core/Login';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 
   ContractData, ArWallet, FromSrcTxContractData, ArTransfer
@@ -184,8 +184,6 @@ import {
  
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
-const login = new Login(settings.stayLoggedIn);
-const mainAddress = ref(login.mainAddress);
 const globalArweaveHandler = new ArweaveHandler();
 
 const networks = computed(() => {
@@ -202,7 +200,8 @@ const selNetwork = ref('arweave-mainnet');
 const prevNetwork = ref(selNetwork.value);
 const props = defineProps({
 	workspace: Object,
-	tokenState: Object
+	tokenState: Object,
+	login: Object
 });
 const tagsList1 = reactive<Tags>([]);
 const tagsList2 = reactive<Tags>([]);
@@ -219,6 +218,7 @@ const appFeeInAr = computed(() => {
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
+const mainAddress = ref(props.login.mainAddress);
 const pstBalance = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
@@ -240,8 +240,7 @@ const deployContract = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
-		const login = new Login(settings.stayLoggedIn, selNetwork.value);
-		const arweave = login.arweave;
+		const arweave = new ArweaveHandler(selNetwork.value);
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {
@@ -258,7 +257,7 @@ const deployContract = async (
 		const contractFileId = workspace.findFileIdByName(contractPath2, contractName2);
 		const iContract = workspace.editors.findIndex(ed => ed.id == contractFileId);
 		
-		const wallet: ArWallet = login.key;
+		const wallet: ArWallet = props.login.key;
 		
 		if (iState < 0 || iContract < 0) {
 			throw Error(`Invalid state or contract id ${iState} ${iContract}`);
@@ -338,8 +337,7 @@ const deployContractFromTX = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
-		const login = new Login(settings.stayLoggedIn, selNetwork.value);
-		const arweave = login.arweave;
+		const arweave = new ArweaveHandler(selNetwork.value);
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {
@@ -347,7 +345,7 @@ const deployContractFromTX = async (
 		}
 		const stateFileId = workspace.findFileIdByName(statePath2, stateName2);
 		const iState = workspace.editors.findIndex(ed => ed.id == stateFileId);
-		const wallet: ArWallet = login.key;
+		const wallet: ArWallet = props.login.key;
 		if (iState < 0 || !contractSrcTX) {
 			throw Error(`Invalid state or contract id ${iState} ${contractSrcTX}`);
 		}

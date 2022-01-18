@@ -5,7 +5,7 @@
 <div class="run-container" v-if="mainAddress">
 	<div class="form-input">
 		<label>Wallet</label>
-		<input type="text" disabled v-model.trim="mainAddress">
+		<input type="text" disabled :value="mainAddress">
 	</div>
 	<div class="form-input">
 		<label>Network</label>
@@ -172,7 +172,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import Icon from '@/components/atomic/Icon';
-import { Login } from '@/core/Login';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 
@@ -182,8 +181,6 @@ import { createToast } from 'mosha-vue-toastify';
 
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
-const login = new Login(settings.stayLoggedIn);
-const mainAddress = ref(login.mainAddress);
 const globalArweaveHandler = new ArweaveHandler();
 
 const networks = computed(() => {
@@ -200,9 +197,11 @@ const inputList = reactive<Input[]>([{ key: 'function', value: '' }]);
 const tagsList = reactive<Tags>([]);
 const props = defineProps({
 	workspace: Object,
-	tokenState: Object
+	tokenState: Object,
+	login: Object
 });
 
+const mainAddress = ref(props.login.mainAddress);
 const contractSettings = computed(() => {
 	const settings = props.tokenState.settings ? props.tokenState.settings : [];
 	return new Map(settings);
@@ -237,8 +236,7 @@ const runInteraction = async (
 	tags: Tags) => {
 	loadingTX.value = true;
 	try {
-		const login = new Login(settings.stayLoggedIn, selNetwork.value);
-		const arweave = login.arweave;
+		const arweave = new ArweaveHandler(selNetwork.value);
 		let func = '';
 		const fullPayload = {};
 		response.value = {};
@@ -262,7 +260,7 @@ const runInteraction = async (
 		const contract = arweave.smartweave.contract(
 				contractTX
 			).connect(
-				login.key
+				props.login.key
 			).setEvaluationOptions({
 				// with this flag set to true, the write will wait for the transaction to be confirmed
 				waitForConfirmation: false,
@@ -329,7 +327,7 @@ const runInteraction = async (
       showIcon: true,
       position: 'bottom-right',
     });
-		console.error(err);
+		console.error(error);
 	}
 	loadingTX.value = false;
 };

@@ -39,16 +39,21 @@
 					:tx="tx"
 					:workspace="workspace" />
 			<RunAndDebug 
+				:login="login"
 				v-if="options['primary']['compile'].active" 
 				:workspace="workspace"
 				:tokenState="tokenState" />
-			<Search v-if="options['primary']['explore'].active" />
+			<Search
+				:login="login"
+				v-if="options['primary']['explore'].active" />
 			<Deploy
+				:login="login"
 				v-if="options['primary']['deploy'].active"
 				:workspace="workspace" 
 				:tokenState="tokenState" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
 			<Accounts 
+				:login="login"
 				v-if="options['secondary']['accounts'].active"
 				:iframe="iframe"
 				:tokenState="tokenState" />
@@ -79,7 +84,8 @@ const props = defineProps({
 	tokenState: Object,
 	iframe: Boolean,
 	tx: String,
-	hideToolbar: Boolean
+	hideToolbar: Boolean,
+	login: Object
 });
 const showPanel = ref(false);
 const selectedOption = ref('');

@@ -342,8 +342,10 @@ import {ref, computed, reactive} from 'vue';
 import Icon from '@/components/atomic/Icon';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
-import { Login } from '@/core/Login';
-import { UserSettings } from '@/core/UserSettings';
+const props = defineProps({
+	mainAddress: String,
+	login: Object
+});
 
 const txtTxId = ref('');
 const txtAddress = ref('');
@@ -358,14 +360,8 @@ const resultsByAddress = ref([]);
 const resultsByTags = ref([]);
 const rdFilter = ref('');
 const globalArweaveHandler = new ArweaveHandler();
-const userSettings = new UserSettings();
-const settings = userSettings.settings;
-let login = new Login(settings.stayLoggedIn);
 const tagsList = reactive<Array<{name: string, values: string}>>([]);
-const mainAddress = computed(() => {
-	return login.mainAddress;
-});
-
+const mainAddress = ref(props.login.mainAddress);
 
 const networks = computed(() => {
 	return globalArweaveHandler.networks;

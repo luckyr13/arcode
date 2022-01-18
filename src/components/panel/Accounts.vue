@@ -64,7 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { Login } from '@/core/Login';
 import { createToast } from 'mosha-vue-toastify';
 import { ref, onMounted, watchEffect, computed } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
@@ -73,14 +72,14 @@ import { ArweaveHandler } from '@/core/ArweaveHandler';
 
 const props = defineProps({
 	iframe: Boolean,
-	tokenState: Object
+	tokenState: Object,
+	login: Object
 });
 const arweave = new ArweaveHandler();
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
 const method = ref('');
-let login = new Login(settings.stayLoggedIn);
 const chkStayLoggedIn = ref(settings.stayLoggedIn);
 const uploadKeyTrigger = () => {
 	const txtFile_uploadKey = document.getElementById('txtFile_uploadKey');
@@ -91,10 +90,10 @@ const uploadKeyTrigger = () => {
 
 const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 	try {
-		const address = await login.uploadKeyFile(event.target, stayLoggedIn);
+		const address = await props.login.uploadKeyFile(event.target, stayLoggedIn, arweave.arweave);
 		if (address) {
 			mainAddress.value = address;
-			method.value = login.method;
+			method.value = props.login.method;
 		} else {
 			throw Error('Error reading wallet address');
 		}
@@ -110,10 +109,10 @@ const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 
 const arConnect = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await login.arConnect(stayLoggedIn);
+		const address = await props.login.arConnect(stayLoggedIn, arweave.arweave);
 		if (address) {
 			mainAddress.value = address;
-			method.value = login.method;
+			method.value = props.login.method;
 		} else {
 			throw Error('Error reading wallet address');
 		}
@@ -129,10 +128,10 @@ const arConnect = async (stayLoggedIn: boolean) => {
 
 const finnie = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await login.finnie(stayLoggedIn);
+		const address = await props.login.finnie(stayLoggedIn, arweave.arweave);
 		if (address) {
 			mainAddress.value = address;
-			method.value = login.method;
+			method.value = props.login.method;
 		} else {
 			throw Error('Error reading wallet address');
 		}
@@ -149,10 +148,10 @@ const finnie = async (stayLoggedIn: boolean) => {
 
 const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await login.arweaveWebWallet(stayLoggedIn);
+		const address = await props.login.arweaveWebWallet(stayLoggedIn, arweave.arweave);
 		if (address) {
 			mainAddress.value = address;
-			method.value = login.method;
+			method.value = props.login.method;
 		} else {
 			throw Error('Error reading wallet address');
 		}
@@ -168,15 +167,14 @@ const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 };
 
 const logout = () => {
-	login.logout();
+	props.login.logout();
 	mainAddress.value = '';
 	method.value = '';
-	login = new Login(settings.stayLoggedIn);
 };
 
 onMounted(() => {
-	mainAddress.value = login.mainAddress;
-	method.value = login.method;
+	mainAddress.value = props.login.mainAddress;
+	method.value = props.login.method;
 });
 watchEffect(async () => {
 	userSettings.setStayLoggedIn(chkStayLoggedIn.value);

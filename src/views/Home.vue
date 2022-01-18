@@ -18,6 +18,7 @@
             :tx="tx"
             :workspace="workspace"
             :hideToolbar="hideToolbar"
+            :login="login"
             :theme="theme" :tokenState="tokenState" />
         </div>
         <div class="workspace-container">
@@ -43,8 +44,10 @@ import Toolbar from '@/components/composed/Toolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { IFrameWalletBridge } from '@/core/IFrameWalletBridge';
 import { createToast } from 'mosha-vue-toastify';
 import { useRoute } from 'vue-router'
+import { Login } from '@/core/Login';
 
 const props = defineProps({
   tx: String,
@@ -56,6 +59,7 @@ const us: UserSettings = new UserSettings();
 const settings = us.settings;
 const theme = ref(settings.theme);
 const arweave = new ArweaveHandler();
+const login = new Login();
 const workspace = ref(null);
 const loadingAppContract = ref(true);
 const tokenState = ref({});
@@ -65,20 +69,6 @@ const route = useRoute()
 // const tx = ref(props.tx);
 const iframe = ref(false);
 
-// Page inside iframe
-if (window && window.self !== window.top) {
-  console.log('IFrame detected ...');
-  iframe.value = true;
-  window.top.postMessage({message: 'arCodeLoaded'}, '*');
-  window.addEventListener("message", (event) => {
-    // Do we trust the sender of this message?
-    if (event.origin !== 'http://localhost' &&
-        event.origin !== 'https://scanner.redstone.tools') {
-      return;
-    }
-    // TODO
-  }, false);
-}
 
 onMounted(async () => {
   try {
@@ -102,6 +92,13 @@ onMounted(async () => {
     const { state, validity } = await contract.readState();
     tokenState.value = state;
     loadingAppContract.value = false;
+
+    // Page inside iframe
+    const iframeBridge = new IFrameWalletBridge();
+    iframe.value = iframeBridge.start();
+
+    // Load session data
+    login.loadSession(settings.stayLoggedIn);
 
   } catch (err) {
     createToast(`${err}`,

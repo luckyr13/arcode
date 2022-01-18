@@ -82,17 +82,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
-import { Login } from '@/core/Login';
-import { UserSettings } from '@/core/UserSettings';
 
 const arweave = new ArweaveHandler();
-const userSettings = new UserSettings();
-const settings = userSettings.settings;
-const login = new Login(settings.stayLoggedIn);
-const mainAddress = ref(login.mainAddress);
 
 const props = defineProps({
-	tokenState: Object
+	tokenState: Object,
+	mainAddress: String
 });
 const contractSettings = computed(() => {
 	const settings = props.tokenState.settings ? props.tokenState.settings : [];
@@ -106,12 +101,6 @@ const appFeeInAr = computed(() => {
 });
 const vipMinimumBalance = computed(() => {
 	return contractSettings.value.get('vipMinimumBalance');
-});
-const balance = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
-	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
-	return res;
 });
 </script>
 
