@@ -27,6 +27,9 @@
 			<input 
 				:disabled="loadingSearch" 
 				type="text" v-model.trim="txtTxId" @keyup.enter="searchByTX(txtTxId)">
+			<div class="text-right">
+				<a v-if="tx" class="link" @click="txtTxId = tx">Use TX from URL</a>
+			</div>
 		</div>
 		<ul class="search-menu">
 			<li>
@@ -344,7 +347,8 @@ import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
 const props = defineProps({
 	mainAddress: String,
-	login: Object
+	login: Object,
+	tx: String
 });
 
 const txtTxId = ref('');

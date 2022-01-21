@@ -20,6 +20,9 @@
 		<input 
 			:disabled="loadingTX"
 			type="text" v-model.trim="txtContract">
+		<div class="text-right">
+			<a v-if="tx" class="link" @click="txtContract = tx">Use TX from URL</a>
+		</div>
 	</div>
 	<h5 class="title-data">Input Data</h5>
 	<p class="no-results" v-if="!inputList.length">No input data.</p>
@@ -198,7 +201,8 @@ const tagsList = reactive<Tags>([]);
 const props = defineProps({
 	workspace: Object,
 	tokenState: Object,
-	login: Object
+	login: Object,
+	tx: String
 });
 
 const mainAddress = ref(props.login.mainAddress);
@@ -555,6 +559,11 @@ watchEffect(async () => {
 .table th {
 	background-color: var(--app-toolbar-panel-title-bgcolor);
 	color: var(--app-toolbar-panel-title-color);
+}
+.link {
+	font-size: 12px;
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 </style>

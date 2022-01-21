@@ -39,11 +39,13 @@
 					:tx="tx"
 					:workspace="workspace" />
 			<RunAndDebug 
+				:tx="tx"
 				:login="login"
 				v-if="options['primary']['compile'].active" 
 				:workspace="workspace"
 				:tokenState="tokenState" />
 			<Search
+				:tx="tx"
 				:login="login"
 				v-if="options['primary']['explore'].active" />
 			<Deploy
