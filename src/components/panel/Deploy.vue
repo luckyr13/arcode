@@ -69,7 +69,13 @@
 		</div>
 		<ul class="deploy-menu">
 			<li>
-				Balance: {{ balance }} AR
+				<p>
+					Balance: {{ balance }} AR
+				</p>
+			</li>
+			<li class="text-right">
+				<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
+					class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
 			</li>
 			<li>
 				<button
@@ -346,7 +352,7 @@ const deployContractFromTX = async (
 		if (balance.value == 0) {
 			throw Error('Not enough balance!');
 		}
-		
+
 		const arweave = new ArweaveHandler(selNetwork.value);
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
@@ -431,6 +437,46 @@ const addTag = (key: string, value: string, tags: Tags) => {
 	tags.push({ key, value });
 };
 
+const testnetMintTokens = async (qty='1000000000000') => {
+	try {
+		const net = networks.value[selNetwork.value];
+		const url = `${net.protocol}://${net.host}:${net.port}/mint/${mainAddress.value}/${qty}`;
+		const res = await fetch(url);
+		if (res.status === 200) {
+		createToast('Tokens minted!',
+			{
+				type: 'success',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		} else {
+			console.log('Error:', res);
+			createToast('Tokens not minted!',
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+
+		// Update balance after 1 second 
+		window.setTimeout(async () => {
+			const arweave = new ArweaveHandler(selNetwork.value);
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+		}, 1500);
+
+
+	} catch (err) {
+		createToast(err,
+    {
+      type: 'danger',
+      showIcon: true,
+      position: 'bottom-right',
+    });
+	}
+};
+
 onMounted(async () => {
 	// Balance for Method 1
 	if (mainAddress.value) {
@@ -492,15 +538,18 @@ watchEffect(async () => {
 }
 .deploy-menu li {
 	padding: 0px;
-	height: 36px;
 	list-style: none;
 	text-align: center;
 	margin-top: 10px;
 }
 
+.deploy-menu li p {
+	margin-bottom: 20px;
+}
+
 .deploy-menu li button {
 	width: 70%;
-	height: 100%;
+	height: 36px;
 	line-height: 12px;
 	border: 0;
 	cursor: pointer;
@@ -621,5 +670,10 @@ watchEffect(async () => {
 }
 .no-results {
 	font-size: 12px;
+}
+.link {
+	font-size: 12px;
+	cursor: pointer;
+	text-decoration: underline;
 }
 </style>

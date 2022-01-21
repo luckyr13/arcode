@@ -94,7 +94,13 @@
 	
 	<ul class="run-menu">
 		<li>
-			Balance: {{ balance }} AR
+			<p>
+				Balance: {{ balance }} AR
+			</p>
+		</li>
+		<li class="text-right">
+			<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
+				class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
 		</li>
 		<li>
 			<button
@@ -356,6 +362,46 @@ const removeTag = (index: number) => {
 	tagsList.splice(index, 1);
 };
 
+const testnetMintTokens = async (qty='1000000000000') => {
+	try {
+		const net = networks.value[selNetwork.value];
+		const url = `${net.protocol}://${net.host}:${net.port}/mint/${mainAddress.value}/${qty}`;
+		const res = await fetch(url);
+		if (res.status === 200) {
+		createToast('Tokens minted!',
+			{
+				type: 'success',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		} else {
+			console.log('Error:', res);
+			createToast('Tokens not minted!',
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+
+		// Update balance after 1 second 
+		window.setTimeout(async () => {
+			const arweave = new ArweaveHandler(selNetwork.value);
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+		}, 1500);
+
+
+	} catch (err) {
+		createToast(err,
+    {
+      type: 'danger',
+      showIcon: true,
+      position: 'bottom-right',
+    });
+	}
+};
+
 onMounted(async () => {
 	// Balance for Method 1
 	if (mainAddress.value) {
@@ -416,11 +462,14 @@ watchEffect(async () => {
 }
 .run-menu li {
 	padding: 0px;
-	height: 36px;
 	font-size: 12px;
 	list-style: none;
 	text-align: center;
 	margin-top: 10px;
+}
+
+.run-menu li p {
+	margin-bottom: 20px;
 }
 
 .run-menu li button {
@@ -435,6 +484,7 @@ watchEffect(async () => {
 	color: gray;
 	cursor: default;
 	background-color: rgba(0,0,0,0.1);
+	height: 36px;
 }
 
 .run-menu li button.primary {
