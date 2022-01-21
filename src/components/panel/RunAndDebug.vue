@@ -236,6 +236,11 @@ const runInteraction = async (
 	tags: Tags) => {
 	loadingTX.value = true;
 	try {
+		// Check balance
+		if (balance.value == 0 && interaction !== 'viewState') {
+			throw Error('Not enough balance!');
+		}
+
 		const arweave = new ArweaveHandler(selNetwork.value);
 		let func = '';
 		const fullPayload = {};

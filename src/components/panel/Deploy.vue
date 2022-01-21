@@ -240,6 +240,11 @@ const deployContract = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
+		// Check balance
+		if (balance.value == 0) {
+			throw Error('Not enough balance!');
+		}
+
 		const arweave = new ArweaveHandler(selNetwork.value);
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
@@ -337,6 +342,11 @@ const deployContractFromTX = async (
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
 	try {
+		// Check balance
+		if (balance.value == 0) {
+			throw Error('Not enough balance!');
+		}
+		
 		const arweave = new ArweaveHandler(selNetwork.value);
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');

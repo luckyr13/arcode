@@ -353,7 +353,6 @@ onMounted(async () => {
       addFolder('/', tx);
       await loadEditorFromTX(tx, `/${tx}`);
     } catch (err) {
-      deleteFolder(`/${tx}`, new Event('Delete-folder'));
       createToast(`${err}`,
         {
           type: 'danger',
