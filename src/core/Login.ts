@@ -8,6 +8,7 @@ import { JWKInterface } from "arweave/web//lib/wallet";
 import Arweave from 'arweave';
 import { ArweaveWebWallet } from 'arweave-wallet-connector';
 import { ref } from 'vue';
+import { IFrameWalletBridge } from './IFrameWalletBridge';
 
 export class Login {
 	// User's private key
@@ -99,8 +100,8 @@ export class Login {
 		return p;
   }
 
-  async arConnect(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
-		if (!window.arweaveWallet) {
+  async arConnect(stayLoggedIn: boolean, arweave: Arweave, iframe=false): Promise<string> {
+		if (!window.arweaveWallet && !iframe) {
 			throw Error('ArConnect not found!');
 		}
 		const address = await arweave.wallets.getAddress();
@@ -117,8 +118,8 @@ export class Login {
 		return address;
   }
 
-  async finnie(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
-		if (!window.arweaveWallet) {
+  async finnie(stayLoggedIn: boolean, arweave: Arweave, iframe=false): Promise<string> {
+		if (!window.arweaveWallet && !iframe) {
 			throw Error('Finnie Wallet not found!');
 		}
 		const address = await arweave.wallets.getAddress();
@@ -164,14 +165,52 @@ export class Login {
 		console.log('Session data loaded ...');
 	}
 
-  logout() {
+  async logout(iframe=false) {
     this.removeAccountFromCache();
     this.mainAddress = '';
 		this.key = null;
-		if ((this.method === 'arconnect' || this.method === 'finnie' || this.method === 'webwallet') &&
-				window.arweaveWallet) {
-			window.arweaveWallet.disconnect();
+		if (iframe) {
+			const api = new IFrameWalletBridge();
+			if ((this.method === 'arconnect' || this.method === 'finnie')) {
+				const res = await api.callAPI({
+					method: 'disconnect'
+				});
+				if (res !== 'disconnected') {
+					throw Error('Error on disconnect');
+				}
+
+			} else if (this.method === 'webwallet') {
+				window.arweaveWallet.disconnect();
+			}
+		} else {
+			if ((this.method === 'arconnect' || this.method === 'finnie' || this.method === 'webwallet') &&
+					window.arweaveWallet) {
+				window.arweaveWallet.disconnect();
+			}
 		}
+		
 		this.method = '';
 	}
+
+  public hijackArweavePostAPI(arweave: Arweave) {
+    const api = new IFrameWalletBridge();
+    // Replace sign
+    arweave.transactions.sign = async (
+      transaction: Transaction,
+      jwk?: JWKInterface | "use_wallet",
+      options?: SignatureOptions
+    ): Promise<void> =>
+    {
+      const signRes =  await api.callAPI({
+        method: 'sign',
+        transaction
+      });
+    }
+    arweave.wallets.getAddress = async (jwk?: JWKInterface | "use_wallet"): Promise<string> =>
+    {
+      return await api.callAPI({
+        method: 'getAddress'
+      });
+    }
+  }
 }

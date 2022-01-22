@@ -7,7 +7,7 @@
 		<h4>Login options:</h4>
 		<ul class="accounts-menu">
 			<li>
-				<button @click="arConnect(chkStayLoggedIn)" :disabled="iframe">
+				<button @click="arConnect(chkStayLoggedIn)">
 					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
 				</button>
 			</li>
@@ -17,7 +17,7 @@
 				</button>
 			</li>
 			<li>
-				<button @click="finnie(chkStayLoggedIn)" :disabled="iframe">
+				<button @click="finnie(chkStayLoggedIn)">
 					<img src="@/assets/img/koi.png"><span>Finnie Wallet</span>
 				</button>
 			</li>
@@ -109,7 +109,7 @@ const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 
 const arConnect = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.arConnect(stayLoggedIn, arweave.arweave);
+		const address = await props.login.arConnect(stayLoggedIn, arweave.arweave, props.iframe);
 		if (address) {
 			mainAddress.value = address;
 			method.value = props.login.method;
@@ -128,7 +128,7 @@ const arConnect = async (stayLoggedIn: boolean) => {
 
 const finnie = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.finnie(stayLoggedIn, arweave.arweave);
+		const address = await props.login.finnie(stayLoggedIn, arweave.arweave, props.iframe);
 		if (address) {
 			mainAddress.value = address;
 			method.value = props.login.method;
@@ -166,8 +166,8 @@ const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 	}
 };
 
-const logout = () => {
-	props.login.logout();
+const logout = async () => {
+	await props.login.logout(props.iframe);
 	mainAddress.value = '';
 	method.value = '';
 };
@@ -175,6 +175,12 @@ const logout = () => {
 onMounted(() => {
 	mainAddress.value = props.login.mainAddress;
 	method.value = props.login.method;
+
+	// Fix iframe wallet communication
+	if (props.iframe) {
+		props.login.hijackArweavePostAPI(arweave.arweave);
+	}
+
 });
 watchEffect(async () => {
 	userSettings.setStayLoggedIn(chkStayLoggedIn.value);

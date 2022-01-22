@@ -205,6 +205,7 @@ const selDeployMethod = ref('contract-src-file');
 const selNetwork = ref('arweave-mainnet');
 const prevNetwork = ref(selNetwork.value);
 const props = defineProps({
+	iframe: Boolean,
 	workspace: Object,
 	tokenState: Object,
 	login: Object
