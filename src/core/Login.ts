@@ -100,8 +100,8 @@ export class Login {
 		return p;
   }
 
-  async arConnect(stayLoggedIn: boolean, arweave: Arweave, iframe=false): Promise<string> {
-		if (!window.arweaveWallet && !iframe) {
+  async arConnect(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
+		if (!window.arweaveWallet) {
 			throw Error('ArConnect not found!');
 		}
 		const address = await arweave.wallets.getAddress();
@@ -118,8 +118,8 @@ export class Login {
 		return address;
   }
 
-  async finnie(stayLoggedIn: boolean, arweave: Arweave, iframe=false): Promise<string> {
-		if (!window.arweaveWallet && !iframe) {
+  async finnie(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
+		if (!window.arweaveWallet) {
 			throw Error('Finnie Wallet not found!');
 		}
 		const address = await arweave.wallets.getAddress();
@@ -212,5 +212,23 @@ export class Login {
         method: 'getAddress'
       });
     }
+  }
+
+  async finnieBridge(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
+		// Validate bridge
+
+		const address = await arweave.wallets.getAddress();
+		this.setAccount(address, null, stayLoggedIn);
+		this.method = 'finnie';
+		return address;
+  }
+
+  async arConnectBridge(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
+		// Validate bridge first
+
+		const address = await arweave.wallets.getAddress();
+		this.setAccount(address, null, stayLoggedIn);
+		this.method = 'arconnect';
+		return address;
   }
 }

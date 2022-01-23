@@ -15,47 +15,51 @@ export class IFrameWalletBridge {
 	start() {
 		if (window && window.self !== window.top) {
 			// Notify parent window that ArCode is loaded
-      window.top.postMessage({ event: 'arCodeLoaded' }, '*');
-
-      // Listen for incoming messages
-      window.addEventListener("message", (event: MessageEvent) => {
-				const origin = event.origin;
-				const data = event.data;
-
-				// Do we trust the sender of this message?
-				if (this._validOriginList.indexOf(origin) < 0) {
-					return;
-				}
-
-        // Handle app request
-        if (data.function === 'appLoaded') {
-					console.log('App loaded: ', data.payload)
-					this.callAPI({ response: 'Bridge stablished!' })
-        }
-
-      }, false);
-
-      console.log('IFrame detected ...');
-      return true;
+			window.top.postMessage({ event: 'arCodeLoaded' }, '*');
+			console.log('IFrame detected ...');
+			return true;
     }
 
     return false;
 	}
 
-	callAPI(payload: Record<string, any>): Promise<string> {
+	callAPI(payload: Record<string, any>, origin = ''): Promise<string> {
+		if ( !(window && window.self !== window.top) ) {
+			throw Error('ArCode is not inside an iframe :)');
+		}
 		const res = new Promise<string>((resolve, reject) => {
 			// 1. Send request
-			window.top.postMessage({ payload, event: 'arcodeAction' }, '*');
+			const reqId = Math.round(Math.random() * 100000);
+			window.top.postMessage({ payload, event: 'arcodeAction', id: reqId }, '*');
 
-			// 2. Listen for incoming messages
-			window.addEventListener("message", (event: MessageEvent) => {
+			// Add a timeout for api call
+			const ms = 20000; 
+			const timeout = window.setTimeout(() => {
+				// Remove window listener
+				window.removeEventListener("message", listenerFunction, false);
+				reject(`Bridge Timeout exceeded!`)
+			}, ms);
+
+			const listenerFunction = (event: MessageEvent) => {
 				const origin = event.origin;
 				const data = event.data;
 
 				// Do we trust the sender of this message?
 				if (this._validOriginList.indexOf(origin) < 0) {
+					console.error(`Untrusted origin: ${origin}`);
 					return;
 				}
+				// Validate nonce
+				else if (data.id !== reqId ) {
+					console.error(`Nonce error: ${data.id} !== ${reqId}`);
+					return;
+				}
+
+				// Clear timeout on success
+				window.clearTimeout(timeout);
+				// Remove window listener
+				window.removeEventListener("message", listenerFunction, false);
+
 
 				// 3. Handle app response
 				if (data.function === 'address') {
@@ -64,18 +68,22 @@ export class IFrameWalletBridge {
 				} else if (data.function === 'disconnected') {
 					console.log(`Wallet disconnected!`)
 					resolve('disconnected');
+				} else if (data.function === 'error') {
+					console.log(`Bridge error: ${data.payload}`);
+					resolve(`Bridge error: ${data.payload}`);
 				}
 
 				reject('Function not found');
+			};
 
-			}, false);
+			// 2. Listen for incoming responses messages
+			window.addEventListener("message", listenerFunction, false);
 
 			return '';
 		});
 
 		return res;
 	}
-
 
 
 }

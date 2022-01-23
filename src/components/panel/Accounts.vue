@@ -109,7 +109,12 @@ const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 
 const arConnect = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.arConnect(stayLoggedIn, arweave.arweave, props.iframe);
+		let address = '';
+		if (props.iframe) {
+			address = await props.login.arConnectBridge(stayLoggedIn, arweave.arweave);
+		} else {
+			address = await props.login.arConnect(stayLoggedIn, arweave.arweave);
+		}
 		if (address) {
 			mainAddress.value = address;
 			method.value = props.login.method;
@@ -128,7 +133,13 @@ const arConnect = async (stayLoggedIn: boolean) => {
 
 const finnie = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.finnie(stayLoggedIn, arweave.arweave, props.iframe);
+		let address = '';
+		if (props.iframe) {
+			address = await props.login.finnieBridge(stayLoggedIn, arweave.arweave);
+		} else {
+			address = await props.login.finnie(stayLoggedIn, arweave.arweave);
+		}
+
 		if (address) {
 			mainAddress.value = address;
 			method.value = props.login.method;

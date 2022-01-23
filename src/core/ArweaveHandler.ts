@@ -5,6 +5,7 @@ import {
   LoggerFactory, ContractData, FromSrcTxContractData,
   RedstoneGatewayInteractionsLoader, ArTransfer
  } from 'redstone-smartweave';
+
 export class ArweaveHandler {
   private readonly _arweave: Arweave;
   private readonly _ardb: ArDB;
@@ -192,5 +193,6 @@ export class ArweaveHandler {
     const res = await fetch(endpoint);
     return res;
   }
+
 
 }
