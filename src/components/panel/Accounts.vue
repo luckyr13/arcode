@@ -178,7 +178,11 @@ const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 };
 
 const logout = async () => {
-	await props.login.logout(props.iframe);
+	if (props.iframe) {
+		await props.login.logoutBridge();
+	} else {
+		await props.login.logout();
+	}
 	mainAddress.value = '';
 	method.value = '';
 };

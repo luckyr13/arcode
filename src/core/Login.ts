@@ -165,28 +165,34 @@ export class Login {
 		console.log('Session data loaded ...');
 	}
 
-  async logout(iframe=false) {
+  async logoutBridge() {
     this.removeAccountFromCache();
     this.mainAddress = '';
 		this.key = null;
-		if (iframe) {
-			const api = new IFrameWalletBridge();
-			if ((this.method === 'arconnect' || this.method === 'finnie')) {
-				const res = await api.callAPI({
-					method: 'disconnect'
-				});
-				if (res !== 'disconnected') {
-					throw Error('Error on disconnect');
-				}
+		const api = new IFrameWalletBridge();
+		if ((this.method === 'arconnect' || this.method === 'finnie')) {
+			const res = await api.callAPI({
+				method: 'disconnect'
+			});
+			if (res !== 'disconnected') {
+				throw Error('Error on disconnect');
+			}
 
-			} else if (this.method === 'webwallet') {
-				window.arweaveWallet.disconnect();
-			}
-		} else {
-			if ((this.method === 'arconnect' || this.method === 'finnie' || this.method === 'webwallet') &&
-					window.arweaveWallet) {
-				window.arweaveWallet.disconnect();
-			}
+		} else if (this.method === 'webwallet') {
+			window.arweaveWallet.disconnect();
+		}
+		
+		this.method = '';
+	}
+
+	async logout() {
+    this.removeAccountFromCache();
+    this.mainAddress = '';
+		this.key = null;
+	
+		if ((this.method === 'arconnect' || this.method === 'finnie' || this.method === 'webwallet') &&
+				window.arweaveWallet) {
+			window.arweaveWallet.disconnect();
 		}
 		
 		this.method = '';
@@ -215,8 +221,6 @@ export class Login {
   }
 
   async finnieBridge(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
-		// Validate bridge
-
 		const address = await arweave.wallets.getAddress();
 		this.setAccount(address, null, stayLoggedIn);
 		this.method = 'finnie';
@@ -224,8 +228,6 @@ export class Login {
   }
 
   async arConnectBridge(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
-		// Validate bridge first
-
 		const address = await arweave.wallets.getAddress();
 		this.setAccount(address, null, stayLoggedIn);
 		this.method = 'arconnect';
