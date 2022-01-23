@@ -208,7 +208,8 @@ const props = defineProps({
 	workspace: Object,
 	tokenState: Object,
 	login: Object,
-	tx: String
+	tx: String,
+	iframe: Boolean
 });
 
 const mainAddress = ref(props.login.mainAddress);
@@ -237,7 +238,7 @@ const appFeeInWinston = computed(() => {
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
-
+const isBridgeActive = ref(false);
 
 const runInteraction = async (
 	contractTX: string,
@@ -252,6 +253,11 @@ const runInteraction = async (
 		}
 
 		const arweave = new ArweaveHandler(selNetwork.value);
+		// Iframe fix
+		const loginMethod = props.login.method;
+		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
+			props.login.hijackArweavePostAPI(arweave.arweave);
+		}
 		let func = '';
 		const fullPayload = {};
 		response.value = {};
@@ -403,7 +409,7 @@ const testnetMintTokens = async (qty='1000000000000') => {
 };
 
 onMounted(async () => {
-	// Balance for Method 1
+	// Get wallet balance
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
@@ -411,6 +417,22 @@ onMounted(async () => {
 			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
 			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+	}
+	// Check iframe conditions
+	isBridgeActive.value = false;
+	if (props.iframe) {
+		// Start handshake with parent 
+		try {
+			isBridgeActive.value = await props.login.isBridgeActive();
+
 		} catch (err) {
 			createToast(`${err}`,
 			{

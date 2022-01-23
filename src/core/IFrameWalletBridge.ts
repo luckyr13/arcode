@@ -23,7 +23,7 @@ export class IFrameWalletBridge {
     return false;
 	}
 
-	callAPI(payload: Record<string, any>, origin = ''): Promise<string> {
+	callAPI(payload: Record<string, any>): Promise<string> {
 		if ( !(window && window.self !== window.top) ) {
 			throw Error('ArCode is not inside an iframe :)');
 		}
@@ -33,11 +33,12 @@ export class IFrameWalletBridge {
 			window.top.postMessage({ payload, event: 'arcodeAction', id: reqId }, '*');
 
 			// Add a timeout for api call
-			const ms = 20000; 
+			const ms = 900000;
 			const timeout = window.setTimeout(() => {
 				// Remove window listener
 				window.removeEventListener("message", listenerFunction, false);
-				reject(`Bridge Timeout exceeded!`)
+				console.error('Bridge timeout!');
+				reject(`Bridge Timeout exceeded!`);
 			}, ms);
 
 			const listenerFunction = (event: MessageEvent) => {
@@ -60,7 +61,6 @@ export class IFrameWalletBridge {
 				// Remove window listener
 				window.removeEventListener("message", listenerFunction, false);
 
-
 				// 3. Handle app response
 				if (data.function === 'address') {
 					console.log(`address: ${data.payload}`)
@@ -68,9 +68,15 @@ export class IFrameWalletBridge {
 				} else if (data.function === 'disconnected') {
 					console.log(`Wallet disconnected!`)
 					resolve('disconnected');
+				} else if (data.function === 'handshake') {
+					console.log(`Connection established! [${data.payload}]`);
+					resolve(data.payload);
+				} else if (data.function === 'signedTransaction') {
+					console.log(`Tx signed!`);
+					resolve(data.payload);
 				} else if (data.function === 'error') {
 					console.log(`Bridge error: ${data.payload}`);
-					resolve(`Bridge error: ${data.payload}`);
+					reject(`Bridge error: ${data.payload}`);
 				}
 
 				reject('Function not found');
@@ -79,7 +85,6 @@ export class IFrameWalletBridge {
 			// 2. Listen for incoming responses messages
 			window.addEventListener("message", listenerFunction, false);
 
-			return '';
 		});
 
 		return res;

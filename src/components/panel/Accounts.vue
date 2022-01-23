@@ -7,7 +7,7 @@
 		<h4>Login options:</h4>
 		<ul class="accounts-menu">
 			<li>
-				<button @click="arConnect(chkStayLoggedIn)">
+				<button :disabled="iframe && !isBridgeActive" @click="arConnect(chkStayLoggedIn)">
 					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
 				</button>
 			</li>
@@ -17,7 +17,7 @@
 				</button>
 			</li>
 			<li>
-				<button @click="finnie(chkStayLoggedIn)">
+				<button :disabled="iframe && !isBridgeActive" @click="finnie(chkStayLoggedIn)">
 					<img src="@/assets/img/koi.png"><span>Finnie Wallet</span>
 				</button>
 			</li>
@@ -34,7 +34,7 @@
 					@change="uploadKey($event, chkStayLoggedIn)">
 			</li>
 		</ul>
-		<div class="text-right form-radio">
+		<div class="text-right form-radio" v-if="!iframe">
 			<label class="">
 				<input 
 					v-model.trim="chkStayLoggedIn" 
@@ -87,6 +87,7 @@ const uploadKeyTrigger = () => {
 		txtFile_uploadKey.click();
 	}
 };
+const isBridgeActive = ref(false);
 
 const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 	try {
@@ -178,22 +179,43 @@ const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 };
 
 const logout = async () => {
-	if (props.iframe) {
-		await props.login.logoutBridge();
-	} else {
-		await props.login.logout();
+	try {
+		if (props.iframe) {
+			await props.login.logoutBridge();
+		} else {
+			await props.login.logout();
+		}
+		mainAddress.value = '';
+		method.value = '';
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
 	}
-	mainAddress.value = '';
-	method.value = '';
 };
 
-onMounted(() => {
+onMounted(async () => {
 	mainAddress.value = props.login.mainAddress;
 	method.value = props.login.method;
+	isBridgeActive.value = false;
 
 	// Fix iframe wallet communication
 	if (props.iframe) {
-		props.login.hijackArweavePostAPI(arweave.arweave);
+		// Start handshake with parent 
+		try {
+			isBridgeActive.value = await props.login.isBridgeActive();
+
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
 	}
 
 });

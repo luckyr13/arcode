@@ -86,19 +86,21 @@ onMounted(async () => {
       us.setAppTheme(theme.value);
     }
 
-    // Load contract state
+    // Load PST contract state
     loadingAppContract.value = true;
     const contract = arweave.smartweave.contract(arweave.tokenContract);
     const { state, validity } = await contract.readState();
     tokenState.value = state;
     loadingAppContract.value = false;
 
-    // Page inside iframe
+    // Is editor inside an iframe?
     const iframeBridge = new IFrameWalletBridge();
     iframe.value = iframeBridge.start();
 
     // Load session data
-    login.loadSession(settings.stayLoggedIn);
+    if (!iframe.value) {
+      login.loadSession(settings.stayLoggedIn);
+    }
 
   } catch (err) {
     createToast(`${err}`,

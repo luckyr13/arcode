@@ -57,7 +57,7 @@ export class Login {
 	}
 
 
-  setAccount(mainAddress: string, arWallet: ArWallet|null = null, stayLoggedIn= false) {
+  setAccount(mainAddress: string, arWallet: ArWallet|null = null, stayLoggedIn= false): void {
     this._storage = stayLoggedIn ? window.localStorage : window.sessionStorage;
     this.mainAddress = mainAddress;
 
@@ -66,7 +66,7 @@ export class Login {
     }
   }
 
-  removeAccountFromCache() {
+  removeAccountFromCache(): void {
     for (const key of this._cachedProperties) {
       window.sessionStorage.removeItem(key)
       window.localStorage.removeItem(key)
@@ -128,7 +128,7 @@ export class Login {
 		return address;
   }
 
-  public hijackArweave(arweave: Arweave) {
+  public hijackArweave(arweave: Arweave): void {
     // Replace sign
     arweave.transactions.sign = async (
       transaction: Transaction,
@@ -145,7 +145,7 @@ export class Login {
 		}
   }
 
-	public loadSession(stayLoggedIn: boolean, arweave: Arweave) {// Check storage 
+	public loadSession(stayLoggedIn: boolean, arweave: Arweave) : void{// Check storage 
 		this._storage = window.sessionStorage;
 		if (stayLoggedIn) {
 			this._storage = window.localStorage;
@@ -198,7 +198,7 @@ export class Login {
 		this.method = '';
 	}
 
-  public hijackArweavePostAPI(arweave: Arweave) {
+  public hijackArweavePostAPI(arweave: Arweave): void {
     const api = new IFrameWalletBridge();
     // Replace sign
     arweave.transactions.sign = async (
@@ -207,9 +207,20 @@ export class Login {
       options?: SignatureOptions
     ): Promise<void> =>
     {
-      const signRes =  await api.callAPI({
+      const signedTransaction: any =  await api.callAPI({
         method: 'sign',
-        transaction
+				data: {
+					transaction,
+					options
+				}
+      });
+      
+      transaction.setSignature({
+        id: signedTransaction.id,
+        owner: signedTransaction.owner,
+        reward: signedTransaction.reward,
+        tags: signedTransaction.tags,
+        signature: signedTransaction.signature,
       });
     }
     arweave.wallets.getAddress = async (jwk?: JWKInterface | "use_wallet"): Promise<string> =>
@@ -221,16 +232,35 @@ export class Login {
   }
 
   async finnieBridge(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
-		const address = await arweave.wallets.getAddress();
-		this.setAccount(address, null, stayLoggedIn);
-		this.method = 'finnie';
+    const api = new IFrameWalletBridge();
+		const address = await api.callAPI({
+      method: 'getAddress'
+    });
+    if (address) {
+			this.setAccount(address, null, stayLoggedIn);
+			this.method = 'finnie';
+    }
 		return address;
   }
 
   async arConnectBridge(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
-		const address = await arweave.wallets.getAddress();
-		this.setAccount(address, null, stayLoggedIn);
-		this.method = 'arconnect';
+		const api = new IFrameWalletBridge();
+		const address = await api.callAPI({
+      method: 'getAddress'
+    });
+    if (address) {
+			this.setAccount(address, null, stayLoggedIn);
+			this.method = 'arconnect';
+    }
 		return address;
+  }
+
+  public async isBridgeActive(): Promise<boolean> {
+		const api = new IFrameWalletBridge();
+		return (
+			await api.callAPI({
+				method: 'startHandshake'
+			}) === 'bridgeActive'
+		);
   }
 }

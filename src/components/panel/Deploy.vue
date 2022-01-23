@@ -237,6 +237,7 @@ const balances = computed(() => {
 	return balances;
 });
 const balance = ref('0');
+const isBridgeActive = ref(false);
 
 const deployContract = async (
 	statePath: string,
@@ -253,6 +254,11 @@ const deployContract = async (
 		}
 
 		const arweave = new ArweaveHandler(selNetwork.value);
+		// Iframe fix
+		const loginMethod = props.login.method;
+		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
+			props.login.hijackArweavePostAPI(arweave.arweave);
+		}
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {
@@ -355,6 +361,12 @@ const deployContractFromTX = async (
 		}
 
 		const arweave = new ArweaveHandler(selNetwork.value);
+		// Iframe fix
+		const loginMethod = props.login.method;
+		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
+			props.login.hijackArweavePostAPI(arweave.arweave);
+		}
+
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
 		if (statePath2 === '') {
@@ -479,7 +491,7 @@ const testnetMintTokens = async (qty='1000000000000') => {
 };
 
 onMounted(async () => {
-	// Balance for Method 1
+	// Get wallet balance
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
@@ -487,6 +499,23 @@ onMounted(async () => {
 			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
 			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
+		} catch (err) {
+			createToast(`${err}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+		}
+	}
+
+	// Check ifarme conditions
+	isBridgeActive.value = false;
+	if (props.iframe) {
+		// Start handshake with parent 
+		try {
+			isBridgeActive.value = await props.login.isBridgeActive();
+
 		} catch (err) {
 			createToast(`${err}`,
 			{

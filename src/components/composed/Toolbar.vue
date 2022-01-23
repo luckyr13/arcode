@@ -41,6 +41,7 @@
 			<RunAndDebug 
 				:tx="tx"
 				:login="login"
+				:iframe="iframe"
 				v-if="options['primary']['compile'].active" 
 				:workspace="workspace"
 				:tokenState="tokenState" />
@@ -50,6 +51,7 @@
 				v-if="options['primary']['explore'].active" />
 			<Deploy
 				:login="login"
+				:iframe="iframe"
 				v-if="options['primary']['deploy'].active"
 				:workspace="workspace" 
 				:tokenState="tokenState" />
