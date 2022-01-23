@@ -36,7 +36,7 @@ export class IFrameWalletBridge {
 			const ms = 900000;
 			const timeout = window.setTimeout(() => {
 				// Remove window listener
-				window.removeEventListener("message", listenerFunction, false);
+				window.removeEventListener("message", listenerFunction, true);
 				console.error('Bridge timeout!');
 				reject(`Bridge Timeout exceeded!`);
 			}, ms);
@@ -59,7 +59,7 @@ export class IFrameWalletBridge {
 				// Clear timeout on success
 				window.clearTimeout(timeout);
 				// Remove window listener
-				window.removeEventListener("message", listenerFunction, false);
+				window.removeEventListener("message", listenerFunction, true);
 
 				// 3. Handle app response
 				if (data.function === 'address') {
@@ -83,7 +83,7 @@ export class IFrameWalletBridge {
 			};
 
 			// 2. Listen for incoming responses messages
-			window.addEventListener("message", listenerFunction, false);
+			window.addEventListener("message", listenerFunction, true);
 
 		});
 
