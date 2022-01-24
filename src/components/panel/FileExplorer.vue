@@ -589,7 +589,7 @@ const selLoadTXLocation = ref('');
 const txtLoadTXGetLastState = ref(false);
 
 watchEffect(() => {
-	const r = /(\/|\\)/g;
+	const r = new RegExp('/|\\\\', 'g');
 	txtNewFileName.value = txtNewFileName.value.replace(r, '');
 	txtNewFolderName.value = txtNewFolderName.value.replace(r, '');
 	txtOpenFileName.value = txtOpenFileName.value.replace(r, '');
