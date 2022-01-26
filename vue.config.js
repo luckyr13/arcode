@@ -32,5 +32,6 @@ module.exports = {
     'mosha-vue-toastify',
     'register-service-worker',
     /@vue/,
+    'typescript-is'
   ]
 }
