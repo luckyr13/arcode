@@ -24,6 +24,7 @@ module.exports = {
     /arweave\/web\/lib/,
     'arweave',
     'ardb',
-    'redstone-smartweave'
+    'redstone-smartweave',
+    '@lezer/common'
   ]
 }
