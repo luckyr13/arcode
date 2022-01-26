@@ -26,5 +26,6 @@ module.exports = {
     'ardb',
     'redstone-smartweave',
     /lezer/,
+    'arweave-wallet-connector'
   ]
 }
