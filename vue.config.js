@@ -19,5 +19,5 @@ module.exports = {
       //navigateFallback: './'
     }
   },
-  transpileDependencies: [ /codemirror/, /arweave\/web\/lib/ ]
+  transpileDependencies: [ /codemirror/, /arweave\/web\/lib/, 'arweave', 'ardb' ]
 }
