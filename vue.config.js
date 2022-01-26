@@ -25,6 +25,6 @@ module.exports = {
     'arweave',
     'ardb',
     'redstone-smartweave',
-    '@lezer/common'
+    /lezer/,
   ]
 }
