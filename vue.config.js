@@ -19,5 +19,11 @@ module.exports = {
       //navigateFallback: './'
     }
   },
-  transpileDependencies: [ /codemirror/, /arweave\/web\/lib/, 'arweave', 'ardb' ]
+  transpileDependencies: [
+    /codemirror/,
+    /arweave\/web\/lib/,
+    'arweave',
+    'ardb',
+    'redstone-smartweave'
+  ]
 }
