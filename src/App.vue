@@ -5,7 +5,6 @@
 <script setup lang="ts">
 import 'mosha-vue-toastify/dist/style.css'
 import 'tippy.js/dist/tippy.css';
-import 'xterm/css/xterm.css';
 import '@vscode/codicons/dist/codicon.css';
 </script>
 
