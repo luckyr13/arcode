@@ -18,5 +18,6 @@ module.exports = {
       exclude: ['index.html', /\.map$/],
       //navigateFallback: './'
     }
-  }
+  },
+  transpileDependencies: [ /codemirror/ ]
 }
