@@ -27,6 +27,7 @@ module.exports = {
     'redstone-smartweave',
     /lezer/,
     'arweave-wallet-connector',
-    /exportHelper/
+    /exportHelper/,
+    'vue-router'
   ]
 }
