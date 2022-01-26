@@ -28,6 +28,8 @@ module.exports = {
     /lezer/,
     'arweave-wallet-connector',
     /exportHelper/,
-    'vue-router'
+    'vue-router',
+    'mosha-vue-toastify',
+    'register-service-worker'
   ]
 }
