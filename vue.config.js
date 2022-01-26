@@ -18,21 +18,5 @@ module.exports = {
       exclude: ['index.html', /\.map$/],
       //navigateFallback: './'
     }
-  },
-  transpileDependencies: [
-    /codemirror/,
-    /arweave\/web\/lib/,
-    'arweave',
-    'ardb',
-    'redstone-smartweave',
-    /lezer/,
-    'arweave-wallet-connector',
-    /exportHelper/,
-    'vue-router',
-    'mosha-vue-toastify',
-    'register-service-worker',
-    /@vue/,
-    'typescript-is',
-    'style-mod'
-  ]
+  }
 }
