@@ -3,8 +3,8 @@ import { ArWallet } from 'redstone-smartweave';
  import{
   SignatureOptions,
 } from "arweave/web/lib/crypto/crypto-interface";
-import Transaction from "arweave/web//lib/transaction";
-import { JWKInterface } from "arweave/web//lib/wallet";
+import Transaction from "arweave/web/lib/transaction";
+import { JWKInterface } from "arweave/web/lib/wallet";
 import Arweave from 'arweave';
 import { ArweaveWebWallet } from 'arweave-wallet-connector';
 import { ref } from 'vue';
