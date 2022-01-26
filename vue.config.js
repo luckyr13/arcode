@@ -31,8 +31,6 @@ module.exports = {
     'vue-router',
     'mosha-vue-toastify',
     'register-service-worker',
-    '@vue/runtime-dom',
-    '@vue/reactivity',
-    '@vue/runtime-core',
+    /@vue/,
   ]
 }
