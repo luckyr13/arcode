@@ -30,6 +30,7 @@ module.exports = {
     /exportHelper/,
     'vue-router',
     'mosha-vue-toastify',
-    'register-service-worker'
+    'register-service-worker',
+    '@vue/reactivity',
   ]
 }
