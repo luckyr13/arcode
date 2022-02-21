@@ -8,6 +8,7 @@ export class IFrameWalletBridge {
     this._validOriginList = [
       'http://localhost',
       'https://scanner.redstone.tools',
+      'https://sonar.redstone.tools',
       'https://arweave.app'
     ];
   }
