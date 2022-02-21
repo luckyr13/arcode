@@ -183,8 +183,8 @@
 		<div v-if="isMainnet" class="link-container text-left">
 			<p v-if="resultsTXIsContract">
 				Open in RedStone Smartweave contracts explorer:
-				<a :href="`https://scanner.redstone.tools/#/app/contract/${txtTxId}`" target="_blank">
-					{{ `https://scanner.redstone.tools/#/app/contract/${txtTxId}` }}
+				<a :href="`https://sonar.redstone.tools/#/app/contract/${txtTxId}`" target="_blank">
+					{{ `https://sonar.redstone.tools/#/app/contract/${txtTxId}` }}
 				</a>
 			</p>
 			<p>
@@ -232,8 +232,8 @@
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
 					Open in RedStone Smartweave contracts explorer:
-					<a :href="`https://scanner.redstone.tools/#/app/contract/${r._id}`" target="_blank">
-						{{ `https://scanner.redstone.tools/#/app/contract/${r._id}` }}
+					<a :href="`https://sonar.redstone.tools/#/app/contract/${r._id}`" target="_blank">
+						{{ `https://sonar.redstone.tools/#/app/contract/${r._id}` }}
 					</a>
 				</p>
 				<p>
@@ -283,8 +283,8 @@
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
 					Open in RedStone Smartweave contracts explorer:
-					<a :href="`https://scanner.redstone.tools/#/app/contract/${r._id}`" target="_blank">
-						{{ `https://scanner.redstone.tools/#/app/contract/${r._id}` }}
+					<a :href="`https://sonar.redstone.tools/#/app/contract/${r._id}`" target="_blank">
+						{{ `https://sonar.redstone.tools/#/app/contract/${r._id}` }}
 					</a>
 				</p>
 				<p>
