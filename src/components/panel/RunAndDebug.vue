@@ -26,26 +26,53 @@
 	</div>
 	<h5 class="title-data">Input Data</h5>
 	<p class="no-results" v-if="!inputList.length">No input data.</p>
-	<div class="data-input-list" v-for="(iL, index) of inputList" :key="index">
-		<div class="form-input col-key">
-			<label>Key</label>
+	<div class="form-radio-linear">
+		<label>
 			<input 
-				:disabled="loadingTX"
-				type="text" v-model.trim="iL.key">
-		</div>
-		<div class="form-input col-value">
-			<label>Value</label>
+				type="radio" 
+				:disabled="loadingTX" 
+				name="inputDataType" value="input" v-model.trim="rdInputDataType">
+			Input fields
+		</label>
+		<label>
 			<input 
-				:disabled="loadingTX"
-				type="text" v-model.trim="iL.value">
-		</div>
-		<div class="form-input col-action">
-			<Icon 
-				@click="removeInputAction(index)"
-				class="icon-action"
-				icon="codicon-trash" />
+				type="radio" 
+				:disabled="loadingTX" 
+				name="inputDataType" value="json" v-model.trim="rdInputDataType">
+			Raw json
+		</label>
+	</div>
+	<div v-if="rdInputDataType === 'input'" >	
+		<div class="data-input-list" v-for="(iL, index) of inputList" :key="index">
+			<div class="form-input col-key">
+				<label>Key</label>
+				<input 
+					:disabled="loadingTX"
+					type="text" v-model.trim="iL.key">
+			</div>
+			<div class="form-input col-value">
+				<label>Value</label>
+				<input 
+					:disabled="loadingTX"
+					type="text" v-model.trim="iL.value">
+			</div>
+			<div class="form-input col-action">
+				<Icon 
+					@click="removeInputAction(index)"
+					class="icon-action"
+					icon="codicon-trash" />
+			</div>
 		</div>
 	</div>
+	<div v-if="rdInputDataType === 'json'" >
+		<div class="form-input">
+			<label>Data</label>
+			<textarea 
+				rows="6"
+				:disabled="loadingTX" :value="inputListJSON" @change="inputDataChange"></textarea>
+		</div>
+	</div>
+
 	<h5 class="title-data">Tags</h5>
 	<p class="no-results" v-if="!tagsList.length">No tags.</p>
 	<div class="data-input-list" v-for="(tL, indexTag) of tagsList" :key="indexTag">
@@ -196,6 +223,7 @@ const networks = computed(() => {
 	return globalArweaveHandler.networks;
 });
 const rdFilter = ref('viewState');
+const rdInputDataType = ref('input');
 const selNetwork = ref('arweave-mainnet');
 const prevNetwork = ref(selNetwork.value);
 const txtContract = ref('');
@@ -203,6 +231,9 @@ const response = ref({});
 const contractInteractionTX = ref('');
 const loadingTX = ref(false);
 const inputList = reactive<Input[]>([{ key: 'function', value: '' }]);
+const inputListJSON = computed(() => {
+	return JSON.stringify(inputList);
+});
 const tagsList = reactive<Tags>([]);
 const props = defineProps({
 	workspace: Object,
@@ -239,6 +270,25 @@ const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
 const isBridgeActive = ref(false);
+
+const inputDataChange = (event) => {
+	try{
+		const data = JSON.parse(event.target.value) || [];
+		if (Array.isArray(data) && data) {
+			inputList.splice(0, inputList.length)
+			for (let e of data) {
+				inputList.push(e);
+			}
+		}
+	} catch (error) {
+		createToast(`Error: ${error}`,
+    {
+      type: 'danger',
+      showIcon: true,
+      position: 'bottom-right',
+    });
+	}
+};
 
 const runInteraction = async (
 	contractTX: string,
@@ -531,7 +581,8 @@ watchEffect(async () => {
 	padding: 10px;
 }
 .form-input input,
-.form-input select
+.form-input select,
+.form-input textarea,
  {
 	width: 100%;
 	padding: 6px;
@@ -566,6 +617,23 @@ watchEffect(async () => {
 	display: block;
 }
 .form-radio input
+ {
+	padding: 12px;
+	border-radius: 4px;
+	border: 1px solid var(--app-background-color);
+	background: inherit;
+	color: inherit;
+}
+
+.form-radio-linear {
+	padding: 10px;
+}
+.form-radio-linear label {
+	font-size: 12px;
+	margin-bottom: 4px;
+	display: inline;
+}
+.form-radio-linear input
  {
 	padding: 12px;
 	border-radius: 4px;
@@ -637,5 +705,6 @@ watchEffect(async () => {
 	cursor: pointer;
 	text-decoration: underline;
 }
+
 
 </style>
