@@ -526,6 +526,7 @@ watchEffect(async () => {
 
 .run-container {
 	padding: 10px;
+	text-align: center;
 }
 .run-menu {
 	padding: 0px;

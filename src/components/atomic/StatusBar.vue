@@ -1,16 +1,13 @@
 <template>
 	<div class="arcode-status-bar">
 		<div v-if="workspace && workspace.getCurrentEditorId() >= 0">
-			Current file: {{ getEditorsFilename(workspace.getCurrentEditorId(), workspace) }} |
-			{{ workspace.getCurrentContent().length }} characters |
-			{{ workspace.getCurrentContent().indexOf('\n') >= 0 ? 
-					workspace.getCurrentContent().match(/\n/g).length + 1 : 1 }}
-					{{ workspace.getCurrentContent().indexOf('\n') >= 0 ? 'lines' : 'line' }}
+			{{ statusBarText }}
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import Workspace from '@/components/composed/Workspace.vue';
 
 const props = defineProps({
@@ -26,6 +23,18 @@ const getEditorsFilename = (editorId: number, workspace: Workspace): string => {
 	}
 	return name;
 };
+
+const statusBarText = computed(() => {
+	const workspace = props.workspace;
+	const content = workspace.getCurrentContent();
+	const fname = getEditorsFilename(workspace.getCurrentEditorId(), workspace);
+	const numChar = content.length;
+	const numLines = content.match(/\n/g) ?
+		content.match(/\n/g).length + 1 :
+		1;
+	const s = `Current file: ${fname} | ${numChar} characters | ${numLines} line${numLines > 1 ? 's' : ''}`;
+	return s;
+});
 
 
 

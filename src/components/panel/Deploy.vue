@@ -559,6 +559,7 @@ watchEffect(async () => {
 
 .deploy-container {
 	padding: 10px;
+	text-align: center;
 }
 .deploy-menu {
 	padding: 0px;
