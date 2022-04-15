@@ -90,7 +90,7 @@
 		:level="0"
 		:fileTree="workspace.getFileTree()" />
 <transition name="fade">
-	<Modal v-if="showModalLoadContractFromTX" @close="showModalLoadContractFromTX = false">
+	<DefaultModal v-if="showModalLoadContractFromTX" @close="showModalLoadContractFromTX = false">
 		<template v-slot:header>
 			<h3>Load Contract from TX</h3>
 		</template>
@@ -159,10 +159,10 @@
 				</button>
 			</div>
 		</template>
-	</Modal>
+	</DefaultModal>
 </transition>
 <transition name="fade">
-	<Modal v-if="showModalAddFolder" @close="showModalAddFolder = false">
+	<DefaultModal v-if="showModalAddFolder" @close="showModalAddFolder = false">
 		<template v-slot:header>
 			<h3>Add Folder</h3>
 		</template>
@@ -202,10 +202,10 @@
 				</button>
 			</div>
 		</template>
-	</Modal>
+	</DefaultModal>
 </transition>
 <transition name="fade">
-	<Modal v-if="showModalNewFile" @close="showModalNewFile = false">
+	<DefaultModal v-if="showModalNewFile" @close="showModalNewFile = false">
 		<template v-slot:header>
 			<h3>Create a New File</h3>
 		</template>
@@ -243,10 +243,10 @@
 				</button>
 			</div>
 		</template>
-	</Modal>
+	</DefaultModal>
 </transition>
 <transition name="fade">
-	<Modal v-if="showModalOpenFile" @close="showModalOpenFile = false">
+	<DefaultModal v-if="showModalOpenFile" @close="showModalOpenFile = false">
 		<template v-slot:header>
 			<h3>Open File: Select Location</h3>
 		</template>
@@ -286,10 +286,10 @@
 				</button>
 			</div>
 		</template>
-	</Modal>
+	</DefaultModal>
 </transition>
 <transition name="fade">
-	<Modal v-if="showModalEditFile" @close="showModalEditFile = false">
+	<DefaultModal v-if="showModalEditFile" @close="showModalEditFile = false">
 		<template v-slot:header>
 			<h3>Edit File Name</h3>
 		</template>
@@ -319,7 +319,7 @@
 				</button>
 			</div>
 		</template>
-	</Modal>
+	</DefaultModal>
 </transition>
 </template>
 
@@ -329,7 +329,7 @@
 import { ref, watchEffect, computed } from 'vue';
 import Icon from '@/components/atomic/Icon';
 import Workspace from '@/components/composed/Workspace.vue';
-import Modal from '@/components/atomic/Modal.vue';
+import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import FileList from '@/components/atomic/FileList.vue';
 import fileDownload from 'js-file-download';
 import { EditorViewMetadata } from '@/core/interfaces/EditorViewMetadata';
