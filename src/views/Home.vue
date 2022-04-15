@@ -31,7 +31,36 @@
       <StatusBar :workspace="workspace" />
     </div>
   </transition>
+
+  <transition name="fade">
+    <DefaultModal v-if="showModalArweaveWebWallet" @close="showModalArweaveWebWallet = false">
+      <template v-slot:header>
+        <h3>Session detected</h3>
+      </template>
+      <template v-slot:body>
+        <div>
+          Resume Arweave Web Wallet session?
+        </div>
+      </template>
+      <template v-slot:footer>
+        <div class="modal-footer text-right">
+          <button
+            class="modal-button modal-button-primary" 
+            @click="login.arweaveWebWallet(settings.stayLoggedIn, arweave); showModalArweaveWebWallet = false">
+            <span >Resume session</span >
+          </button>
+          <button 
+            class="modal-button" 
+            @click="login.logout(); showModalArweaveWebWallet = false">
+            Dismiss
+          </button>
+        </div>
+      </template>
+    </DefaultModal>
+  </transition>
 </template>
+
+
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
@@ -44,6 +73,7 @@ import { IFrameWalletBridge } from '@/core/IFrameWalletBridge';
 import { createToast } from 'mosha-vue-toastify';
 import { useRoute } from 'vue-router'
 import { Login } from '@/core/Login';
+import DefaultModal from '@/components/atomic/DefaultModal.vue';
 
 const props = defineProps({
   tx: String,
@@ -59,6 +89,7 @@ const login = new Login();
 const workspace = ref(null);
 const loadingAppContract = ref(true);
 const tokenState = ref({});
+const showModalArweaveWebWallet = ref(false);
 
 const route = useRoute()
 // const tx = ref(route.params.tx);
@@ -95,7 +126,12 @@ onMounted(async () => {
 
     // Load session data
     if (!iframe.value) {
-      login.loadSession(settings.stayLoggedIn);
+      const sessInfo = login.loadSession(settings.stayLoggedIn);
+      if (sessInfo.method === 'webwallet') {
+        // Throw modal
+        showModalArweaveWebWallet.value = true;
+        // await login.arweaveWebWallet(settings.stayLoggedIn, arweave);
+      }
     }
 
   } catch (err) {
@@ -212,5 +248,32 @@ onMounted(async () => {
   }
 }
 
+.modal-button {
+  display: inline;
+  margin-top: 1rem;
+  padding: 10px;
+  background-color: rgba(55, 55, 55, 1);
+  color: #FFF;
+  border: 0;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.modal-button:hover {
+  cursor: pointer;
+  background-color: rgba(55, 55, 55, 0.5);
+}
+.modal-button span {
+  margin-left: 4px;
+}
+.modal-button-primary {
+  background-color: var(--app-toolbar-panel-title-bgcolor);
+  color:  var(--app-toolbar-panel-title-color);
+}
+.modal-button-primary:hover {
+  background-color: #000;
+  color: #FFF;
+  background-color: rgba(0, 0, 0, 0.5);
+}
 
 </style>

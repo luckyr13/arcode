@@ -18,7 +18,7 @@ export class Login {
   private _mainAddress = ref('');
   private _cachedProperties = ['MAINADDRESS', 'KEY', 'METHOD'];
   // ArweaveApp
-  private _arweaveWebWallet: ArweaveWebWallet = new ArweaveWebWallet({
+  private _arweaveWebWallet = new ArweaveWebWallet({
     name: 'Arcode Studio',
     logo: 'https://arweave.net/wJGdli6nMQKCyCdtCewn84ba9-WsJ80-GS-KtKdkCLg'
   })
@@ -145,12 +145,13 @@ export class Login {
     }
   }
 
-  public loadSession(stayLoggedIn: boolean, arweave: Arweave) : void{// Check storage 
+  public loadSession(stayLoggedIn: boolean, arweave: Arweave) : { method: string, address: string } {
+    // Check storage 
     this._storage = window.sessionStorage;
     if (stayLoggedIn) {
       this._storage = window.localStorage;
     }
-    const mainAddress = this._storage.getItem(this._cachedProperties[0]);
+    const mainAddress = this._storage.getItem(this._cachedProperties[0])!;
     const key = JSON.parse(this._storage.getItem(this._cachedProperties[1])!);
     const method = this._storage.getItem(this._cachedProperties[2])!;
 
@@ -158,11 +159,9 @@ export class Login {
       this._mainAddress.value = mainAddress;
       this._key = key;
       this._method = method;
-      if (this._method === 'webwallet') {
-        this.arweaveWebWallet(stayLoggedIn, arweave);
-      }
+      
     }
-    console.log('Session data loaded ...');
+    return {method, address: mainAddress};
   }
 
   async logoutBridge() {
