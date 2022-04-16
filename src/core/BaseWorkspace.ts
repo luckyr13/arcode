@@ -3,6 +3,11 @@ import {EditorView, keymap, highlightActiveLine} from "@codemirror/view";
 import {defaultKeymap, indentWithTab} from "@codemirror/commands";
 import { bracketMatching } from "@codemirror/matchbrackets";
 import {javascript} from "@codemirror/lang-javascript";
+import {rust} from "@codemirror/lang-rust";
+import {json} from "@codemirror/lang-json";
+import {python} from "@codemirror/lang-python";
+import {java} from "@codemirror/lang-java";
+import {cpp} from "@codemirror/lang-cpp";
 import { lineNumbers, gutter } from "@codemirror/gutter";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { defaultHighlightStyle } from "@codemirror/highlight";
@@ -12,6 +17,9 @@ import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
 import { GenericWorkspace } from './interfaces/GenericWorkspace';
 import { EditorViewMetadata } from './interfaces/EditorViewMetadata';
 import { ref } from 'vue';
+import {StreamLanguage} from "@codemirror/stream-parser";
+import {erlang} from "@codemirror/legacy-modes/mode/erlang";
+import {go} from "@codemirror/legacy-modes/mode/go";
 
 export class BaseWorkspace implements GenericWorkspace
 {
@@ -23,6 +31,7 @@ export class BaseWorkspace implements GenericWorkspace
   private _storage = window.localStorage;
   private _currentContent = ref('');
   private _tx = '';
+  private _langExtension: Compartment = new Compartment();
 
 	constructor(theme = '', tx= '') {
 		// Save content in cache
@@ -47,10 +56,15 @@ export class BaseWorkspace implements GenericWorkspace
 		);
 
 		this._extensions.push(
-			javascript(),
+			this._langExtension.of(this._getLangExtension(''))
+		);
+
+		this._extensions.push(
 			gutter({class: 'cm-arcode-gutter'}),
 			EditorView.lineWrapping,
 		);
+
+
 		
     if (this._storage.getItem('cachedEditors') !== null && !tx) {
       this._cachedEditorsContent = JSON.parse(this._storage.getItem('cachedEditors')!);
@@ -78,6 +92,28 @@ export class BaseWorkspace implements GenericWorkspace
 			return oneDark;
 		}
 		return defaultHighlightStyle.fallback;
+	}
+
+	private _getLangExtension(lang: string): Extension {
+		if (lang == 'js') {
+			return javascript();
+		} else if (lang == 'rs') {
+			return rust();
+		} else if (lang == 'json') {
+			return json();
+		} else if (lang == 'py') {
+			return python();
+		} else if (lang == 'java') {
+			return java();
+		} else if (lang == 'cpp') {
+			return cpp();
+		} else if (lang == 'erl') {
+			return StreamLanguage.define(erlang);
+		} else if (lang == 'go') {
+			return StreamLanguage.define(go);
+		}
+		
+		return [];
 	}
 
 	public createEditor(content: string, active: boolean, newEditorId = -1): number {
@@ -173,6 +209,22 @@ export class BaseWorkspace implements GenericWorkspace
 				effects: this._themeExtension.reconfigure(this._getThemeExtension(theme))
 			});
 		}
+	}
+
+	public setLanguage(editorId: number, fname: string): void {
+		const editor = this.getEditorView(editorId);
+		const lang = this._getFileExtensionFromName(fname);
+		if (editor) {
+			editor.dispatch({
+				effects: this._langExtension.reconfigure(this._getLangExtension(lang))
+			});
+		}
+	}
+
+	private _getFileExtensionFromName(fname: string) {
+		const fnpieces = fname.trim().split('.');
+		const ext = fnpieces.length ? fnpieces[fnpieces.length - 1] : '';
+		return ext;
 	}
 
 	updateCachedEditors(editorId: number) {
