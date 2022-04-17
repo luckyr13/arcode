@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   chainWebpack: config => {
@@ -10,6 +11,13 @@ module.exports = {
     });
     // Cool fix
     config.externals({ v8: {}, undici: {} });
+  },
+  configureWebpack: {
+    plugins: [
+      new webpack.ProvidePlugin({
+          Buffer: ['buffer', 'Buffer'],
+      }),
+    ]
   },
   publicPath: './',
   pwa: {
