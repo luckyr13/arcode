@@ -320,7 +320,7 @@ $toolbar-container-width: 180px;
 }
 
 .icon-toolbar {
-	padding: 10px 0px;
+	padding: 8px 0px;
 	font-size: 24px !important;
 }
 
