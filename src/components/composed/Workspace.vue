@@ -396,7 +396,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
     let filename = `${tx}`;
     if (datatype === 'application/javascript') {
       filename = `${tx}.js`;
-      data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+      data = await arweave.getTXData(tx);
       createToast(`JS file found!`,
         {
           type: 'success',
@@ -405,7 +405,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
         });
     } else if (datatype === 'application/json') {
       filename = `${tx}.json`;
-      data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+      data = await arweave.getTXData(tx);
       const replacer = undefined;
       const space = 4;
       if (data) {

@@ -72,14 +72,14 @@
 			tabindex="0"
 			@click="downloadFile(getEditor(workspace.getCurrentEditorId(), workspace))">
 			<Icon class="menu-icon"
-				icon="codicon-cloud-download" />
+				icon="codicon-desktop-download" />
 			<span>Download File</span>
 		</button>
 	</li>
 	<li v-else>
 		<button class="disabled">
 			<Icon class="menu-icon"
-				icon="codicon-cloud-download" />
+				icon="codicon-desktop-download" />
 			<span>Download File</span>
 		</button>
 	</li>
@@ -454,7 +454,8 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 		let filename = `${tx}`;
 		if (datatype === 'application/javascript') {
 			filename = `${tx}.js`;
-			data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+
+			data = await arweave.getTXData(tx);
 			createToast(`JS file found!`,
 				{
 					type: 'success',
@@ -463,7 +464,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 				});
 		} else if (datatype === 'application/json') {
 			filename = `${tx}.json`;
-			data = await arweave.arweave.transactions.getData(tx, {decode: true, string: true});
+			data = await arweave.getTXData(tx);
 			const replacer = undefined;
 			const space = 4;
 			if (data) {
