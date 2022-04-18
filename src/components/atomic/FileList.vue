@@ -5,10 +5,10 @@
 		<span :style="{ paddingLeft: `${level * 6}px` }">
 			<Icon v-if="showFiles"
 			class="fd-icon" 
-			icon="codicon-folder-opened" />
+			:icon="fileTree.name ? 'codicon-folder-opened' : 'codicon-root-folder-opened'" />
 			<Icon v-if="!showFiles"
 			class="fd-icon" 
-			icon="codicon-folder" />
+			:icon="fileTree.name ? 'codicon-folder' : 'codicon-root-folder'" />
 			{{ fileTree.name ? fileTree.name : '/' }}
 		</span>
 		
