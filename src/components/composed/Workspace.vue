@@ -87,6 +87,7 @@ import { lootContract } from '@/core/contracts/LootContract';
 import { token } from '@/core/contracts/Token';
 import { tokenPST } from '@/core/contracts/TokenPST';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { WasmSrc } from 'redstone-smartweave';
 
 const props = defineProps({
   theme: String,
@@ -373,8 +374,6 @@ onMounted(async () => {
 
 });
 
-
-
 const loadEditorFromTX = async (tx: string, path: string) => {
   const arweave = new ArweaveHandler();
   const res = await arweave.ardb.search('transaction').id(
@@ -417,9 +416,46 @@ const loadEditorFromTX = async (tx: string, path: string) => {
           showIcon: true,
           position: 'bottom-right',
         });
+    } else if (datatype === 'application/wasm') {
+      data = await arweave.getTXData(tx, false);
+      var buffer = Buffer.from(data);
+      filename = `${tx}.wasm`;
+
+      const fileId = workspace.fileTree.findFileIdByName(path, filename);
+      if (fileId < 0) {
+        addEditor(inputEvent, onlyInParent, buffer.toString(), filename, path);
+      } else {
+        console.log(`${filename} already in workspace!`);
+        workspace.selectEditor(fileId, new Event('selectEditor'));
+      }
+
+      const wasmSrc = new WasmSrc(buffer);
+      data = await wasmSrc.sourceCode();
+
+
+      createToast(`WASM source found!`,
+      {
+        type: 'success',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+
+      // Load all source files
+      for (const tmpFName of data.keys()) {
+        const fileId = workspace.fileTree.findFileIdByName(path, tmpFName);
+        if (fileId < 0) {
+          addEditor(inputEvent, onlyInParent, data.get(tmpFName), tmpFName, path);
+        } else {
+          console.log(`${tmpFName} already in workspace!`);
+          workspace.selectEditor(fileId, new Event('selectEditor'));
+        }
+      }
+      
+      // force End wasm
+      return;
     } else {
       data = Object.prototype.hasOwnProperty.call(tags, 'Init-State') ?
-      tags['Init-State'] : '';
+        tags['Init-State'] : '';
       if (data) {
         filename = `${tx}.json`;
         const replacer = undefined;

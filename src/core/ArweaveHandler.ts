@@ -194,15 +194,17 @@ export class ArweaveHandler {
     return res;
   }
 
-  public async getTXData(tx: string): Promise<string> {
+  public async getTXData(tx: string, asString = true): Promise<string|Uint8Array> {
     let data: string|Uint8Array = '';
     let errM1 = false;
 
     // Method 1
     try {
       const response = await fetch(`${this._baseURL}${tx}`);
-      if (response.ok) {
+      if (response.ok && asString) {
         data = await response.text();
+      } else if (response.ok && !asString){
+        data = new Uint8Array(await response.arrayBuffer());
       } else {
         throw Error('Error on response');
       }
@@ -215,14 +217,14 @@ export class ArweaveHandler {
     // Method 2
     if (errM1) {
       try {
-        data = await this.arweave.transactions.getData(tx, {decode: true, string: true});
+        data = await this.arweave.transactions.getData(tx, {decode: true, string: asString});
       } catch (err) {
         console.error('ErrM2: ', err);
         throw Error('It seems not possible to load tx data');
       }
     }
 
-    return `${data}`;
+    return data;
   }
 
 

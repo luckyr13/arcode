@@ -335,6 +335,7 @@ import fileDownload from 'js-file-download';
 import { EditorViewMetadata } from '@/core/interfaces/EditorViewMetadata';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
+import { WasmSrc } from 'redstone-smartweave';
 
 const showModalLoadContractFromTX = ref(false);
 const loadingContractTX = ref(false);
@@ -476,7 +477,29 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 					showIcon: true,
 					position: 'bottom-right',
 				});
-		} else {
+		} else if (datatype === 'application/wasm') {
+      data = await arweave.getTXData(tx, false);
+      var buffer = Buffer.from(data);
+      filename = `${tx}.wasm`;
+      const wasmSrc = new WasmSrc(buffer);
+      data = await wasmSrc.sourceCode();
+
+      workspace.addEditor(inputEvent, onlyInParent, buffer.toString(), filename, path);
+      createToast(`WASM source found!`,
+      {
+        type: 'success',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+
+      // Load all source files
+      for (const tmpFName of data.keys()) {
+        workspace.addEditor(inputEvent, onlyInParent, data.get(tmpFName), tmpFName, path);
+      }
+      
+      // force End wasm
+      return;
+    } else {
 			data = Object.prototype.hasOwnProperty.call(tags, 'Init-State') ?
 			tags['Init-State'] : '';
 			if (data) {
