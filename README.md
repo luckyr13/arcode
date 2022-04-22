@@ -24,7 +24,7 @@ ArCode Studio is an online IDE for smartweave contracts.
 - Official domain: https://arcode.studio
 - Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg
 - GitHub pages backup: https://luckyr13.github.io/arcode
-- Permaweb backup: https://permaweb.arcode.studio
+- Permaweb backup: http://permaweb.arcode.studio
 
 ## Usage fees:
 - Contract deployment/write interaction: 0.00001 AR
