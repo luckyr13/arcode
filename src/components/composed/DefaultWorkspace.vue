@@ -1,7 +1,7 @@
 <template>
   <div class="arcode-workspace">
     <div class="workspace-bg text-center" >
-      <Logo />
+      <AnimatedLogo />
       <h4 class="text-center arcode-title" >
         ArCode Studio v{{ appVersion }}
       </h4>
@@ -40,21 +40,21 @@
             type="button" 
             @click="addEditor($event)"
             data-tippy-workspace-content="New File">
-              <Icon icon="codicon-new-file" />
+              <DefaultIcon icon="codicon-new-file" />
           </button>
           <button 
             class="button" 
             type="button" 
             @click="scrollEditor('left')"
             data-tippy-workspace-content="Scroll left">
-              <Icon icon="codicon-chevron-left" />
+              <DefaultIcon icon="codicon-chevron-left" />
           </button>
           <button 
             class="button" 
             type="button" 
             @click="scrollEditor('right')"
             data-tippy-workspace-content="Scroll right">
-              <Icon icon="codicon-chevron-right" />
+              <DefaultIcon icon="codicon-chevron-right" />
           </button>
         </div>
       </div>
@@ -78,8 +78,8 @@ import {
   ref, onBeforeUpdate, watchEffect, onMounted
 } from 'vue';
 import { Workspace } from '@/core/Workspace';
-import Logo from '@/components/atomic/Logo';
-import Icon from '@/components/atomic/Icon';
+import AnimatedLogo from '@/components/atomic/AnimatedLogo';
+import IconTemplate from '@/components/atomic/IconTemplate';
 import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';

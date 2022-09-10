@@ -57,7 +57,7 @@
 					type="text" v-model.trim="iL.value">
 			</div>
 			<div class="form-input col-action">
-				<Icon 
+				<DefaultIcon 
 					@click="removeInputAction(index)"
 					class="icon-action"
 					icon="codicon-trash" />
@@ -89,7 +89,7 @@
 				type="text" v-model.trim="tL.value">
 		</div>
 		<div class="form-input col-action">
-			<Icon 
+			<DefaultIcon 
 				@click="removeTag(indexTag)"
 				class="icon-action"
 				icon="codicon-trash" />
@@ -134,7 +134,7 @@
 				:class="{primary: !loadingTX}" 
 				:disabled="loadingTX"
 				@click="addInputData('', '')">
-				<Icon class="icon-btn" icon="codicon-add" /><span>Add Input Data</span>
+				<DefaultIcon class="icon-btn" icon="codicon-add" /><span>Add Input Data</span>
 			</button>
 		</li>
 		<li>
@@ -142,7 +142,7 @@
 				:class="{primary: !loadingTX}" 
 				:disabled="loadingTX"
 				@click="addTag('', '')">
-				<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
+				<DefaultIcon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 			</button>
 		</li>
 		<li>
@@ -150,7 +150,7 @@
 				:class="{primary: (txtContract) && !loadingTX}" 
 				:disabled="(!txtContract) || loadingTX"
 				@click="runInteraction(txtContract, inputList, rdFilter, tagsList)">
-				<Icon class="icon-btn" icon="codicon-debug-alt" /><span>Run Interaction</span>
+				<DefaultIcon class="icon-btn" icon="codicon-debug-alt" /><span>Run Interaction</span>
 			</button>
 		</li>
 	</ul>
@@ -194,20 +194,20 @@
 		Loading ...
 	</p>
 	<div class="run-container" v-if="contractInteractionTX">
-		<Icon class="icon-run-panel success" icon="codicon-check" />
+		<DefaultIcon class="icon-run-panel success" icon="codicon-check" />
 		<h3>TX created successfully!</h3>
 		<p class="text-center">TX: {{ contractInteractionTX }}</p>
 	</div>
 </div>
 <div class="run-container" v-else>
-	<Icon class="icon-run-panel" icon="codicon-lock" />
+	<DefaultIcon class="icon-run-panel" icon="codicon-lock" />
 	<p class="text-center no-results">Please login first!</p>
 </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
-import Icon from '@/components/atomic/Icon';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { 

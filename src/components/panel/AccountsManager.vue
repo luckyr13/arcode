@@ -23,7 +23,7 @@
 			</li>
 			<li>
 				<button @click="uploadKeyTrigger()">
-					<Icon class="icon-menu-btn" icon="codicon-folder-opened" />
+					<DefaultIcon class="icon-menu-btn" icon="codicon-folder-opened" />
 						<span>Upload your keyfile</span>
 					</button>
 				<input
@@ -54,7 +54,7 @@
 		<ul class="accounts-menu">
 			<li class="text-center">
 				<button class="primary" @click="logout()">
-					<Icon class="icon-btn" icon="codicon-sign-out" /><span>Logout</span>
+					<DefaultIcon class="icon-btn" icon="codicon-sign-out" /><span>Logout</span>
 				</button>
 			</li>
 		</ul>
@@ -67,7 +67,7 @@
 import { createToast } from 'mosha-vue-toastify';
 import { ref, onMounted, watchEffect, computed } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
-import Icon from '@/components/atomic/Icon';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 
 const props = defineProps({

@@ -13,7 +13,7 @@
     <div class="main-container" v-if="!loadingAppContract">
       <div class="toolbar-and-workspace">
         <div class="toolbar-container">
-          <Toolbar 
+          <MainToolbar 
             :iframe="iframe"
             :tx="tx"
             :workspace="workspace"
@@ -22,7 +22,7 @@
             :theme="theme" :tokenState="tokenState" />
         </div>
         <div class="workspace-container">
-          <Workspace 
+          <DefaultWorkspace 
             ref="workspace"
             :tx="tx"
             :theme="theme" />
@@ -64,8 +64,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import Workspace from '@/components/composed/Workspace.vue';
-import Toolbar from '@/components/composed/Toolbar.vue';
+import DefaultWorkspace from '@/components/composed/DefaultWorkspace.vue';
+import MainToolbar from '@/components/composed/MainToolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
 import { ArweaveHandler } from '@/core/ArweaveHandler';

@@ -8,7 +8,7 @@
 						:class="{ active: option.active }"
 						@click="select(option.id, 'primary', $event)"
 						@keyup.enter="select(option.id, 'primary', $event)">
-							<Icon class="icon-toolbar" :icon="option.icon" />
+							<DefaultIcon class="icon-toolbar" :icon="option.icon" />
 					</a>
 				</li>
 			</ul>
@@ -19,7 +19,7 @@
 						class="icon-toolbar-link"
 						data-tippy-content="Open in a New tab"
 						:href="arcodeExternalTab" target="_blank">
-							<Icon class="icon-toolbar" icon="codicon-link-external" />
+							<DefaultIcon class="icon-toolbar" icon="codicon-link-external" />
 					</a>
 				</li>
 				<li v-for="optionSec in options['secondary']" :key="optionSec.id">
@@ -28,7 +28,7 @@
 						:class="{ active: optionSec.active }"
 						@click="select(optionSec.id, 'secondary', $event)"
 						@keyup.enter="select(optionSec.id, 'secondary', $event)">
-							<Icon class="icon-toolbar" :icon="optionSec.icon" />
+							<DefaultIcon class="icon-toolbar" :icon="optionSec.icon" />
 					</a>
 				</li>
 			</ul>
@@ -45,23 +45,23 @@
 				v-if="options['primary']['compile'].active" 
 				:workspace="workspace"
 				:tokenState="tokenState" />
-			<Search
+			<SearchArweave
 				:tx="tx"
 				:login="login"
 				v-if="options['primary']['explore'].active" />
-			<Deploy
+			<DeployContract
 				:login="login"
 				:iframe="iframe"
 				v-if="options['primary']['deploy'].active"
 				:workspace="workspace" 
 				:tokenState="tokenState" />
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
-			<Accounts 
+			<AccountsManager
 				:login="login"
 				v-if="options['secondary']['accounts'].active"
 				:iframe="iframe"
 				:tokenState="tokenState" />
-			<Help
+			<HelpInfo
 				v-if="options['secondary']['help'].active" 
 				:tokenState="tokenState" />
 		</div>
@@ -76,11 +76,11 @@ import { ToolbarOption } from '@/core/interfaces/ToolbarOption';
 import FileExplorer from '@/components/panel/FileExplorer.vue';
 import RunAndDebug from '@/components/panel/RunAndDebug.vue';
 import UserSettings from '@/components/panel/UserSettings.vue';
-import Accounts from '@/components/panel/Accounts.vue';
-import Deploy from '@/components/panel/Deploy.vue';
-import Help from '@/components/panel/Help.vue';
-import Search from '@/components/panel/Search.vue';
-import Icon from '@/components/atomic/Icon';
+import AccountsManager from '@/components/panel/AccountsManager.vue';
+import DeployContract from '@/components/panel/DeployContract.vue';
+import HelpInfo from '@/components/panel/HelpInfo.vue';
+import SearchArweave from '@/components/panel/SearchArweave.vue';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
 import tippy from 'tippy.js';
 
 const props = defineProps({

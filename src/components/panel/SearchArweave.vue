@@ -37,7 +37,7 @@
 					:class="{primary: (txtTxId) && !loadingSearch}" 
 					:disabled="(!txtTxId || !selSearchMethod) || loadingSearch"
 					@click="searchByTX(txtTxId)">
-					<Icon class="icon-btn" icon="codicon-search" /><span>Search</span>
+					<DefaultIcon class="icon-btn" icon="codicon-search" /><span>Search</span>
 				</button>
 			</li>
 		</ul>
@@ -121,7 +121,7 @@
 					:class="{primary: (txtAddress && txtResLimit) && !loadingSearch}" 
 					:disabled="(!txtAddress || !selSearchMethod || !txtResLimit) || loadingSearch"
 					@click="searchByAddress(txtAddress, txtResLimit)">
-					<Icon class="icon-btn" icon="codicon-search" /><span>Search</span>
+					<DefaultIcon class="icon-btn" icon="codicon-search" /><span>Search</span>
 				</button>
 			</li>
 		</ul>
@@ -153,7 +153,7 @@
 					type="text" v-model.trim="tL1.values">
 			</div>
 			<div class="form-input col-action">
-				<Icon 
+				<DefaultIcon 
 					@click="removeTag(index1, tagsList)"
 					class="icon-action"
 					icon="codicon-trash" />
@@ -165,7 +165,7 @@
 					:class="{primary: !loadingSearch}" 
 					:disabled="loadingSearch"
 					@click="addTag('', '', tagsList)">
-					<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
+					<DefaultIcon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 				</button>
 			</li>
 			<li>
@@ -173,7 +173,7 @@
 					:class="{primary: (tagsList.length) && !loadingSearch}" 
 					:disabled="(!tagsList.length) || loadingSearch"
 					@click="searchByTags(tagsList, txtResLimitTags)">
-					<Icon class="icon-btn" icon="codicon-search" /><span>Search</span>
+					<DefaultIcon class="icon-btn" icon="codicon-search" /><span>Search</span>
 				</button>
 			</li>
 		</ul>
@@ -342,7 +342,7 @@
 
 <script setup lang="ts">
 import {ref, computed, reactive} from 'vue';
-import Icon from '@/components/atomic/Icon';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
 import { createToast } from 'mosha-vue-toastify';
 const props = defineProps({

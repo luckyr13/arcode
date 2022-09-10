@@ -7,7 +7,7 @@
 		<button
 			tabindex="0"
 			@click="showModalNewFile = true; selNewFileLocation = '/'; txtNewFileName = getProposedFileName(workspace);">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 				icon="codicon-new-file" />
 			<span>New File</span>
 		</button>
@@ -16,7 +16,7 @@
 		<button
 			tabindex="0"
 			@click="openFile('txt_file_openFile')">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 				icon="codicon-folder-opened" />
 			<span>Open File...</span>
 		</button>
@@ -30,7 +30,7 @@
 		<button
 			tabindex="0"
 			@click="showModalAddFolder = true; selNewFolderLocation = '/'; txtNewFolderName='';">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 				icon="codicon-new-folder" />
 			<span>Add Folder</span>
 		</button>
@@ -39,7 +39,7 @@
 		<button
 			tabindex="0"
 			@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false; selNetwork = 'arweave-mainnet'">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 				icon="codicon-mirror" />
 			<span>Load Contract from TX</span>
 		</button>
@@ -54,14 +54,14 @@
 		<button 
 			tabindex="0" 
 			@click="showModalEditFile = true; txtEditFileName = getEditorsFilename(workspace.getCurrentEditorId(), workspace)">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 			icon="codicon-edit" />
 			<span>Edit File Name</span>
 		</button>
 	</li>
 	<li v-else>
 		<button class="disabled">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 			icon="codicon-edit" />
 			<span>Edit File Name</span>
 		</button>
@@ -71,14 +71,14 @@
 		<button
 			tabindex="0"
 			@click="downloadFile(getEditor(workspace.getCurrentEditorId(), workspace))">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 				icon="codicon-desktop-download" />
 			<span>Download File</span>
 		</button>
 	</li>
 	<li v-else>
 		<button class="disabled">
-			<Icon class="menu-icon"
+			<DefaultIcon class="menu-icon"
 				icon="codicon-desktop-download" />
 			<span>Download File</span>
 		</button>
@@ -327,8 +327,8 @@
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
 import { ref, watchEffect, computed } from 'vue';
-import Icon from '@/components/atomic/Icon';
-import Workspace from '@/components/composed/Workspace.vue';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
+import DefaultWorkspace from '@/components/composed/DefaultWorkspace.vue';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import FileList from '@/components/atomic/FileList.vue';
 import fileDownload from 'js-file-download';
@@ -401,13 +401,13 @@ const openFile_helper = (inputEvent: Event): Promise<string> => {
 };
 
 
-const addFolderModal = (workspace: Workspace, path: string, folderName: string) => {
+const addFolderModal = (workspace: DefaultWorkspace, path: string, folderName: string) => {
 	workspace.addFolder(path, folderName);
 	showModalAddFolder.value = false;
 };
 const newFileModal = (
 	inputEvent: Event,
-	workspace: Workspace,
+	workspace: DefaultWorkspace,
 	fileName: string,
 	path: string) => {
 	const onlyInParent= false;
@@ -418,7 +418,7 @@ const newFileModal = (
 
 const openFileModal = (
 	inputEvent: Event,
-	workspace: Workspace,
+	workspace: DefaultWorkspace,
 	fileName: string,
 	path: string,
 	content='') => {
@@ -428,14 +428,14 @@ const openFileModal = (
 	showModalOpenFile.value = false;
 };
 const editFileModal = (
-	workspace: Workspace,
+	workspace: DefaultWorkspace,
 	newFileName: string,
 	editorId: number) => {
 	workspace.updateEditorName(editorId, newFileName);
 	txtEditFileName.value = '';
 	showModalEditFile.value = false;
 };
-const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) => {
+const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWorkspace) => {
 	const arweave = new ArweaveHandler(selNetwork.value);
 	const res = await arweave.ardb.search('transaction').id(
 		tx
@@ -531,7 +531,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: Workspace) 
 	}
 };
 
-const loadLatestContractStateFromTX = async (tx: string, path: string, workspace: Workspace) => {
+const loadLatestContractStateFromTX = async (tx: string, path: string, workspace: DefaultWorkspace) => {
 	const arweave = new ArweaveHandler(selNetwork.value);
 	const contract = await arweave.smartweave.contract(tx);
 	// Read state
@@ -554,7 +554,7 @@ const loadLatestContractStateFromTX = async (tx: string, path: string, workspace
 		});
 };
 
-const loadFromTXModal = async (tx: string, path: string, workspace: Workspace) => {
+const loadFromTXModal = async (tx: string, path: string, workspace: DefaultWorkspace) => {
 	loadingContractTX.value = true;
 	try {
 		await loadEditorFromTX(tx, path, workspace);
@@ -574,7 +574,7 @@ const loadFromTXModal = async (tx: string, path: string, workspace: Workspace) =
 	showModalLoadContractFromTX.value = false;
 };
 
-const getProposedFileName = (workspace: Workspace): string => {
+const getProposedFileName = (workspace: DefaultWorkspace): string => {
 	let newEditorId = 0;
 	const ids = workspace.editors.map((v) => {
 		return parseInt(v.id)
@@ -586,13 +586,13 @@ const getProposedFileName = (workspace: Workspace): string => {
 	return `Untitled-${newEditorId}`;
 };
 
-const getEditorsFilename = (editorId: number, workspace: Workspace): string => {
+const getEditorsFilename = (editorId: number, workspace: DefaultWorkspace): string => {
 	const i = workspace.editors.findIndex(ed => ed.id == editorId);
 	return workspace.editors[i].name;
 };
 
 
-const getEditor = (editorId: number, workspace: Workspace): string => {
+const getEditor = (editorId: number, workspace: DefaultWorkspace): string => {
 	const i = workspace.editors.findIndex(ed => ed.id == editorId);
 	return workspace.editors[i];
 };

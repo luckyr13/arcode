@@ -3,22 +3,22 @@
 	<li 
 		class="folder" @click="showFiles = !showFiles">
 		<span :style="{ paddingLeft: `${level * 6}px` }">
-			<Icon v-if="showFiles"
+			<DefaultIcon v-if="showFiles"
 			class="fd-icon" 
 			:icon="fileTree.name ? 'codicon-folder-opened' : 'codicon-root-folder-opened'" />
-			<Icon v-if="!showFiles"
+			<DefaultIcon v-if="!showFiles"
 			class="fd-icon" 
 			:icon="fileTree.name ? 'codicon-folder' : 'codicon-root-folder'" />
 			{{ fileTree.name ? fileTree.name : '/' }}
 		</span>
 		
-		<Icon v-if="showFiles"
+		<DefaultIcon v-if="showFiles"
 			class="menu-icon" 
 			icon="codicon-chevron-up" />
-		<Icon v-if="!showFiles"
+		<DefaultIcon v-if="!showFiles"
 			class="menu-icon" 
 			icon="codicon-chevron-down" />
-		<Icon v-if="fileTree.name && fileTree.children.length === 0"
+		<DefaultIcon v-if="fileTree.name && fileTree.children.length === 0"
 			class="menu-icon" 
 			@click="workspace.deleteFolder(`${path ? path : ''}`, $event)"
 			icon="codicon-trash" />
@@ -35,7 +35,7 @@
 					active: editor.id == workspace.getCurrentEditorId() && workspace.isEditorActive(editor.id) }"
 				@click="workspace.selectEditor(editor.id, $event)">
 				<span :style="{ paddingLeft: `${level * 10}px` }">{{ editor.name }}</span>
-				<Icon 
+				<DefaultIcon 
 					class="menu-icon" 
 					@click="workspace.deleteEditor(editor.id, $event)"
 					icon="codicon-trash" />
@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import Icon from '@/components/atomic/Icon';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { ref, onMounted } from 'vue';
 
 const props = defineProps({

@@ -61,7 +61,7 @@
 					type="text" v-model.trim="tL1.value">
 			</div>
 			<div class="form-input col-action">
-				<Icon 
+				<DefaultIcon 
 					@click="removeTag(index1, tagsList1)"
 					class="icon-action"
 					icon="codicon-trash" />
@@ -82,7 +82,7 @@
 					:class="{primary: !loadingDeployContract}" 
 					:disabled="loadingDeployContract"
 					@click="addTag('', '', tagsList1)">
-					<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
+					<DefaultIcon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 				</button>
 			</li>
 			<li>
@@ -94,7 +94,7 @@
 						selDeployFileContractLocation,
 						workspace,
 						tagsList1)">
-					<Icon class="icon-btn" icon="codicon-rocket" /><span>Deploy Now</span>
+					<DefaultIcon class="icon-btn" icon="codicon-rocket" /><span>Deploy Now</span>
 				</button>
 			</li>
 		</ul>
@@ -132,7 +132,7 @@
 					type="text" v-model.trim="tL2.value">
 			</div>
 			<div class="form-input col-action">
-				<Icon 
+				<DefaultIcon 
 					@click="removeTag(index2, tagsList2)"
 					class="icon-action"
 					icon="codicon-trash" />
@@ -147,7 +147,7 @@
 					:class="{primary: !loadingDeployContract}" 
 					:disabled="loadingDeployContract"
 					@click="addTag('', '', tagsList2)">
-					<Icon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
+					<DefaultIcon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 				</button>
 			</li>
 			<li>
@@ -155,7 +155,7 @@
 					:class="{primary: (selDeployFileStateLocation2 && txtDeployFileContractLocationByTx) && !loadingDeployContract}" 
 					:disabled="(!selDeployFileStateLocation2 || !txtDeployFileContractLocationByTx) || loadingDeployContract"
 					@click="deployContractFromTX(selDeployFileStateLocation2, txtDeployFileContractLocationByTx, workspace, tagsList2)">
-					<Icon class="icon-btn" icon="codicon-rocket" /><span>Deploy Now</span>
+					<DefaultIcon class="icon-btn" icon="codicon-rocket" /><span>Deploy Now</span>
 				</button>
 			</li>
 		</ul>
@@ -163,11 +163,11 @@
 	
 </div>
 <div class="deploy-container" v-else-if="!mainAddress">
-	<Icon class="icon-deploy-login" icon="codicon-lock" />
+	<DefaultIcon class="icon-deploy-login" icon="codicon-lock" />
 	<p class="text-center no-results">Please login first!</p>
 </div>
 <div class="deploy-container" v-else-if="deployedContractTX">
-	<Icon class="icon-deploy-login success" icon="codicon-check" />
+	<DefaultIcon class="icon-deploy-login success" icon="codicon-check" />
 	<h3>Contract deployed successfully!</h3>
 	<p class="text-center">TX: {{ deployedContractTX }}</p>
 </div>
@@ -175,7 +175,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
-import Icon from '@/components/atomic/Icon';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { UserSettings } from '@/core/UserSettings';
 import { Login } from '@/core/Login';
 import { ArweaveHandler } from '@/core/ArweaveHandler';
@@ -183,7 +183,7 @@ import {
   ContractData, ArWallet, FromSrcTxContractData, ArTransfer
  } from 'redstone-smartweave';
 import { createToast } from 'mosha-vue-toastify';
-import { Workspace } from '@/components/composed/Workspace'
+import { DefaultWorkspace } from '@/components/composed/DefaultWorkspace'
 import { 
   Tags
  } from 'redstone-smartweave';
@@ -242,7 +242,7 @@ const isBridgeActive = ref(false);
 const deployContract = async (
 	statePath: string,
 	contractSrcPath: string,
-	workspace: Workspace,
+	workspace: DefaultWorkspace,
 	tags: Tags) => {
 	let contractSrc = ``;
 	let initStateSrc = ``;
@@ -350,7 +350,7 @@ const deployContract = async (
 const deployContractFromTX = async (
 	statePath: string, 
 	contractSrcTX: string,
-	workspace: Workspace,
+	workspace: DefaultWorkspace,
 	tags: Tags) => {
 	let initStateSrc = ``;
 	loadingDeployContract.value = true;
