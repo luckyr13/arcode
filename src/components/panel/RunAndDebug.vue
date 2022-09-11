@@ -276,7 +276,7 @@ const inputDataChange = (event) => {
 		const data = JSON.parse(event.target.value) || [];
 		if (Array.isArray(data) && data) {
 			inputList.splice(0, inputList.length)
-			for (let e of data) {
+			for (const e of data) {
 				inputList.push(e);
 			}
 		}

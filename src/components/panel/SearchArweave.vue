@@ -385,8 +385,8 @@ const searchByTX = async (tx: string) => {
 		resultsTXIsContract.value = false;
 
 		resultsTX.value._tags.forEach(tag => {
-			let key = tag.name ? tag.name : '';
-			let value = tag.value ? tag.value : '';
+			const key = tag.name ? tag.name : '';
+			const value = tag.value ? tag.value : '';
 			if (key == 'App-Name' && value == 'SmartWeaveContract') {
 				resultsTXIsContract.value = true;
 			}
@@ -506,8 +506,8 @@ const searchByAddress = async (address: string, limit: number) => {
 const txIsContract = (tags) => {
 	let isContract = false;
 	tags.forEach(tag => {
-		let key = tag.name ? tag.name : '';
-		let value = tag.value ? tag.value : '';
+		const key = tag.name ? tag.name : '';
+		const value = tag.value ? tag.value : '';
 		if (key == 'App-Name' && value == 'SmartWeaveContract') {
 			isContract = true;
 		}

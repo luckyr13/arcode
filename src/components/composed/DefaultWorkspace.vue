@@ -383,8 +383,8 @@ const loadEditorFromTX = async (tx: string, path: string) => {
     const tags = {};
     // Get contract if possible
     res.tags.forEach(async tag => {
-      let key = tag.name;
-      let value = tag.value;
+      const key = tag.name;
+      const value = tag.value;
       tags[key] = value;
     });
     const datatype = res.data.type;
@@ -418,7 +418,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
         });
     } else if (datatype === 'application/wasm') {
       data = await arweave.getTXData(tx, false);
-      var buffer = Buffer.from(data);
+      const buffer = Buffer.from(data);
       filename = `${tx}.wasm`;
 
       const fileId = workspace.fileTree.findFileIdByName(path, filename);

@@ -150,7 +150,7 @@ const arcodeExternalTab = computed(() => {
 });
 
 const select = (optionId: string, optionType: string, event: Event) => {
-	let target: HTMLAnchorElement = event.currentTarget as HTMLAnchorElement;
+	const target: HTMLAnchorElement = event.currentTarget as HTMLAnchorElement;
 
 	// Clear previous selected option
 	if (selectedOption.value && 
@@ -214,7 +214,7 @@ onMounted(() => {
 
 	// Collapse/show toolbar 
 	if (!props.hideToolbar) {
-		var x = window.matchMedia("(min-width: 700px)")
+		const x = window.matchMedia("(min-width: 700px)")
 		responsiveToolbar(x);
 	}
 

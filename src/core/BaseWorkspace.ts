@@ -1,23 +1,20 @@
 import {EditorState, Extension, Compartment} from "@codemirror/state";
-import {EditorView, keymap, highlightActiveLine} from "@codemirror/view";
-import {defaultKeymap, indentWithTab} from "@codemirror/commands";
-import { bracketMatching } from "@codemirror/matchbrackets";
+import {
+	EditorView, keymap, highlightActiveLine, 
+	lineNumbers, gutter } from "@codemirror/view";
+import {defaultKeymap, indentWithTab, history, historyKeymap} from "@codemirror/commands";
+import { bracketMatching, StreamLanguage, defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import {javascript} from "@codemirror/lang-javascript";
 import {rust} from "@codemirror/lang-rust";
 import {json} from "@codemirror/lang-json";
 import {python} from "@codemirror/lang-python";
 import {java} from "@codemirror/lang-java";
 import {cpp} from "@codemirror/lang-cpp";
-import { lineNumbers, gutter } from "@codemirror/gutter";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { defaultHighlightStyle } from "@codemirror/highlight";
-import { closeBrackets } from "@codemirror/closebrackets";
-import { history, historyKeymap } from "@codemirror/history";
-import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
+import { autocompletion, completionKeymap, closeBrackets } from "@codemirror/autocomplete";
 import { GenericWorkspace } from './interfaces/GenericWorkspace';
 import { EditorViewMetadata } from './interfaces/EditorViewMetadata';
 import { ref } from 'vue';
-import {StreamLanguage} from "@codemirror/stream-parser";
 import {erlang} from "@codemirror/legacy-modes/mode/erlang";
 import {go} from "@codemirror/legacy-modes/mode/go";
 
@@ -91,7 +88,7 @@ export class BaseWorkspace implements GenericWorkspace
 		if (theme == 'theme-dark' || theme == 'dark-blue') {
 			return oneDark;
 		}
-		return defaultHighlightStyle.fallback;
+		return syntaxHighlighting(defaultHighlightStyle);
 	}
 
 	private _getLangExtension(lang: string): Extension {
