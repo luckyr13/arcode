@@ -379,7 +379,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
   const arweaveWrapper = new ArweaveWrapper();
   const arweave = arweaveWrapper.arweave;
   const ardbWrapper = new ArDBWrapper(arweave);
-  const ardb = ArDBWrapper.ardb;
+  const ardb = ardbWrapper.ardb;
   const res = await ardb.search('transaction').id(
     tx
   ).findOne();
@@ -399,7 +399,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
     let filename = `${tx}`;
     if (datatype === 'application/javascript') {
       filename = `${tx}.js`;
-      data = await arweave.getTXData(tx);
+      data = await arweaveWrapper.getTXData(tx);
       createToast(`JS file found!`,
         {
           type: 'success',
@@ -408,7 +408,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
         });
     } else if (datatype === 'application/json') {
       filename = `${tx}.json`;
-      data = await arweave.getTXData(tx);
+      data = await arweaveWrapper.getTXData(tx);
       const replacer = undefined;
       const space = 4;
       if (data) {
@@ -421,7 +421,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
           position: 'bottom-right',
         });
     } else if (datatype === 'application/wasm') {
-      data = await arweave.getTXData(tx, false);
+      data = await arweaveWrapper.getTXData(tx, false);
       const buffer = Buffer.from(data);
       filename = `${tx}.wasm`;
 

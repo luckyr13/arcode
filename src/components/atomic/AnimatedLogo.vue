@@ -64,11 +64,24 @@ onMounted(() => {
       
     ],
     easing: 'easeInOutSine',
-    duration: 9000,
+    // duration: 9000,
+    
     delay: function(el, i) { return  3000 },
     direction: 'alternate',
     loop: true
   });
+
+  anime({
+    targets: '#arcode-workspace-logo path',
+    rotateY: {
+      value: '360deg',
+      duration: 3600,
+      easing: 'easeInOutBounce'
+    },
+    easing: 'linear',
+    delay: function(el, i) { return  5000 },
+    loop: true
+  })
 });
 </script>
 
@@ -86,5 +99,8 @@ onMounted(() => {
 	stroke-dasharray: 20;
 	fill: #000;
 	filter: drop-shadow(200px 10px 300px #000 );
+}
+#arcode-workspace-logo path {
+  transform-origin: 500%;
 }
 </style>
