@@ -438,7 +438,8 @@ const editFileModal = (
 const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWorkspace) => {
 	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 	const arweave = arweaveWrapper.arweave;
-	const ardb = new ArDBWrapper(arweave);
+	const ardbWrapper = new ArDBWrapper(arweave);
+	const ardb = ardbWrapper.ardb;
 	const res = await ardb.search('transaction').id(
 		tx
 	).findOne();
@@ -537,7 +538,11 @@ const loadLatestContractStateFromTX = async (tx: string, path: string, workspace
 	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 	const arweave = arweaveWrapper.arweave;
 	const warpContracts = new WarpContracts(arweave);
-	const { state, validity } = await warpContracts.readState(tx);
+	const { sortKey, cachedValue } = await warpContracts.readState(tx);
+  const state = cachedValue &&
+    Object.prototype.hasOwnProperty.call(cachedValue, 'state') ?
+    cachedValue.state : {};
+    
 	const onlyInParent= false;
 	const inputEvent = new Event('empty-event');
 	const filename = `${tx}-latest.json`;

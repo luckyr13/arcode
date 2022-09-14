@@ -225,8 +225,11 @@ watchEffect(async () => {
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
-			balance.value = await arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.ar.winstonToAr(balance.value);
+			const walletBalance = await arweave.wallets.getBalance(mainAddress.value);
+			if (walletBalance) {
+				balance.value = arweave.ar.winstonToAr(walletBalance);
+			}
+			
 		} catch (err) {
 			createToast(`${err}`,
 			{
@@ -238,7 +241,7 @@ watchEffect(async () => {
 	}
 });
 const pstBalance = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const balances = props.tokenState && props.tokenState.balances ? props.tokenState.balances : {};
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
 		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
 	return res;

@@ -119,7 +119,10 @@ onMounted(async () => {
 
     // Load PST contract state
     loadingAppContract.value = true;
-    const { state, validity } = await warp.readState(tokenContract)
+    const { sortKey, cachedValue } = await warp.readState(tokenContract);
+    const state = cachedValue &&
+      Object.prototype.hasOwnProperty.call(cachedValue, 'state') ?
+      cachedValue.state : {};
     tokenState.value = state;
     loadingAppContract.value = false;
 

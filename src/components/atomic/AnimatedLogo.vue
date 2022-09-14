@@ -79,7 +79,7 @@ onMounted(() => {
       easing: 'easeInOutBounce'
     },
     easing: 'linear',
-    delay: function(el, i) { return  5000 },
+    delay: function(el, i) { return  6000 },
     loop: true
   })
 });

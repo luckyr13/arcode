@@ -79,7 +79,7 @@ import {
 } from 'vue';
 import { Workspace } from '@/core/Workspace';
 import AnimatedLogo from '@/components/atomic/AnimatedLogo';
-import IconTemplate from '@/components/atomic/IconTemplate';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';
