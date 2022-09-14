@@ -209,18 +209,16 @@
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { UserSettings } from '@/core/UserSettings';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
-import { 
-  Input, View, Tags, ArTransfer
- } from 'redstone-smartweave';
+import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
 import { createToast } from 'mosha-vue-toastify';
+import { WarpContracts, Tags, ArTransfer } from '@/core/WarpContracts';
 
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
-const globalArweaveHandler = new ArweaveHandler();
+const globalArweaveWrapper = new ArweaveWrapper();
 
 const networks = computed(() => {
-	return globalArweaveHandler.networks;
+	return arweaveNetworks;
 });
 const rdFilter = ref('viewState');
 const rdInputDataType = ref('input');
@@ -230,7 +228,7 @@ const txtContract = ref('');
 const response = ref({});
 const contractInteractionTX = ref('');
 const loadingTX = ref(false);
-const inputList = reactive<Input[]>([{ key: 'function', value: '' }]);
+const inputList = reactive<any[]>([{ key: 'function', value: '' }]);
 const inputListJSON = computed(() => {
 	return JSON.stringify(inputList);
 });
@@ -249,7 +247,7 @@ const contractSettings = computed(() => {
 	return new Map(settings);
 });
 const appFeeInAr = computed(() => {
-	return globalArweaveHandler.arweave.ar.winstonToAr(appFeeInWinston.value);
+	return globalArweaveWrapper.arweave.ar.winstonToAr(appFeeInWinston.value);
 });
 const pstBalance = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
@@ -292,7 +290,7 @@ const inputDataChange = (event) => {
 
 const runInteraction = async (
 	contractTX: string,
-	data: Input[],
+	data: any[],
 	interaction: string,
 	tags: Tags) => {
 	loadingTX.value = true;
@@ -302,11 +300,13 @@ const runInteraction = async (
 			throw Error('Not enough balance!');
 		}
 
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+		const arweave = arweaveWrapper.arweave;
+		const warp = new WarpContracts(arweave);
 		// Iframe fix
 		const loginMethod = props.login.method;
 		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
-			props.login.hijackArweavePostAPI(arweave.arweave);
+			props.login.hijackArweavePostAPI(arweave);
 		}
 		let func = '';
 		const fullPayload = {};
@@ -328,7 +328,7 @@ const runInteraction = async (
 		if (!func) {
 			throw Error('Please provide a "function" input.');
 		}
-		const contract = arweave.smartweave.contract(
+		const contract = warp.warp.contract(
 				contractTX
 			).connect(
 				props.login.key
@@ -336,7 +336,7 @@ const runInteraction = async (
 				// with this flag set to true, the write will wait for the transaction to be confirmed
 				waitForConfirmation: false,
 			});
-			const transfer = arweave.getTransferData(
+			const transfer = warp.getTransferData(
 				pstBalance.value,
 				vipMinimumBalance.value,
 				selNetwork.value,
@@ -346,7 +346,7 @@ const runInteraction = async (
 			);
 
 		// Dry-run
-		const handlerResult = await contract.callContract<Input>(
+		const handlerResult = await contract.callContract<any>(
 			fullPayload, undefined, undefined, tags, transfer
 		);
     if (handlerResult.type !== 'ok') {
@@ -355,7 +355,7 @@ const runInteraction = async (
 
 		// View interaction with user's key 
 		if (interaction === 'viewState') {			
-			const { state, result } = await contract.viewState<Input, View>(fullPayload);
+			const { state, result } = await contract.viewState<any, any>(fullPayload);
 			response.value = result;
 			createToast('Success on viewState interaction!',
 			{
@@ -366,7 +366,7 @@ const runInteraction = async (
 		}
 		// Write interaction (Dry-run)
 		else if (interaction === 'writeInteractionDryRun') {
-      const { state, result } = await contract.dryWrite<Input>(fullPayload);
+      const { state, result } = await contract.dryWrite<any>(fullPayload);
 			response.value = result;
 			createToast('Interaction executed successfully!',
 			{
@@ -442,7 +442,7 @@ const testnetMintTokens = async (qty='1000000000000') => {
 
 		// Update balance after 1 second 
 		window.setTimeout(async () => {
-			const arweave = new ArweaveHandler(selNetwork.value);
+			const arweave = new ArweaveWrapper(selNetwork.value);
 			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
 			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 		}, 1500);
@@ -463,7 +463,7 @@ onMounted(async () => {
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
-			const arweave = new ArweaveHandler(selNetwork.value);
+			const arweave = new ArweaveWrapper(selNetwork.value);
 			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
 			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
@@ -499,7 +499,7 @@ watchEffect(async () => {
 	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
 		balance.value = 0;
 		try {
-			const arweave = new ArweaveHandler(selNetwork.value);
+			const arweave = new ArweaveWrapper(selNetwork.value);
 			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
 			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;

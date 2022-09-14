@@ -343,7 +343,8 @@
 <script setup lang="ts">
 import {ref, computed, reactive} from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
+import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { createToast } from 'mosha-vue-toastify';
 const props = defineProps({
 	mainAddress: String,
@@ -363,12 +364,11 @@ const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
 const resultsByTags = ref([]);
 const rdFilter = ref('');
-const globalArweaveHandler = new ArweaveHandler();
 const tagsList = reactive<Array<{name: string, values: string}>>([]);
 const mainAddress = ref(props.login.mainAddress);
 
 const networks = computed(() => {
-	return globalArweaveHandler.networks;
+	return arweaveNetworks;
 });
 
 const searchByTX = async (tx: string) => {
@@ -380,8 +380,11 @@ const searchByTX = async (tx: string) => {
 	resultsByTags.value = [];
 	loadingSearch.value = true;
 	try {
-		const arweave = new ArweaveHandler(selNetwork.value);
-		resultsTX.value = await arweave.ardb.search('transaction').id(tx).findOne();
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+		const arweave = arweaveWrapper.arweave;
+		const ardbWrapper = new ArDBWrapper(arweave);
+		const ardb = ardbWrapper.ardb;
+		resultsTX.value = await ardb.search('transaction').id(tx).findOne();
 		resultsTXIsContract.value = false;
 
 		resultsTX.value._tags.forEach(tag => {
@@ -411,7 +414,10 @@ const searchByAddress = async (address: string, limit: number) => {
 	loadingSearch.value = true;
 	try {
 		const tags = [];
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+		const arweave = arweaveWrapper.arweave;
+		const ardbWrapper = new ArDBWrapper(arweave);
+		const ardb = ardbWrapper.ardb;
 
 		if (!address) {
 			// throw Error('');
@@ -486,7 +492,7 @@ const searchByAddress = async (address: string, limit: number) => {
       });
 		}
 
-		resultsByAddress.value = await arweave.ardb.search(
+		resultsByAddress.value = await ardb.search(
 				'transactions'
 			).from(
 				address
@@ -532,7 +538,10 @@ const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, l
 	loadingSearch.value = true;
 	try {
 		const tags = [];
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+		const arweave = arweaveWrapper.arweave;
+		const ardbWrapper = new ArDBWrapper(arweave);
+		const ardb = ardbWrapper.ardb;
 
 		if (!tagsList.length) {
 			throw Error('Please provide tags');
@@ -552,7 +561,7 @@ const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, l
       });
 		}
 
-		resultsByTags.value = await arweave.ardb.search(
+		resultsByTags.value = await ardb.search(
 				'transactions'
 			).limit(limit).tags(tags).find();
 
@@ -568,8 +577,8 @@ const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, l
 };
 
 const isMainnet = () => {
-	const arweave = new ArweaveHandler(selNetwork.value);
-	return arweave.onMainnet();
+	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+	return arweaveWrapper.onMainnet();
 };
 </script>
 

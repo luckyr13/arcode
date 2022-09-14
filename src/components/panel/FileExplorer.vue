@@ -333,9 +333,10 @@ import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import FileList from '@/components/atomic/FileList.vue';
 import fileDownload from 'js-file-download';
 import { EditorViewMetadata } from '@/core/interfaces/EditorViewMetadata';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
+import { ArDBWrapper } from '@/core/ArDBWrapper';
+import { WarpContracts, WasmSrc } from '@/core/WarpContracts';
 import { createToast } from 'mosha-vue-toastify';
-import { WasmSrc } from 'redstone-smartweave';
 
 const showModalLoadContractFromTX = ref(false);
 const loadingContractTX = ref(false);
@@ -343,11 +344,10 @@ const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
 const showModalOpenFile = ref(false);
 const showModalEditFile = ref(false);
-const globalArweaveHandler = new ArweaveHandler();
 const selNetwork = ref('arweave-mainnet');
 
 const networks = computed(() => {
-	return globalArweaveHandler.networks;
+	return arweaveNetworks;
 });
 
 const props = defineProps({
@@ -436,8 +436,10 @@ const editFileModal = (
 	showModalEditFile.value = false;
 };
 const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWorkspace) => {
-	const arweave = new ArweaveHandler(selNetwork.value);
-	const res = await arweave.ardb.search('transaction').id(
+	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+	const arweave = arweaveWrapper.arweave;
+	const ardb = new ArDBWrapper(arweave);
+	const res = await ardb.search('transaction').id(
 		tx
 	).findOne();
 	if (res) {
@@ -456,7 +458,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 		if (datatype === 'application/javascript') {
 			filename = `${tx}.js`;
 
-			data = await arweave.getTXData(tx);
+			data = await arweaveWrapper.getTXData(tx);
 			createToast(`JS file found!`,
 				{
 					type: 'success',
@@ -465,7 +467,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 				});
 		} else if (datatype === 'application/json') {
 			filename = `${tx}.json`;
-			data = await arweave.getTXData(tx);
+			data = await arweaveWrapper.getTXData(tx);
 			const replacer = undefined;
 			const space = 4;
 			if (data) {
@@ -478,7 +480,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 					position: 'bottom-right',
 				});
 		} else if (datatype === 'application/wasm') {
-      data = await arweave.getTXData(tx, false);
+      data = await arweaveWrapper.getTXData(tx, false);
       const buffer = Buffer.from(data);
       filename = `${tx}.wasm`;
       const wasmSrc = new WasmSrc(buffer);
@@ -532,10 +534,10 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 };
 
 const loadLatestContractStateFromTX = async (tx: string, path: string, workspace: DefaultWorkspace) => {
-	const arweave = new ArweaveHandler(selNetwork.value);
-	const contract = await arweave.smartweave.contract(tx);
-	// Read state
-	const { state } = await contract.readState();
+	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+	const arweave = arweaveWrapper.arweave;
+	const warpContracts = new WarpContracts(arweave);
+	const { state, validity } = await warpContracts.readState(tx);
 	const onlyInParent= false;
 	const inputEvent = new Event('empty-event');
 	const filename = `${tx}-latest.json`;

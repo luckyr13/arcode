@@ -68,12 +68,14 @@ import DefaultWorkspace from '@/components/composed/DefaultWorkspace.vue';
 import MainToolbar from '@/components/composed/MainToolbar.vue';
 import StatusBar from '@/components/atomic/StatusBar.vue';
 import { UserSettings } from '@/core/UserSettings';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { ArweaveWrapper } from '@/core/ArweaveWrapper';
+import { WarpContracts } from '@/core/WarpContracts';
 import { IFrameWalletBridge } from '@/core/IFrameWalletBridge';
 import { createToast } from 'mosha-vue-toastify';
 import { useRoute } from 'vue-router'
 import { Login } from '@/core/Login';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
+import { tokenContract } from '@/core/contracts/ArcodeCommunity'
 
 const props = defineProps({
   tx: String,
@@ -84,7 +86,9 @@ const props = defineProps({
 const us: UserSettings = new UserSettings();
 const settings = us.settings;
 const theme = ref(settings.theme);
-const arweave = new ArweaveHandler();
+const arweaveWrapper = new ArweaveWrapper();
+const arweave = arweaveWrapper.arweave;
+const warp = new WarpContracts(arweave);
 const login = new Login();
 const workspace = ref(null);
 const loadingAppContract = ref(true);
@@ -115,8 +119,7 @@ onMounted(async () => {
 
     // Load PST contract state
     loadingAppContract.value = true;
-    const contract = arweave.smartweave.contract(arweave.tokenContract);
-    const { state, validity } = await contract.readState();
+    const { state, validity } = await warp.readState(tokenContract)
     tokenState.value = state;
     loadingAppContract.value = false;
 

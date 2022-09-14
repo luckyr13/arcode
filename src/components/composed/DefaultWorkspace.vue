@@ -83,11 +83,12 @@ import IconTemplate from '@/components/atomic/IconTemplate';
 import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';
-import { lootContract } from '@/core/contracts/LootContract';
-import { token } from '@/core/contracts/Token';
-import { tokenPST } from '@/core/contracts/TokenPST';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
-import { WasmSrc } from 'redstone-smartweave';
+import { lootContract } from '@/core/contract-sources/LootContract';
+import { token } from '@/core/contract-sources/Token';
+import { tokenPST } from '@/core/contract-sources/TokenPST';
+import { ArweaveWrapper } from '@/core/ArweaveWrapper';
+import { ArDBWrapper } from '@/core/ArDBWrapper';
+import { WasmSrc } from '@/core/WarpContracts';
 
 const props = defineProps({
   theme: String,
@@ -375,8 +376,11 @@ onMounted(async () => {
 });
 
 const loadEditorFromTX = async (tx: string, path: string) => {
-  const arweave = new ArweaveHandler();
-  const res = await arweave.ardb.search('transaction').id(
+  const arweaveWrapper = new ArweaveWrapper();
+  const arweave = arweaveWrapper.arweave;
+  const ardbWrapper = new ArDBWrapper(arweave);
+  const ardb = ArDBWrapper.ardb;
+  const res = await ardb.search('transaction').id(
     tx
   ).findOne();
   if (res) {

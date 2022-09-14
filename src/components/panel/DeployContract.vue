@@ -178,22 +178,19 @@ import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { UserSettings } from '@/core/UserSettings';
 import { Login } from '@/core/Login';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
 import { 
-  ContractData, ArWallet, FromSrcTxContractData, ArTransfer
- } from 'redstone-smartweave';
+	WarpContracts, ContractData, ArWallet, 
+	FromSrcTxContractData, ArTransfer, Tags } from '@/core/WarpContracts';
 import { createToast } from 'mosha-vue-toastify';
 import { DefaultWorkspace } from '@/components/composed/DefaultWorkspace'
-import { 
-  Tags
- } from 'redstone-smartweave';
  
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
-const globalArweaveHandler = new ArweaveHandler();
+const globalArweaveWrapper = new ArweaveWrapper();
 
 const networks = computed(() => {
-	return globalArweaveHandler.networks;
+	return arweaveNetworks;
 });
 const selDeployFileContractLocation = ref('');
 const txtDeployFileContractLocationByTx = ref('');
@@ -220,7 +217,7 @@ const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
 });
 const appFeeInAr = computed(() => {
-	return globalArweaveHandler.arweave.ar.winstonToAr(appFeeInWinston.value);
+	return globalArweaveWrapper.arweave.ar.winstonToAr(appFeeInWinston.value);
 });
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
@@ -253,11 +250,14 @@ const deployContract = async (
 			throw Error('Not enough balance!');
 		}
 
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+		const arweave = arweaveWrapper.arweave;
+		const warpContracts = new WarpContracts(arweave);
+
 		// Iframe fix
 		const loginMethod = props.login.method;
 		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
-			props.login.hijackArweavePostAPI(arweave.arweave);
+			props.login.hijackArweavePostAPI(arweave);
 		}
 		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
 		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
@@ -283,7 +283,7 @@ const deployContract = async (
 		contractSrc = workspace.editors[iContract].view.state.doc.toString();
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
 
-		const transfer = arweave.getTransferData(
+		const transfer = warpContracts.getTransferData(
 			pstBalance.value,
 			vipMinimumBalance.value,
 			selNetwork.value,
@@ -299,7 +299,7 @@ const deployContract = async (
 			transfer: transfer
 		};
 
-		const tx = await arweave.createContract(contract);
+		const tx = await warpContracts.createContract(contract);
 		
 		if (tx) {
 			deployedContractTX.value = tx;
@@ -310,9 +310,9 @@ const deployContract = async (
 				position: 'bottom-right',
 			});
 
-			if (!arweave.onMainnet()) {
+			if (warpContracts.onLocalnet()) {
 				// Call mine 
-				const miningRes = await arweave.arlocalMine();
+				const miningRes = await arweaveWrapper.arlocalMine();
 				console.log('Confirmed tx: ', miningRes);
 				createToast('Transaction confirmed!',
 				{
@@ -360,7 +360,10 @@ const deployContractFromTX = async (
 			throw Error('Not enough balance!');
 		}
 
-		const arweave = new ArweaveHandler(selNetwork.value);
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+		const arweave = arweaveWrapper.arweave;
+		const warpContracts = new WarpContracts(arweave);
+		const warp = warpContracts.warp;
 		// Iframe fix
 		const loginMethod = props.login.method;
 		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
@@ -380,7 +383,7 @@ const deployContractFromTX = async (
 		}
 		initStateSrc = workspace.editors[iState].view.state.doc.toString();
 		
-		const transfer = arweave.getTransferData(
+		const transfer = warpContracts.getTransferData(
 			pstBalance.value,
 			vipMinimumBalance.value,
 			selNetwork.value,
@@ -396,7 +399,7 @@ const deployContractFromTX = async (
 			transfer: transfer
 		};
 		
-		const tx = await arweave.createContractFromTX(contract);
+		const tx = await warpContracts.createContractFromTX(contract);
 		
 		if (tx) {
 			deployedContractTX.value = tx;
@@ -407,9 +410,9 @@ const deployContractFromTX = async (
 				position: 'bottom-right',
 			});
 
-			if (!arweave.onMainnet()) {
+			if (warpContracts.onLocalnet()) {
 				// Call mine 
-				const miningRes = await arweave.arlocalMine();
+				const miningRes = await arweaveWrapper.arlocalMine();
 				console.log('Confirmed tx: ', miningRes);
 				createToast('Transaction confirmed!',
 				{
@@ -474,9 +477,9 @@ const testnetMintTokens = async (qty='1000000000000') => {
 
 		// Update balance after 1 second 
 		window.setTimeout(async () => {
-			const arweave = new ArweaveHandler(selNetwork.value);
-			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweaveWrapper.arweave.ar.winstonToAr(balance.value);
 		}, 1500);
 
 
@@ -495,9 +498,9 @@ onMounted(async () => {
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
-			const arweave = new ArweaveHandler(selNetwork.value);
-			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweaveWrapper.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
 		} catch (err) {
 			createToast(`${err}`,
@@ -532,9 +535,9 @@ watchEffect(async () => {
 	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
 		balance.value = 0;
 		try {
-			const arweave = new ArweaveHandler(selNetwork.value);
-			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweaveWrapper.arweave.ar.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
 		} catch (err) {
 			createToast(`${err}`,

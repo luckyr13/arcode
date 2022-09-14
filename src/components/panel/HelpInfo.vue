@@ -15,10 +15,10 @@
 			<a tabindex="0" href="https://arweave.org" target="_blank">Arweave.org</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://scanner.redstone.tools/" target="_blank">Redstone Smartweave Scanner</a>
+			<a tabindex="0" href="https://sonar.warp.cc/" target="_blank">SonAR Scanner</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://github.com/redstone-finance/redstone-smartcontracts" target="_blank">Redstone SmartContracts SDK</a>
+			<a tabindex="0" href="https://github.com/warp-contracts/warp" target="_blank">Warp SDK</a>
 		</li>
 		<li>
 			<a tabindex="0" href="https://github.com/textury/arlocal" target="_blank">arlocal GitHub</a>
@@ -81,9 +81,10 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 
-const arweave = new ArweaveHandler();
+const arweaveWrapper = new ArweaveWrapper();
+const arweave = arweaveWrapper.arweave;
 
 const props = defineProps({
 	tokenState: Object,
@@ -97,7 +98,7 @@ const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
 });
 const appFeeInAr = computed(() => {
-	return parseFloat(arweave.arweave.ar.winstonToAr(appFeeInWinston.value));
+	return parseFloat(arweave.ar.winstonToAr(appFeeInWinston.value));
 });
 const vipMinimumBalance = computed(() => {
 	return contractSettings.value.get('vipMinimumBalance');

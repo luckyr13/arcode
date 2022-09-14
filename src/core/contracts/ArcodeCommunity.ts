@@ -1,0 +1,1 @@
+export const tokenContract = 'XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg';

@@ -1,4 +1,3 @@
-import { ArweaveHandler } from './ArweaveHandler';
 import { ArWallet } from 'redstone-smartweave';
  import{
   SignatureOptions,

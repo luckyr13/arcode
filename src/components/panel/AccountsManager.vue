@@ -68,14 +68,15 @@ import { createToast } from 'mosha-vue-toastify';
 import { ref, onMounted, watchEffect, computed } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ArweaveHandler } from '@/core/ArweaveHandler';
+import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 
 const props = defineProps({
 	iframe: Boolean,
 	tokenState: Object,
 	login: Object
 });
-const arweave = new ArweaveHandler();
+const arweaveWrapper = new ArweaveWrapper();
+const arweave = arweaveWrapper.arweave;
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
@@ -91,7 +92,7 @@ const isBridgeActive = ref(false);
 
 const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.uploadKeyFile(event.target, stayLoggedIn, arweave.arweave);
+		const address = await props.login.uploadKeyFile(event.target, stayLoggedIn, arweave);
 		if (address) {
 			mainAddress.value = address;
 			method.value = props.login.method;
@@ -112,9 +113,9 @@ const arConnect = async (stayLoggedIn: boolean) => {
 	try {
 		let address = '';
 		if (props.iframe) {
-			address = await props.login.arConnectBridge(stayLoggedIn, arweave.arweave);
+			address = await props.login.arConnectBridge(stayLoggedIn, arweave);
 		} else {
-			address = await props.login.arConnect(stayLoggedIn, arweave.arweave);
+			address = await props.login.arConnect(stayLoggedIn, arweave);
 		}
 		if (address) {
 			mainAddress.value = address;
@@ -136,9 +137,9 @@ const finnie = async (stayLoggedIn: boolean) => {
 	try {
 		let address = '';
 		if (props.iframe) {
-			address = await props.login.finnieBridge(stayLoggedIn, arweave.arweave);
+			address = await props.login.finnieBridge(stayLoggedIn, arweave);
 		} else {
-			address = await props.login.finnie(stayLoggedIn, arweave.arweave);
+			address = await props.login.finnie(stayLoggedIn, arweave);
 		}
 
 		if (address) {
@@ -160,7 +161,7 @@ const finnie = async (stayLoggedIn: boolean) => {
 
 const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.arweaveWebWallet(stayLoggedIn, arweave.arweave);
+		const address = await props.login.arweaveWebWallet(stayLoggedIn, arweave);
 		if (address) {
 			mainAddress.value = address;
 			method.value = props.login.method;
@@ -224,8 +225,8 @@ watchEffect(async () => {
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
-			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
+			balance.value = await arweave.wallets.getBalance(mainAddress.value);
+			balance.value = arweave.ar.winstonToAr(balance.value);
 		} catch (err) {
 			createToast(`${err}`,
 			{
