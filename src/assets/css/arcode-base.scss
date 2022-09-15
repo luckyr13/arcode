@@ -73,6 +73,11 @@ body {
   filter: Invert(var(--app-invert-img));
 }
 
+.invert-colors {
+ -webkit-filter: Invert(var(--app-invert-img));
+  filter: Invert(var(--app-invert-img));
+}
+
 .arcode-workspace .workspace .tabs {
   background-color: var(--app-toolbar-panel-bgcolor);
 }
@@ -122,6 +127,9 @@ body {
 
 .modal-container {
 	background-color: var(--app-background-bgcolor);
-	color: var(--app-background-color);
-	
+	color: var(--app-background-color);	
+}
+
+.lds-ring div {
+  border-color: var(--app-background-color) transparent transparent transparent !important;
 }

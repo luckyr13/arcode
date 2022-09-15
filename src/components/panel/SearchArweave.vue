@@ -7,6 +7,7 @@
 		<label>Method</label>
 		<select 
 			:disabled="loadingSearch" 
+			@change="resetResults()"
 			v-model.trim="selSearchMethod">
 			<option value="tx">Search by TX</option>
 			<option value="address">Search by Address</option>
@@ -65,6 +66,7 @@
 				@keyup.enter="searchByAddress(txtAddress, txtResLimit)">
 		</div>
 		<div class="form-radio">
+			<label>Results filter</label>
 			<label>
 				<input 
 					type="radio" 
@@ -133,6 +135,7 @@
 				type="number" 
 				max="100"
 				min="1"
+				maxlength="3" 
 				:disabled="loadingSearch" 
 				v-model.trim="txtResLimitTags" 
 				@keyup.enter="searchByTags(tagsList, txtResLimitTags)">
@@ -178,35 +181,35 @@
 			</li>
 		</ul>
 	</template>
-	<h5>Results:</h5>
+	<h2>Results:</h2>
 	<template v-if="resultsTX && Object.keys(resultsTX).length">
 		<div v-if="isMainnet" class="link-container text-left">
 			<p v-if="resultsTXIsContract">
-				Open in RedStone Smartweave contracts explorer:
-				<a :href="`https://sonar.redstone.tools/#/app/contract/${txtTxId}`" target="_blank">
-					{{ `https://sonar.redstone.tools/#/app/contract/${txtTxId}` }}
+				<a :href="`https://sonar.warp.cc/#/app/contract/${txtTxId}`" target="_blank">
+					<img src="@/assets/img/warpLogoSmall.png" />
+					<span>Open in SonAR</span>
 				</a>
 			</p>
 			<p>
-				Open in Viewblock: 
 				<a :href="`https://viewblock.io/arweave/tx/${txtTxId}`" target="_blank">
-					{{ `https://viewblock.io/arweave/tx/${txtTxId}` }}
+					<img src="@/assets/img/miniViewblock.png" />
+					<span>Open in Viewblock</span>
 				</a>
 			</p>
 			<p>
-				Open in Arweave.net: 
 				<a :href="`https://arweave.net/${txtTxId}`" target="_blank">
-					{{ `https://arweave.net/${txtTxId}` }}
+					<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+					<span>Open in Arweave</span>
 				</a>
 			</p>
 		</div>
 		<table class="table">
 			<thead>
 				<tr>
-					<th>
+					<th style="width: 20%">
 						Key
 					</th>
-					<th>
+					<th style="width: 80%;">
 						Value
 					</th>
 				</tr>
@@ -216,38 +219,38 @@
 					<td style="width: 20%">
 						{{ k }}
 					</td>
-					<td>
-						{{ resultsTX[k] }}
+					<td style="width: 80%;">
+						<pre>{{ resultsTX[k] }}</pre>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</template>
 	<template v-if="resultsByAddress && resultsByAddress.length">
-		<p class="no-results">{{ resultsByAddress.length }} results found.</p>
 		<div v-for="r of resultsByAddress" :key="r._id">
 			<p>
-				TX: {{ r._id }}
+				<strong>TX:</strong>&nbsp;<span>{{ r._id }}</span>
 			</p>
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
-					Open in RedStone Smartweave contracts explorer:
-					<a :href="`https://sonar.redstone.tools/#/app/contract/${r._id}`" target="_blank">
-						{{ `https://sonar.redstone.tools/#/app/contract/${r._id}` }}
+					<a :href="`https://sonar.warp.cc/#/app/contract/${r._id}`" target="_blank">
+						<img src="@/assets/img/warpLogoSmall.png" />
+						<span>Open in SonAR</span>
 					</a>
 				</p>
 				<p>
-					Viewblock link: 
 					<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
-						{{ `https://viewblock.io/arweave/tx/${r._id}` }}
+						<img src="@/assets/img/miniViewblock.png" />
+						<span>Open in Viewblock</span>
 					</a>
 				</p>
 				<p>
-					Arweave.net link: 
 					<a :href="`https://arweave.net/${r._id}`" target="_blank">
-						{{ `https://arweave.net/${r._id}` }}
+						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+						<span>Open in Arweave</span>
 					</a>
 				</p>
+
 			</div>
 			<table class="table" >
 				<thead>
@@ -266,7 +269,7 @@
 							{{ k }}
 						</td>
 						<td>
-							{{ r[k] }}
+							<pre>{{ r[k] }}</pre>
 						</td>
 					</tr>
 				</tbody>
@@ -275,28 +278,27 @@
 		</div>
 	</template>
 	<template v-if="resultsByTags && resultsByTags.length">
-		<p class="no-results">{{ resultsByTags.length }} results found.</p>
 		<div v-for="r of resultsByTags" :key="r._id">
 			<p>
-				TX: {{ r._id }}
+				<strong>TX:</strong>&nbsp;<span>{{ r._id }}</span>
 			</p>
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
-					Open in RedStone Smartweave contracts explorer:
-					<a :href="`https://sonar.redstone.tools/#/app/contract/${r._id}`" target="_blank">
-						{{ `https://sonar.redstone.tools/#/app/contract/${r._id}` }}
+					<a :href="`https://sonar.warp.cc/#/app/contract/${r._id}`" target="_blank">
+						<img src="@/assets/img/warpLogoSmall.png" />
+						<span>Open in SonAR</span>
 					</a>
 				</p>
 				<p>
-					Viewblock link: 
 					<a :href="`https://viewblock.io/arweave/tx/${r._id}`" target="_blank">
-						{{ `https://viewblock.io/arweave/tx/${r._id}` }}
+						<img src="@/assets/img/miniViewblock.png" />
+						<span>Open in Viewblock</span>
 					</a>
 				</p>
 				<p>
-					Arweave.net link: 
 					<a :href="`https://arweave.net/${r._id}`" target="_blank">
-						{{ `https://arweave.net/${r._id}` }}
+						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+						<span>Open in Arweave</span>
 					</a>
 				</p>
 			</div>
@@ -317,7 +319,7 @@
 							{{ k }}
 						</td>
 						<td>
-							{{ r[k] }}
+							<pre>{{ r[k] }}</pre>
 						</td>
 					</tr>
 				</tbody>
@@ -328,15 +330,21 @@
 	
 	<p 
 		class="no-results"
-		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && (!resultsByAddress || resultsByAddress.length <= 0) && !loadingSearch">
+		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && 
+					(!resultsByAddress || resultsByAddress.length <= 0) && 
+					(!resultsByTags || resultsByTags.length <= 0) && 
+					!loadingSearch">
 		No results.
 	</p>
-	<p 
+	<div 
 		class="no-results text-center"
 		v-if="loadingSearch">
-		Loading ...
-	</p>
-
+		<div
+		class="lds-ring lds-ring-small"
+		v-if="loadingSearch"><div></div><div></div><div></div><div></div></div>
+		<span>Loading ...</span>
+	</div>
+	
 </div>
 </template>
 
@@ -379,24 +387,29 @@ const searchByTX = async (tx: string) => {
 	resultsByAddress.value = [];
 	resultsByTags.value = [];
 	loadingSearch.value = true;
+	resultsTXIsContract.value = false;
 	try {
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 		const arweave = arweaveWrapper.arweave;
 		const ardbWrapper = new ArDBWrapper(arweave);
 		const ardb = ardbWrapper.ardb;
-		resultsTX.value = await ardb.search('transaction').id(tx).findOne();
-		resultsTXIsContract.value = false;
+		const tmpRes = await ardb.search('transaction').id(tx).findOne();
 
-		resultsTX.value._tags.forEach(tag => {
-			const key = tag.name ? tag.name : '';
-			const value = tag.value ? tag.value : '';
-			if (key == 'App-Name' && value == 'SmartWeaveContract') {
-				resultsTXIsContract.value = true;
-			}
-		});
+		if (tmpRes) {
+			resultsTX.value = tmpRes;
+			resultsTX.value._tags.forEach(tag => {
+				const key = tag.name ? tag.name : '';
+				const value = tag.value ? tag.value : '';
+				if (key == 'App-Name' && value == 'SmartWeaveContract') {
+					resultsTXIsContract.value = true;
+				}
+			});
+		}
 
 	} catch (err) {
-		createToast(`${err}`,
+		console.error('searchByTx', err);
+		const errorMsg = 'No results found.';
+		createToast(`${errorMsg}`,
       {
         type: 'danger',
         showIcon: true,
@@ -580,6 +593,15 @@ const isMainnet = () => {
 	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 	return arweaveWrapper.onMainnet();
 };
+
+const resetResults = () => {
+	resultsTX.value = {};
+	resultsByAddress.value = [];
+	resultsByTags.value = [];
+	loadingSearch.value = false;
+	resultsTXIsContract.value = false;
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -699,6 +721,11 @@ const isMainnet = () => {
   margin-bottom: 12px;
 }
 
+.table pre {
+  white-space: pre-wrap; 
+
+}
+
 .table th {
 	background-color: var(--app-toolbar-panel-title-bgcolor);
 	color: var(--app-toolbar-panel-title-color);
@@ -709,6 +736,14 @@ const isMainnet = () => {
 }
 .link-container a {
 	color: inherit;
+}
+
+.link-container img {
+	width: 25px;
+}
+.link-container span {
+	margin-left: 12px;
+	line-height: 16px;
 }
 
 .no-results {
