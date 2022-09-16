@@ -4,22 +4,22 @@
 </div>
 <div class="search-container">
 	<div class="form-input">
-		<label>Method</label>
-		<select 
-			:disabled="loadingSearch" 
-			@change="resetResults()"
-			v-model.trim="selSearchMethod">
-			<option value="tx">Search by tx</option>
-			<option value="address">Search by address</option>
-			<option value="advanced">Advanced search</option>
-		</select>
-	</div>
-	<div class="form-input">
 		<label>Network</label>
 		<select 
 			:disabled="loadingSearch" 
 			v-model.trim="selNetwork">
 			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
+		</select>
+	</div>
+	<div class="form-input">
+		<label>Method</label>
+		<select 
+			:disabled="loadingSearch" 
+			@change="resetResults()"
+			v-model.trim="selSearchMethod">
+			<option value="tx">Search by Tx Id</option>
+			<option value="address">Search by Address</option>
+			<option value="advanced">Advanced Search</option>
 		</select>
 	</div>
 	<template v-if="selSearchMethod == 'tx'">
@@ -173,6 +173,22 @@
 					icon="codicon-trash" />
 			</div>
 		</div>
+		<h5 class="title-tags">From list</h5>
+		<p class="no-results" v-if="!ownersList.length">No owners.</p>
+		<div class="data-input-list" v-for="(fL1, index1) of ownersList" :key="index1">
+			<div class="form-input col-address">
+				<label>Wallet address #{{ index1 + 1 }}</label>
+				<input 
+					:disabled="loadingSearch"
+					type="text" v-model.trim="fL1.owner">
+			</div>
+			<div class="form-input col-action">
+				<DefaultIcon 
+					@click="removeOwner(index1, ownersList)"
+					class="icon-action"
+					icon="codicon-trash" />
+			</div>
+		</div>
 		<div class="form-radio">
 			<label>Sorting order</label>
 			<label>
@@ -204,7 +220,7 @@
 				maxlength="3" 
 				:disabled="loadingSearch" 
 				v-model.trim="txtResLimitAdvanced" 
-				@keyup.enter="advancedSearch(tagsList, txtResLimitAdvanced)">
+				@keyup.enter="advancedSearch(tagsList, ownersList, txtResLimitAdvanced)">
 		</div>
 		<ul class="search-menu">
 			<li>
@@ -217,9 +233,17 @@
 			</li>
 			<li>
 				<button
-					:class="{primary: (tagsList.length) && !loadingSearch}" 
-					:disabled="(!tagsList.length) || loadingSearch"
-					@click="advancedSearch(tagsList, txtResLimitAdvanced)">
+					:class="{primary: !loadingSearch}" 
+					:disabled="loadingSearch"
+					@click="addOwner('', ownersList)">
+					<DefaultIcon class="icon-btn" icon="codicon-account" /><span>Add Owner</span>
+				</button>
+			</li>
+			<li>
+				<button
+					:class="{primary: (tagsList.length || ownersList.length) && !loadingSearch}" 
+					:disabled="(!tagsList.length && !ownersList.length) || loadingSearch"
+					@click="advancedSearch(tagsList, ownersList, txtResLimitAdvanced)">
 					<DefaultIcon class="icon-btn" icon="codicon-search" /><span>Search</span>
 				</button>
 			</li>
@@ -342,9 +366,10 @@
 		</div>
 	</template>
 	<template v-if="advancedResults && advancedResults.length">
-		<div v-for="r of advancedResults" :key="r._id">
+		<div v-for="(r, rIndex) of advancedResults" :key="r._id">
 			<p>
-				<strong>TX:</strong>&nbsp;<span>{{ r._id }}</span>
+				<strong>TX {{ rIndex + 1 }}:</strong><br>
+				<span>{{ r._id }}</span>
 			</p>
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
@@ -444,7 +469,8 @@ const advancedResults = ref([]);
 const rdFilter = ref('');
 const rdSortingOrderByAddress = ref('HEIGHT_DESC');
 const rdSortingOrderAdvanced =  ref('HEIGHT_DESC');
-const tagsList = reactive<Array<{name: string, values: string}>>([]);
+const tagsList = reactive<Array<ArDBTag>>([]);
+const ownersList = reactive<Array<{ owner: string }>>([]);
 const mainAddress = ref(props.login.mainAddress);
 
 const networks = computed(() => {
@@ -610,12 +636,19 @@ const addTag = (key: string, values: string, tags: Array<{name: string, values: 
 	tags.push({ key, values });
 };
 
+const removeOwner = (index: number, owners: Array<{owner: string}>) => {
+	owners.splice(index, 1);
+};
+
+const addOwner = (owner: string, owners: Array<{owner: string}>) => {
+	owners.push({ owner });
+};
 
 const advancedSearch = async (
-	tagsList: Array<{name: string, values: string[]}>,
+	tagsList: Array<ArDBTag>,
+	ownersList: Array<{owner: string}>,
 	limit: number) => {
 	limit = parseInt(limit);
-	const owners = [];
 	resultsByAddress.value = [];
 	resultsTX.value = {};
 	advancedResults.value = [];
@@ -623,12 +656,13 @@ const advancedSearch = async (
 	const sortOrder = rdSortingOrderAdvanced.value;
 	try {
 		const tags: ArDBTag[] = [];
+		const owners: string[] = [];
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 		const arweave = arweaveWrapper.arweave;
 		const ardbWrapper = new ArDBWrapper(arweave);
 
-		if (!tagsList.length) {
-			throw Error('Please provide tags');
+		if (!tagsList.length && !ownersList.length ) {
+			throw Error('Please provide tags or an owner address');
 		} else if (limit <= 0 || limit > 100) {
 			throw Error('Limit must be between 1 - 100');
 		}
@@ -636,13 +670,21 @@ const advancedSearch = async (
 		for (const t of tagsList) {
 			const tname = t.name;
 			const tvalues = t.values;
-			if (!tname || !tvalues) {
-				throw Error('Empty tags');
+			if (!tname) {
+				throw Error('Tags: Empty Key');
 			}
 			tags.push({
         name: tname,
         values: tvalues.split(','),
       });
+		}
+
+		for (const o of ownersList) {
+			const owner = o.owner.trim();
+			if (!owner) {
+				throw Error('Empty owner');
+			}
+			owners.push(owner);
 		}
 
 		advancedResults.value = await ardbWrapper.findFromOwners(
@@ -673,6 +715,20 @@ const resetResults = () => {
 	advancedResults.value = [];
 	loadingSearch.value = false;
 	resultsTXIsContract.value = false;
+	txtTxId.value = '';
+	txtAddress.value = '';
+	rdFilter.value = '';
+	rdSortingOrderByAddress.value = 'HEIGHT_DESC';
+	txtResLimit.value = 5;
+	// Advanced
+	while (tagsList.length) {
+		tagsList.pop();
+	}
+	while (ownersList.length) {
+		ownersList.pop();
+	}
+	rdSortingOrderAdvanced.value = 'HEIGHT_DESC';
+	txtResLimitAdvanced.value = 5;
 }
 
 </script>
@@ -841,6 +897,11 @@ const resetResults = () => {
 .col-value {
 	float: left;
 	width: 45%;
+}
+.col-address {
+	float: left;
+	width: 87%;
+	height: 32px;
 }
 .col-action {
 	float: left;
