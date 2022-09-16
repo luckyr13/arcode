@@ -227,9 +227,10 @@
 		</table>
 	</template>
 	<template v-if="resultsByAddress && resultsByAddress.length">
-		<div v-for="r of resultsByAddress" :key="r._id">
+		<div v-for="(r, rAIndex) of resultsByAddress" :key="r._id">
 			<p>
-				<strong>TX:</strong>&nbsp;<span>{{ r._id }}</span>
+				<strong>TX {{ rAIndex + 1 }}:</strong><br>
+				<span>{{ r._id }}</span>
 			</p>
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
@@ -352,7 +353,7 @@
 import {ref, computed, reactive} from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
-import { ArDBWrapper } from '@/core/ArDBWrapper';
+import { ArDBWrapper, ArDBTag } from '@/core/ArDBWrapper';
 import { createToast } from 'mosha-vue-toastify';
 const props = defineProps({
 	mainAddress: String,
@@ -392,8 +393,7 @@ const searchByTX = async (tx: string) => {
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 		const arweave = arweaveWrapper.arweave;
 		const ardbWrapper = new ArDBWrapper(arweave);
-		const ardb = ardbWrapper.ardb;
-		const tmpRes = await ardb.search('transaction').id(tx).findOne();
+		const tmpRes = await ardbWrapper.findOneTx(tx);
 
 		if (tmpRes) {
 			resultsTX.value = tmpRes;
@@ -426,11 +426,10 @@ const searchByAddress = async (address: string, limit: number) => {
 	resultsByTags.value = [];
 	loadingSearch.value = true;
 	try {
-		const tags = [];
+		const tags: ArDBTag[] = [];
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 		const arweave = arweaveWrapper.arweave;
 		const ardbWrapper = new ArDBWrapper(arweave);
-		const ardb = ardbWrapper.ardb;
 
 		if (!address) {
 			// throw Error('');
@@ -504,12 +503,9 @@ const searchByAddress = async (address: string, limit: number) => {
         ],
       });
 		}
-
-		resultsByAddress.value = await ardb.search(
-				'transactions'
-			).from(
-				address
-			).limit(limit).tags(tags).find();
+		resultsByAddress.value = await ardbWrapper.findFromOwners(
+			address, limit, tags
+		);
 
 	} catch (err) {
 		createToast(`${err}`,
@@ -545,16 +541,16 @@ const addTag = (key: string, values: string, tags: Array<{name: string, values: 
 
 const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, limit: number) => {
 	limit = parseInt(limit);
+	const owners = [];
 	resultsByAddress.value = [];
 	resultsTX.value = {};
 	resultsByTags.value = [];
 	loadingSearch.value = true;
 	try {
-		const tags = [];
+		const tags: ArDBTag[] = [];
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 		const arweave = arweaveWrapper.arweave;
 		const ardbWrapper = new ArDBWrapper(arweave);
-		const ardb = ardbWrapper.ardb;
 
 		if (!tagsList.length) {
 			throw Error('Please provide tags');
@@ -574,9 +570,7 @@ const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, l
       });
 		}
 
-		resultsByTags.value = await ardb.search(
-				'transactions'
-			).limit(limit).tags(tags).find();
+		resultsByTags.value = await ardbWrapper.findFromOwners(owners, limit, tags);
 
 	} catch (err) {
 		createToast(`${err}`,
