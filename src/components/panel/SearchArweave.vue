@@ -9,9 +9,9 @@
 			:disabled="loadingSearch" 
 			@change="resetResults()"
 			v-model.trim="selSearchMethod">
-			<option value="tx">Search by TX</option>
-			<option value="address">Search by Address</option>
-			<option value="tags">Search by Tags</option>
+			<option value="tx">Search by tx</option>
+			<option value="address">Search by address</option>
+			<option value="advanced">Advanced search</option>
 		</select>
 	</div>
 	<div class="form-input">
@@ -54,38 +54,6 @@
 			<div class="text-right">
 				<a v-if="mainAddress" class="link" @click="txtAddress = mainAddress">Use my wallet address</a>
 			</div>
-		</div>
-		<div class="form-input">
-			<label>Results limit</label>
-			<input 
-				type="number" 
-				max="100"
-				min="1"
-				:disabled="loadingSearch" 
-				v-model.trim="txtResLimit" 
-				@keyup.enter="searchByAddress(txtAddress, txtResLimit)">
-		</div>
-		<div class="form-radio">
-			<label>Sorting order</label>
-			<label>
-				<input 
-					type="radio" 
-					:disabled="loadingSearch" 
-					name="sortingOrderByAddress"
-					value="HEIGHT_ASC"
-					v-model.trim="rdSortingOrderByAddress">
-				Height Ascending
-			</label>
-			<label>
-				<input 
-					type="radio" 
-					:disabled="loadingSearch" 
-					name="sortingOrderByAddress"
-					value="HEIGHT_DESC"
-					checked 
-					v-model.trim="rdSortingOrderByAddress">
-				Height Descending
-			</label>
 		</div>
 		<div class="form-radio">
 			<label>Results filter</label>
@@ -139,6 +107,38 @@
 				Media Files
 			</label>
 		</div>
+		<div class="form-radio">
+			<label>Sorting order</label>
+			<label>
+				<input 
+					type="radio" 
+					:disabled="loadingSearch" 
+					name="sortingOrderByAddress"
+					value="HEIGHT_ASC"
+					v-model.trim="rdSortingOrderByAddress">
+				Height Ascending
+			</label>
+			<label>
+				<input 
+					type="radio" 
+					:disabled="loadingSearch" 
+					name="sortingOrderByAddress"
+					value="HEIGHT_DESC"
+					checked 
+					v-model.trim="rdSortingOrderByAddress">
+				Height Descending
+			</label>
+		</div>
+		<div class="form-input">
+			<label>Results limit</label>
+			<input 
+				type="number" 
+				max="100"
+				min="1"
+				:disabled="loadingSearch" 
+				v-model.trim="txtResLimit" 
+				@keyup.enter="searchByAddress(txtAddress, txtResLimit)">
+		</div>
 		<ul class="search-menu">
 			<li>
 				<button
@@ -150,18 +150,7 @@
 			</li>
 		</ul>
 	</template>
-	<template v-if="selSearchMethod == 'tags'">
-		<div class="form-input">
-			<label>Results limit</label>
-			<input 
-				type="number" 
-				max="100"
-				min="1"
-				maxlength="3" 
-				:disabled="loadingSearch" 
-				v-model.trim="txtResLimitTags" 
-				@keyup.enter="searchByTags(tagsList, txtResLimitTags)">
-		</div>
+	<template v-if="selSearchMethod == 'advanced'">
 		<h5 class="title-tags">Tags</h5>
 		<p class="no-results" v-if="!tagsList.length">No tags.</p>
 		<div class="data-input-list" v-for="(tL1, index1) of tagsList" :key="index1">
@@ -184,6 +173,39 @@
 					icon="codicon-trash" />
 			</div>
 		</div>
+		<div class="form-radio">
+			<label>Sorting order</label>
+			<label>
+				<input 
+					type="radio" 
+					:disabled="loadingSearch" 
+					name="sortingOrderAdvanced"
+					value="HEIGHT_ASC"
+					v-model.trim="rdSortingOrderAdvanced">
+				Height Ascending
+			</label>
+			<label>
+				<input 
+					type="radio" 
+					:disabled="loadingSearch" 
+					name="sortingOrderAdvanced"
+					value="HEIGHT_DESC"
+					checked 
+					v-model.trim="rdSortingOrderAdvanced">
+				Height Descending
+			</label>
+		</div>
+		<div class="form-input">
+			<label>Results limit</label>
+			<input 
+				type="number" 
+				max="100"
+				min="1"
+				maxlength="3" 
+				:disabled="loadingSearch" 
+				v-model.trim="txtResLimitAdvanced" 
+				@keyup.enter="advancedSearch(tagsList, txtResLimitAdvanced)">
+		</div>
 		<ul class="search-menu">
 			<li>
 				<button
@@ -197,7 +219,7 @@
 				<button
 					:class="{primary: (tagsList.length) && !loadingSearch}" 
 					:disabled="(!tagsList.length) || loadingSearch"
-					@click="searchByTags(tagsList, txtResLimitTags)">
+					@click="advancedSearch(tagsList, txtResLimitAdvanced)">
 					<DefaultIcon class="icon-btn" icon="codicon-search" /><span>Search</span>
 				</button>
 			</li>
@@ -222,6 +244,12 @@
 				<a :href="`https://arweave.net/${txtTxId}`" target="_blank">
 					<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
 					<span>Open in Arweave</span>
+				</a>
+			</p>
+			<p v-if="resultsTXIsContract">
+				<a :href="`https://arcode.studio/#/${txtTxId}`" target="_blank">
+					<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+					<span>Open in ArCode Studio</span>
 				</a>
 			</p>
 		</div>
@@ -273,6 +301,12 @@
 						<span>Open in Arweave</span>
 					</a>
 				</p>
+				<p v-if="txIsContract(r._tags)">
+					<a :href="`https://arcode.studio/#/${r._id}`" target="_blank">
+						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+						<span>Open in ArCode Studio</span>
+					</a>
+				</p>
 
 			</div>
 			<table class="table" >
@@ -307,8 +341,8 @@
 			</button>
 		</div>
 	</template>
-	<template v-if="resultsByTags && resultsByTags.length">
-		<div v-for="r of resultsByTags" :key="r._id">
+	<template v-if="advancedResults && advancedResults.length">
+		<div v-for="r of advancedResults" :key="r._id">
 			<p>
 				<strong>TX:</strong>&nbsp;<span>{{ r._id }}</span>
 			</p>
@@ -329,6 +363,12 @@
 					<a :href="`https://arweave.net/${r._id}`" target="_blank">
 						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
 						<span>Open in Arweave</span>
+					</a>
+				</p>
+				<p v-if="txIsContract(r._tags)">
+					<a :href="`https://arcode.studio/#/${r._id}`" target="_blank">
+						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+						<span>Open in ArCode Studio</span>
 					</a>
 				</p>
 			</div>
@@ -362,7 +402,7 @@
 		class="no-results"
 		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && 
 					(!resultsByAddress || resultsByAddress.length <= 0) && 
-					(!resultsByTags || resultsByTags.length <= 0) && 
+					(!advancedResults || advancedResults.length <= 0) && 
 					!loadingSearch">
 		No results.
 	</p>
@@ -393,16 +433,17 @@ const props = defineProps({
 const txtTxId = ref('');
 const txtAddress = ref('');
 const txtResLimit = ref(5);
-const txtResLimitTags = ref(5);
+const txtResLimitAdvanced = ref(5);
 const selSearchMethod = ref('tx');
 const selNetwork = ref('arweave-mainnet');
 const loadingSearch = ref(false);
 const resultsTX = ref({});
 const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
-const resultsByTags = ref([]);
+const advancedResults = ref([]);
 const rdFilter = ref('');
 const rdSortingOrderByAddress = ref('HEIGHT_DESC');
+const rdSortingOrderAdvanced =  ref('HEIGHT_DESC');
 const tagsList = reactive<Array<{name: string, values: string}>>([]);
 const mainAddress = ref(props.login.mainAddress);
 
@@ -416,7 +457,7 @@ const searchByTX = async (tx: string) => {
 	}
 	resultsTX.value = {};
 	resultsByAddress.value = [];
-	resultsByTags.value = [];
+	advancedResults.value = [];
 	loadingSearch.value = true;
 	resultsTXIsContract.value = false;
 	try {
@@ -453,7 +494,7 @@ const searchByAddress = async (address: string, limit: number) => {
 	limit = parseInt(limit);
 	resultsByAddress.value = [];
 	resultsTX.value = {};
-	resultsByTags.value = [];
+	advancedResults.value = [];
 	loadingSearch.value = true;
 	const sortOrder = rdSortingOrderByAddress.value;
 	try {
@@ -570,13 +611,16 @@ const addTag = (key: string, values: string, tags: Array<{name: string, values: 
 };
 
 
-const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, limit: number) => {
+const advancedSearch = async (
+	tagsList: Array<{name: string, values: string[]}>,
+	limit: number) => {
 	limit = parseInt(limit);
 	const owners = [];
 	resultsByAddress.value = [];
 	resultsTX.value = {};
-	resultsByTags.value = [];
+	advancedResults.value = [];
 	loadingSearch.value = true;
+	const sortOrder = rdSortingOrderAdvanced.value;
 	try {
 		const tags: ArDBTag[] = [];
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
@@ -601,7 +645,11 @@ const searchByTags = async (tagsList: Array<{name: string, values: string[]}>, l
       });
 		}
 
-		resultsByTags.value = await ardbWrapper.findFromOwners(owners, limit, tags);
+		advancedResults.value = await ardbWrapper.findFromOwners(
+			owners,
+			limit,
+			tags,
+			sortOrder);
 
 	} catch (err) {
 		createToast(`${err}`,
@@ -622,7 +670,7 @@ const isMainnet = () => {
 const resetResults = () => {
 	resultsTX.value = {};
 	resultsByAddress.value = [];
-	resultsByTags.value = [];
+	advancedResults.value = [];
 	loadingSearch.value = false;
 	resultsTXIsContract.value = false;
 }
