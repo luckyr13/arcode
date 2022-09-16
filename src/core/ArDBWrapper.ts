@@ -26,18 +26,23 @@ export class ArDBWrapper {
 		return tmpRes;
 	}
 
-	async findFromOwners(owners: string[]|string, limit=10, tags: ArDBTag[] = []) {
+	async findFromOwners(
+		owners: string[]|string,
+		limit=10,
+		tags: ArDBTag[] = [],
+		sortingOrder: 'HEIGHT_DESC'|'HEIGHT_ASC' = 'HEIGHT_DESC') {
+		let tmpRes = null;
 		let query = this._ardb.search(
 				'transactions'
-			).limit(limit);
-		let tmpRes = null;
-
+			).limit(limit).sort(sortingOrder);
+		// Filters
 		if (tags && tags.length) {
 			query = query.tags(tags);
 		}
 		if (owners && owners.length) {
 			query = query.from(owners);
 		}
+		// Run query
 		try {
 			tmpRes = await query.find();
 		} catch (err) {

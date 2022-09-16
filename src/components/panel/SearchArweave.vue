@@ -66,6 +66,28 @@
 				@keyup.enter="searchByAddress(txtAddress, txtResLimit)">
 		</div>
 		<div class="form-radio">
+			<label>Sorting order</label>
+			<label>
+				<input 
+					type="radio" 
+					:disabled="loadingSearch" 
+					name="sortingOrderByAddress"
+					value="HEIGHT_ASC"
+					v-model.trim="rdSortingOrderByAddress">
+				Height Ascending
+			</label>
+			<label>
+				<input 
+					type="radio" 
+					:disabled="loadingSearch" 
+					name="sortingOrderByAddress"
+					value="HEIGHT_DESC"
+					checked 
+					v-model.trim="rdSortingOrderByAddress">
+				Height Descending
+			</label>
+		</div>
+		<div class="form-radio">
 			<label>Results filter</label>
 			<label>
 				<input 
@@ -277,6 +299,13 @@
 			</table>
 			<hr>
 		</div>
+		<div class="text-center">
+			<button
+				class="more-results-btn primary"
+				:disabled="loadingSearch">
+				<span>Load next results</span>
+			</button>
+		</div>
 	</template>
 	<template v-if="resultsByTags && resultsByTags.length">
 		<div v-for="r of resultsByTags" :key="r._id">
@@ -363,8 +392,8 @@ const props = defineProps({
 
 const txtTxId = ref('');
 const txtAddress = ref('');
-const txtResLimit = ref(10);
-const txtResLimitTags = ref(10);
+const txtResLimit = ref(5);
+const txtResLimitTags = ref(5);
 const selSearchMethod = ref('tx');
 const selNetwork = ref('arweave-mainnet');
 const loadingSearch = ref(false);
@@ -373,6 +402,7 @@ const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
 const resultsByTags = ref([]);
 const rdFilter = ref('');
+const rdSortingOrderByAddress = ref('HEIGHT_DESC');
 const tagsList = reactive<Array<{name: string, values: string}>>([]);
 const mainAddress = ref(props.login.mainAddress);
 
@@ -425,6 +455,7 @@ const searchByAddress = async (address: string, limit: number) => {
 	resultsTX.value = {};
 	resultsByTags.value = [];
 	loadingSearch.value = true;
+	const sortOrder = rdSortingOrderByAddress.value;
 	try {
 		const tags: ArDBTag[] = [];
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
@@ -504,7 +535,7 @@ const searchByAddress = async (address: string, limit: number) => {
       });
 		}
 		resultsByAddress.value = await ardbWrapper.findFromOwners(
-			address, limit, tags
+			address, limit, tags, sortOrder
 		);
 
 	} catch (err) {
@@ -659,8 +690,8 @@ const resetResults = () => {
 
 .icon-btn {
 	display: inline !important;
-	line-height: 12px;
-	font-size: 12px;
+	line-height: 14px;
+	font-size: 14px;
 	float: right;
 }
 
@@ -678,17 +709,18 @@ const resetResults = () => {
 	margin-top: 10px;
 }
 .search-menu li button {
-	width: 70%;
+	width: 60%;
 	height: 100%;
-	line-height: 12px;
+	line-height: 16px;
 	border: 0;
 	cursor: pointer;
-	font-size: 12px;
+	font-size: 14px;
 	text-align: center;
   vertical-align: middle;
 	color: gray;
 	cursor: default;
 	background-color: rgba(0,0,0,0.1);
+	border-radius: 6px;
 }
 
 .search-menu li button.primary {
@@ -698,7 +730,7 @@ const resetResults = () => {
 }
 
 .search-menu li button span {
-	font-size: 12px;
+	font-size: 14px;
 	margin-left: 6px;
 	line-height: 14px;
 
@@ -742,6 +774,7 @@ const resetResults = () => {
 
 .no-results {
 	font-size: 12px;
+	margin-bottom: 20px;
 }
 
 .link {
@@ -773,6 +806,38 @@ const resetResults = () => {
 }
 .data-input-list {
 	min-height: 76px;
+}
+
+.more-results-btn {
+	width: 100%;
+	height: 100%;
+	line-height: 12px;
+	border: 0;
+	cursor: pointer;
+	font-size: 16px;
+	padding: 12px;
+	text-align: center;
+  vertical-align: middle;
+	color: gray;
+	cursor: default;
+	background-color: rgba(0,0,0,0.1);
+}
+
+.more-results-btn.primary {
+	background-color: var(--app-toolbar-panel-title-bgcolor);
+  color: var(--app-toolbar-panel-title-color);
+  cursor: pointer;
+}
+
+.more-results-btn span {
+	font-size: 16px;
+	margin-left: 6px;
+	line-height: 14px;
+
+}
+
+.more-results-btn:hover {
+	background-color: rgba(0,0,0,0.3);
 }
 
 </style>
