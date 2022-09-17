@@ -20,8 +20,8 @@
     "@codemirror/language": "^6.2.1",
     "@codemirror/legacy-modes": "^6.1.0",
     "@codemirror/state": "^6.1.1",
-    "@codemirror/theme-one-dark": "^6.0.0",
-    "@codemirror/view": "^6.2.3",
+    "@codemirror/theme-one-dark": "^6.1.0",
+    "@codemirror/view": "^6.2.4",
     "@vscode/codicons": "^0.0.32",
     "animejs": "^3.2.1",
     "ardb": "^1.1.10",
@@ -36,11 +36,11 @@
     "tippy.js": "^6.3.7",
     "vue": "^3.2.39",
     "vue-router": "^4.1.5",
-    "warp-contracts": "^1.2.4"
+    "warp-contracts": "^1.2.5"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.23.0",
-    "@typescript-eslint/parser": "^5.23.0",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
     "@vue/cli-plugin-babel": "~5.0.4",
     "@vue/cli-plugin-eslint": "~5.0.4",
     "@vue/cli-plugin-pwa": "~5.0.4",
@@ -49,8 +49,8 @@
     "@vue/cli-service": "~5.0.4",
     "@vue/compiler-sfc": "^3.2.33",
     "@vue/eslint-config-typescript": "^11.0.1",
-    "eslint": "^8.15.0",
-    "eslint-plugin-vue": "^9.4.0",
+    "eslint": "^8.23.1",
+    "eslint-plugin-vue": "^9.5.1",
     "sass": "^1.51.0",
     "sass-loader": "^13.0.2",
     "typescript": "^4.6.4"
