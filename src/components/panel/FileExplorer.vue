@@ -45,9 +45,6 @@
 		</button>
 	</li>
 </ul>
-<div class="arcode-main-toolbar-panel-title panel-title">
-	Files In Workspace
-</div>
 <ul class="file-menu">
 	<li 
 		v-if="workspace.getCurrentEditorId() >= 0">
@@ -84,6 +81,9 @@
 		</button>
 	</li>
 </ul>
+<div class="arcode-main-toolbar-panel-title panel-title">
+	Files In Workspace
+</div>
 <FileList 
 		v-if="workspace" 
 		:workspace="workspace" 

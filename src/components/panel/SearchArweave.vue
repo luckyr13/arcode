@@ -12,7 +12,7 @@
 		</select>
 	</div>
 	<div class="form-input">
-		<label>Method</label>
+		<label>Search Method</label>
 		<select 
 			:disabled="loadingSearch" 
 			@change="resetResults()"
@@ -357,10 +357,25 @@
 			</table>
 			<hr>
 		</div>
+		<div 
+			class="no-results text-center"
+			v-if="loadingMoreResults">
+			<div
+			class="lds-ring lds-ring-small">
+			<div></div><div></div><div></div><div></div></div>
+			<span>Loading ...</span>
+		</div>
 		<div class="text-center">
 			<button
 				class="more-results-btn primary"
-				:disabled="loadingSearch">
+				v-if="selSearchMethod == 'address' && !loadingMoreResults"
+				@click="nextResultsSearchByAddress()">
+				<span>Load next results</span>
+			</button>
+			<button
+				class="more-results-btn primary"
+				:disabled="loadingSearch"
+				v-if="selSearchMethod == 'advanced'">
 				<span>Load next results</span>
 			</button>
 		</div>
@@ -435,8 +450,8 @@
 		class="no-results text-center"
 		v-if="loadingSearch">
 		<div
-		class="lds-ring lds-ring-small"
-		v-if="loadingSearch"><div></div><div></div><div></div><div></div></div>
+		class="lds-ring lds-ring-small">
+		<div></div><div></div><div></div><div></div></div>
 		<span>Loading ...</span>
 	</div>
 	
@@ -462,6 +477,7 @@ const txtResLimitAdvanced = ref(5);
 const selSearchMethod = ref('tx');
 const selNetwork = ref('arweave-mainnet');
 const loadingSearch = ref(false);
+const loadingMoreResults = ref(false);
 const resultsTX = ref({});
 const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
@@ -472,10 +488,10 @@ const rdSortingOrderAdvanced =  ref('HEIGHT_DESC');
 const tagsList = reactive<Array<ArDBTag>>([]);
 const ownersList = reactive<Array<{ owner: string }>>([]);
 const mainAddress = ref(props.login.mainAddress);
-
 const networks = computed(() => {
 	return arweaveNetworks;
 });
+let gArDBWrapperSearchByAddress: ArDBWrapper|null = null;
 
 const searchByTX = async (tx: string) => {
 	if (!tx) {
@@ -527,7 +543,8 @@ const searchByAddress = async (address: string, limit: number) => {
 		const tags: ArDBTag[] = [];
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 		const arweave = arweaveWrapper.arweave;
-		const ardbWrapper = new ArDBWrapper(arweave);
+		gArDBWrapperSearchByAddress = new ArDBWrapper(arweave);
+		const ardbWrapper = gArDBWrapperSearchByAddress;
 
 		if (!address) {
 			// throw Error('');
@@ -601,10 +618,12 @@ const searchByAddress = async (address: string, limit: number) => {
         ],
       });
 		}
+		
 		resultsByAddress.value = await ardbWrapper.findFromOwners(
 			address, limit, tags, sortOrder
 		);
 
+		
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -616,8 +635,49 @@ const searchByAddress = async (address: string, limit: number) => {
 	loadingSearch.value = false;
 };
 
+const nextResultsSearchByAddress = async () => {
+	const ardbWrapper = gArDBWrapperSearchByAddress;
+	loadingMoreResults.value = true;
+	try {
+		const nextRes = await ardbWrapper.nextResults();
+		if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
+				nextRes.length) {
+			resultsByAddress.value.push(...nextRes);
+		} else if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
+				nextRes.length === 0) {
+			createToast(`No more results found.`,
+      {
+        type: 'warning',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+		}else if (nextRes && Object.keys(nextRes)) {
+			resultsByAddress.value.push(nextRes);
+		} else {
+			createToast(`No more results found.`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+		}
+		loadingMoreResults.value = false;
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+		loadingMoreResults.value = false;
+	}
+};
+
 const txIsContract = (tags) => {
 	let isContract = false;
+	if (!tags) {
+		return false;
+	}
 	tags.forEach(tag => {
 		const key = tag.name ? tag.name : '';
 		const value = tag.value ? tag.value : '';

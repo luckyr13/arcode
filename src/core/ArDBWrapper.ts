@@ -43,12 +43,8 @@ export class ArDBWrapper {
 			query = query.from(owners);
 		}
 		// Run query
-		try {
-			tmpRes = await query.find();
-		} catch (err) {
-			console.error('findFromAddress:', err);
-		}
-
+		tmpRes = await query.find();
+		
 		return tmpRes;
 	}
 
