@@ -372,12 +372,6 @@
 				@click="nextResultsSearchByAddress()">
 				<span>Load next results</span>
 			</button>
-			<button
-				class="more-results-btn primary"
-				:disabled="loadingSearch"
-				v-if="selSearchMethod == 'advanced'">
-				<span>Load next results</span>
-			</button>
 		</div>
 	</template>
 	<template v-if="advancedResults && advancedResults.length">
@@ -436,8 +430,15 @@
 			</table>
 			<hr>
 		</div>
+		<div class="text-center">
+			<button
+				class="more-results-btn primary"
+				v-if="selSearchMethod == 'advanced' && !loadingMoreResults"
+				@click="nextResultsAdvancedSearch()">
+				<span>Load next results</span>
+			</button>
+		</div>
 	</template>
-	
 	<p 
 		class="no-results"
 		v-if="(!resultsTX || Object.keys(resultsTX).length <= 0) && 
@@ -492,6 +493,7 @@ const networks = computed(() => {
 	return arweaveNetworks;
 });
 let gArDBWrapperSearchByAddress: ArDBWrapper|null = null;
+let gArDBWrapperAdvancedSearch: ArDBWrapper|null = null;
 
 const searchByTX = async (tx: string) => {
 	if (!tx) {
@@ -719,7 +721,8 @@ const advancedSearch = async (
 		const owners: string[] = [];
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 		const arweave = arweaveWrapper.arweave;
-		const ardbWrapper = new ArDBWrapper(arweave);
+		gArDBWrapperAdvancedSearch = new ArDBWrapper(arweave);
+		const ardbWrapper = gArDBWrapperAdvancedSearch;
 
 		if (!tagsList.length && !ownersList.length ) {
 			throw Error('Please provide tags or an owner address');
@@ -764,12 +767,52 @@ const advancedSearch = async (
 	loadingSearch.value = false;
 };
 
+
+const nextResultsAdvancedSearch = async () => {
+	const ardbWrapper = gArDBWrapperAdvancedSearch;
+	loadingMoreResults.value = true;
+	try {
+		const nextRes = await ardbWrapper.nextResults();
+		if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
+				nextRes.length) {
+			advancedResults.value.push(...nextRes);
+		} else if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
+				nextRes.length === 0) {
+			createToast(`No more results found.`,
+      {
+        type: 'warning',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+		}else if (nextRes && Object.keys(nextRes)) {
+			advancedResults.value.push(nextRes);
+		} else {
+			createToast(`No more results found.`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+		}
+		loadingMoreResults.value = false;
+	} catch (err) {
+		createToast(`${err}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+		loadingMoreResults.value = false;
+	}
+};
+
 const isMainnet = () => {
 	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 	return arweaveWrapper.onMainnet();
 };
 
 const resetResults = () => {
+	loadingMoreResults.value = false;
 	resultsTX.value = {};
 	resultsByAddress.value = [];
 	advancedResults.value = [];
