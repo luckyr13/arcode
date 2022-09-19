@@ -440,9 +440,19 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 	const arweave = arweaveWrapper.arweave;
 	const ardbWrapper = new ArDBWrapper(arweave);
 	const ardb = ardbWrapper.ardb;
-	const res = await ardb.search('transaction').id(
-		tx
-	).findOne();
+	let res = undefined;
+  const onlyInParent= false;
+  const inputEvent = new Event('empty-event');
+
+  try {
+    res = await ardb.search('transaction').id(
+      tx
+    ).findOne();
+  } catch (err) {
+    console.log('loadEditorFromTx', err)
+  }
+
+
 	if (res) {
 		const tags = {};
 		// Get contract if possible
@@ -452,8 +462,6 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 			tags[key] = value;
 		});
 		const datatype = res.data.type;
-		const onlyInParent= false;
-		const inputEvent = new Event('empty-event');
 		let data = '';
 		let filename = `${tx}`;
 		if (datatype === 'application/javascript') {
@@ -558,7 +566,100 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 
 	} // If tx not found
 	else {
-		alert('ups')
+		try {
+      const gatewayUrl = arweaveWrapper.secondaryRedstoneGW;
+      createToast(`Fetching contract from secondary gw ...`,
+        {
+          type: 'warning',
+          showIcon: true,
+          position: 'bottom-right',
+      });
+      const tmp_res = await fetch(`${gatewayUrl}/gateway/contracts/${tx}`);
+      if (tmp_res.ok) {
+        const tmp_data = JSON.parse(await tmp_res.text());
+        let srcData = tmp_data.src;
+        let initStateData = '';
+
+        if (tmp_data.initState) {
+          const replacer = undefined;
+          const space = 4;
+          initStateData = JSON.stringify(tmp_data.initState, replacer, space);
+        }
+
+        // Check if it is WASM
+        let fileNameJs = `${tx}.js`;
+        let WASMbuffer = null;
+        if (!srcData && tmp_data.srcBinary) {
+          fileNameJs = `${tx}.wasm`;
+          srcData = undefined;
+          WASMbuffer = Buffer.from(tmp_data.srcBinary);
+        }
+        const fileIdJs = workspace.findFileIdByName(path, fileNameJs);
+        if (fileIdJs < 0 && srcData) {
+          workspace.addEditor(inputEvent, onlyInParent, srcData, fileNameJs, path);
+        } else if (fileIdJs >= 0) {
+          console.log(`${tx}.js already in workspace!`);
+          workspace.selectEditor(fileIdJs, new Event('selectEditor'));
+        }
+
+        const fileIdJson = workspace.findFileIdByName(path, `${tx}.json`);
+        if (fileIdJson < 0 && initStateData) {
+          workspace.addEditor(inputEvent, onlyInParent, initStateData, `${tx}.json`, path);
+        } else if (fileIdJson >= 0) {
+          console.log(`${tx}.json already in workspace!`);
+          workspace.selectEditor(fileIdJson, new Event('selectEditor'));
+        }
+
+        // Load WASM
+        if (!WASMbuffer) {
+          // End function
+          return;
+        }
+
+        const wasmSrc = new WasmSrc(WASMbuffer);
+        const sourceCodeObj = await wasmSrc.sourceCode();
+
+        createToast(`WASM source found!`,
+        {
+          type: 'success',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+
+        // Load all source files
+        for (const tmpFName of sourceCodeObj.keys()) {
+          const finalNameArr = tmpFName.split('/');
+          let finalName = '';
+          let finalPath = '';
+          if (finalNameArr.length) {
+            const finalIndex = finalNameArr.length - 1;
+            finalName = finalNameArr[finalIndex];
+
+            // Create new directories
+            if (finalIndex - 1 >= 0) {
+              finalPath = finalNameArr.slice(0, finalIndex).join('/');
+              createDirectoryStructure(path, finalPath);
+            }
+          }
+
+          const fileId = workspace.findFileIdByName(path, tmpFName);
+          if (fileId < 0) {
+            workspace.addEditor(
+              inputEvent, 
+              onlyInParent, 
+              sourceCodeObj.get(tmpFName), 
+              finalName, 
+              `${path}/${finalPath}`);
+          } else {
+            console.log(`${tmpFName} already in workspace!`);
+            workspace.selectEditor(fileId, new Event('selectEditor'));
+          }
+        }
+        
+      }
+    } catch (err) {
+      console.log('loadEditorFromTx2', err)
+    }
 	}
 };
 

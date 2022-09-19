@@ -358,6 +358,8 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
   const ardb = ardbWrapper.ardb;
   const gatewayUrl = arweaveWrapper.secondaryRedstoneGW;
   let res = undefined;
+  const onlyInParent= false;
+  const inputEvent = new Event('empty-event');
 
   try {
     res = await ardb.search('transaction').id(
@@ -366,8 +368,6 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
   } catch (err) {
     console.log('loadEditorFromTx', err)
   }
-  const onlyInParent= false;
-  const inputEvent = new Event('empty-event');
 
   if (res) {
     const tags = {};
