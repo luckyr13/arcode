@@ -18,6 +18,12 @@
 			</a>
 		</li>
 		<li>
+			<a tabindex="0" href="https://discord.gg/KMjZkkWrSS" target="_blank">
+				<img src="@/assets/img/social-media/discord0.png">
+				<span>Discord Channel</span>
+			</a>
+		</li>
+		<li>
 			<a tabindex="0" href="https://sonar.warp.cc/" target="_blank">
 				<img src="@/assets/img/warpLogoSmall.png">
 				<span>SonAR Scanner</span>
