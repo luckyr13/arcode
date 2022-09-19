@@ -1,30 +1,43 @@
+<p align="center">
+  <img src="https://arweave.net/GYuvaTZpyksPQxKGdjfl5jQJynaRmbMQSYXaylFAvRQ" style="max-width: 100%">
+</p>
+
 # ArCode Studio: Smartweave editor and deployer
 ArCode Studio is an online IDE for smartweave contracts.
 
 ## Current features
 ++ Workspace and File Explorer:
 - Create, edit and store your JS and JSON files in ArCode.
-- Create/edit/remove folders
-- Load contracts sources into the workspace directly from Arweave TXs
+- Create/edit/remove folders.
+- Load contracts sources and state into the workspace directly from their Arweave TXs.
 
 ++ Arweave explorer
-- Get info about a particular tx 
-- Get detailed info about a particular address
+- Explore the Arweave Mainnet, a local gateway or the Redstone Testnet Gateway.
+- Get detailed info about a particular Arweave tx.
+- Get detailed info about a particular Arweave address.
+- Advanced search (search by custom tags and tx owners).
 
 ++ Connect to ArCode using your favorite Arweave Wallet!
-- Login methods supported: ArConnect, Arweave.app (coming soon), Finnie Wallet and using a key file
+- Login methods supported: ArConnect, Arweave.app, Finnie Wallet and the old but always useful "using a key file" method.
 
 ++ Deploy contracts
+- Deploy a contract from files in your ArCode Workspace.
+- Deploy a contract with a new state from your Workspace using a previous Contract Source Tx.
+- Deploy to the Arweave Mainnet, a local gateway or the Redstone Testnet Gateway.
 
 ++ Interact with smartweave contracts
+- View state.
+- Write interaction (dry-run).
+- Write interaction (Create and post tx).
+- Interact with contracts on the Arweave Mainnet, a local gateway or the Redstone Testnet Gateway.
 
-++ ArLocal support to help users on their daily testing battles!
+++ Multiple skins to customize your IDE.
+
 
 ## Links
 - Official domain: https://arcode.studio
 - Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg
 - GitHub pages backup: https://luckyr13.github.io/arcode
-- Permaweb backup: http://permaweb.arcode.studio
 
 ## Usage fees:
 - Contract deployment/write interaction: 0.00001 AR
