@@ -30,6 +30,10 @@ export const arweaveNetworks: Record<string, {host: string, port: number, protoc
   },
 };
 
+export function onMainnetByString(host: string) {
+  return arweaveMainNets.indexOf(host) >= 0;
+}
+
 export class ArweaveWrapper {
   private readonly _arweave: Arweave;
   private _host = '';
@@ -146,6 +150,8 @@ export class ArweaveWrapper {
   public onLocalnet(_arweave: Arweave) {
     return arweaveLocalNets.indexOf(this._arweave.api.config.host!) >= 0;
   }
+
+
 
 
 }

@@ -6,6 +6,7 @@
 	<div class="form-input">
 		<label>Network</label>
 		<select 
+			@change="resetResults()"
 			:disabled="loadingSearch" 
 			v-model.trim="selNetwork">
 			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
@@ -462,7 +463,7 @@
 <script setup lang="ts">
 import {ref, computed, reactive} from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
+import { ArweaveWrapper, arweaveNetworks,onMainnetByString } from '@/core/ArweaveWrapper';
 import { ArDBWrapper, ArDBTag } from '@/core/ArDBWrapper';
 import { createToast } from 'mosha-vue-toastify';
 const props = defineProps({
@@ -806,10 +807,9 @@ const nextResultsAdvancedSearch = async () => {
 	}
 };
 
-const isMainnet = () => {
-	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-	return arweaveWrapper.onMainnet();
-};
+const isMainnet = computed(() => {
+	return onMainnetByString(selNetwork.value);
+});
 
 const resetResults = () => {
 	loadingMoreResults.value = false;
