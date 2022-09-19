@@ -206,11 +206,11 @@ const updateEditorName = (editorId: number, newName: string) => {
 
 const loadExamples = () => {
   addFolder('/', 'Contracts');
-  addFolder('/Contracts', 'loot-contract');
+  // addFolder('/Contracts', 'loot-contract');
   addFolder('/Contracts', 'token');
-  addFolder('/Contracts', 'token-pst');
+  // addFolder('/Contracts', 'token-pst');
   const emptyEvent = new Event('emptyEvent');
-
+/*
   addEditor(
     emptyEvent,
     false,
@@ -225,6 +225,7 @@ const loadExamples = () => {
     lootContract.name,
     '/contracts/loot-contract',
     false);
+*/
   addEditor(
     emptyEvent,
     false,
@@ -239,6 +240,7 @@ const loadExamples = () => {
     token.stateName,
     '/contracts/token',
     false);
+  /*
   addEditor(
     emptyEvent,
     false,
@@ -253,6 +255,7 @@ const loadExamples = () => {
     tokenPST.stateName,
     '/contracts/token-pst',
     false);
+    */
 
   window.setTimeout(() => {
     workspace.currentContent = '';

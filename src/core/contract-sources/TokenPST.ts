@@ -76,10 +76,10 @@ export function handle (state, action) {
 `,
 	state: `{
   "ticker": "EXAMPLE_PST_TOKEN",
-  "owner": "uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M",
+  "owner": "YOUR_ARWEAVE_ADDRESS",
   "canEvolve": true,
   "balances": {
-      "uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M": 10000000
+      "YOUR_ARWEAVE_ADDRESS": 10000000
   }
 }`
 }

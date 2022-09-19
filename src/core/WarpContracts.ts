@@ -3,7 +3,8 @@ import {
   EvalStateResult, LoggerFactory, ConsoleLoggerFactory,
   ArWallet, Tags, ArTransfer,
   WriteInteractionResponse, ContractData,
-  FromSrcTxContractData, defaultCacheOptions, WarpGatewayInteractionsLoader  } from 'warp-contracts'
+  FromSrcTxContractData, defaultCacheOptions, WarpGatewayInteractionsLoader,
+  ContractDeploy  } from 'warp-contracts'
 import Arweave from 'arweave';
 import { SortKeyCacheResult } from 'warp-contracts/lib/types/cache/SortKeyCache';
 import { arweaveMainNets, arweaveTestNets, arweaveLocalNets } from './ArweaveWrapper';
@@ -147,12 +148,16 @@ export class WarpContracts {
     throw new Error('Unable to select token holder');
   }
 
-  public async createContract(contract: ContractData): Promise<any> {
-    return await this.warp.createContract.deploy(contract);
+  public async createContract(
+      contract: ContractData, disableBundling?: boolean
+    ): Promise<ContractDeploy> {
+    return await this.warp.createContract.deploy(contract, disableBundling);
   }
 
-  public async createContractFromTX(contract: FromSrcTxContractData): Promise<any> {
-    return await this.warp.createContract.deployFromSourceTx(contract);
+  public async createContractFromTX(
+      contract: FromSrcTxContractData, disableBundling?: boolean
+    ): Promise<ContractDeploy> {
+    return await this.warp.createContract.deployFromSourceTx(contract, disableBundling);
   }
 
 

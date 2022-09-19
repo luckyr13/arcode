@@ -4,24 +4,25 @@
 </div>
 <div class="deploy-container" v-if="mainAddress && !deployedContractTX">
 	<div class="form-input">
+		<label>Network</label>
+		<select 
+			:disabled="loadingDeployContract" 
+			v-model.trim="selNetwork">
+			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
+		</select>
+	</div>
+	<div class="form-input">
 		<label>Wallet</label>
 		<input type="text" disabled :value="mainAddress">
 	</div>
 	<div class="form-input">
 		<label>Method</label>
 		<select 
+			@change="resetForms()"
 			:disabled="loadingDeployContract" 
 			v-model.trim="selDeployMethod">
 			<option value="contract-src-file">Contract-Src from File</option>
 			<option value="contract-src-tx">Contract-Src from TX</option>
-		</select>
-	</div>
-	<div class="form-input">
-		<label>Network</label>
-		<select 
-			:disabled="loadingDeployContract" 
-			v-model.trim="selNetwork">
-			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
 		</select>
 	</div>
 	<template v-if="selDeployMethod === 'contract-src-file'">
@@ -67,17 +68,16 @@
 					icon="codicon-trash" />
 			</div>
 		</div>
+		<h5 class="title-tags">Balance</h5>
 		<ul class="deploy-menu">
 			<li>
-				<p>
-					Balance: {{ balance }} AR
-				</p>
+				<span class="span-balance">{{ balance }}</span> AR
 			</li>
 			<li class="text-right">
 				<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
 					class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
 			</li>
-			<li>
+			<li class="text-center-f">
 				<button
 					:class="{primary: !loadingDeployContract}" 
 					:disabled="loadingDeployContract"
@@ -85,7 +85,7 @@
 					<DefaultIcon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 				</button>
 			</li>
-			<li>
+			<li class="text-center-f">
 				<button
 					:class="{primary: (selDeployFileStateLocation && selDeployFileContractLocation) && !loadingDeployContract}" 
 					:disabled="(!selDeployFileStateLocation || !selDeployFileContractLocation) || loadingDeployContract"
@@ -138,11 +138,12 @@
 					icon="codicon-trash" />
 			</div>
 		</div>
+		<h5 class="title-tags">Balance</h5>
 		<ul class="deploy-menu">
 			<li>
-				Balance: {{ balance }} AR
+				<span class="span-balance">{{ balance }}</span> AR
 			</li>
-			<li>
+			<li class="text-center-f">
 				<button
 					:class="{primary: !loadingDeployContract}" 
 					:disabled="loadingDeployContract"
@@ -150,7 +151,7 @@
 					<DefaultIcon class="icon-btn" icon="codicon-tag" /><span>Add Tag</span>
 				</button>
 			</li>
-			<li>
+			<li class="text-center-f">
 				<button
 					:class="{primary: (selDeployFileStateLocation2 && txtDeployFileContractLocationByTx) && !loadingDeployContract}" 
 					:disabled="(!selDeployFileStateLocation2 || !txtDeployFileContractLocationByTx) || loadingDeployContract"
@@ -162,11 +163,11 @@
 	</template>
 	
 </div>
-<div class="deploy-container" v-else-if="!mainAddress">
+<div class="deploy-container text-center-f" v-else-if="!mainAddress">
 	<DefaultIcon class="icon-deploy-login" icon="codicon-lock" />
 	<p class="text-center no-results">Please login first!</p>
 </div>
-<div class="deploy-container" v-else-if="deployedContractTX">
+<div class="deploy-container text-center-f" v-else-if="deployedContractTX">
 	<DefaultIcon class="icon-deploy-login success" icon="codicon-check" />
 	<h3>Contract deployed successfully!</h3>
 	<p class="text-center">TX: {{ deployedContractTX }}</p>
@@ -275,7 +276,6 @@ const deployContract = async (
 		const contractFileId = workspace.findFileIdByName(contractPath2, contractName2);
 		const iContract = workspace.editors.findIndex(ed => ed.id == contractFileId);
 		
-		const wallet: ArWallet = props.login.key;
 		
 		if (iState < 0 || iContract < 0) {
 			throw Error(`Invalid state or contract id ${iState} ${iContract}`);
@@ -291,6 +291,9 @@ const deployContract = async (
 			mainAddress.value,
 			balances.value
 		);
+
+		const wallet: ArWallet = props.login.key;
+		
 		const contract: ContractData = {
 			wallet: wallet,
 			initState: initStateSrc,
@@ -300,7 +303,7 @@ const deployContract = async (
 		};
 
 		const tx = await warpContracts.createContract(contract);
-		
+
 		if (tx) {
 			deployedContractTX.value = tx;
 			createToast('Contract deployed!',
@@ -310,7 +313,7 @@ const deployContract = async (
 				position: 'bottom-right',
 			});
 
-			if (warpContracts.onLocalnet()) {
+			if (warpContracts.onLocalnet(arweave)) {
 				// Call mine 
 				const miningRes = await arweaveWrapper.arlocalMine();
 				console.log('Confirmed tx: ', miningRes);
@@ -410,7 +413,7 @@ const deployContractFromTX = async (
 				position: 'bottom-right',
 			});
 
-			if (warpContracts.onLocalnet()) {
+			if (warpContracts.onLocalnet(arweave)) {
 				// Call mine 
 				const miningRes = await arweaveWrapper.arlocalMine();
 				console.log('Confirmed tx: ', miningRes);
@@ -550,6 +553,15 @@ watchEffect(async () => {
 	}
 });
 
+const resetForms = () => {
+	selDeployFileContractLocation.value = '';
+	txtDeployFileContractLocationByTx.value = '';
+	selDeployFileStateLocation.value = '';
+	selDeployFileStateLocation2.value = '';
+	deployedContractTX.value = '';
+	loadingDeployContract.value = false;
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -562,7 +574,7 @@ watchEffect(async () => {
 
 .deploy-container {
 	padding: 10px;
-	text-align: center;
+	text-align: left;
 }
 .deploy-menu {
 	padding: 0px;
@@ -573,7 +585,7 @@ watchEffect(async () => {
 .deploy-menu li {
 	padding: 0px;
 	list-style: none;
-	text-align: center;
+	text-align: left;
 	margin-top: 10px;
 }
 
@@ -584,7 +596,7 @@ watchEffect(async () => {
 .deploy-menu li button {
 	width: 70%;
 	height: 36px;
-	line-height: 12px;
+	line-height: 14px;
 	border: 0;
 	cursor: pointer;
 	text-align: center;
@@ -592,6 +604,8 @@ watchEffect(async () => {
 	color: gray;
 	cursor: default;
 	background-color: rgba(0,0,0,0.1);
+	border-radius: 6px;
+	font-size: 14px;
 }
 
 .deploy-menu li button.primary {
@@ -601,7 +615,7 @@ watchEffect(async () => {
 }
 
 .deploy-menu li button span {
-	font-size: 12px;
+	font-size: 14px;
 	margin-left: 6px;
 	line-height: 14px;
 
@@ -661,8 +675,8 @@ watchEffect(async () => {
 
 .icon-btn {
 	display: inline !important;
-	line-height: 12px;
-	font-size: 12px;
+	line-height: 14px;
+	font-size: 14px;
 	float: right;
 }
 
@@ -709,5 +723,11 @@ watchEffect(async () => {
 	font-size: 12px;
 	cursor: pointer;
 	text-decoration: underline;
+}
+.text-center-f {
+	text-align: center !important;
+}
+.span-balance{
+	font-size: 16px;
 }
 </style>

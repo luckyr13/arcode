@@ -97,7 +97,7 @@
 		<template v-slot:body>
 			<template v-if="!loadingContractTX">
 				<div class="form-input">
-					<label>Workspace Location</label>
+					<label>Destination Folder</label>
 					<select v-model.trim="selLoadTXLocation">
 						<option value="/">/</option>
 						<template v-for="path of workspace.getFileTreePaths()" :key="path">

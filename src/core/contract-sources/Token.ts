@@ -76,7 +76,7 @@ export function handle (state, action) {
     "ticker": "EXAMPLE_TOKEN",
     "divisibility": 100000000,
     "balances": {
-        "uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M": 100000000000000
+        "YOUR_ARWEAVE_ADDRESS": 100000000000000
     }
 }`
 }
