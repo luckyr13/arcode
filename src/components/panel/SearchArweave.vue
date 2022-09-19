@@ -303,9 +303,15 @@
 	</template>
 	<template v-if="resultsByAddress && resultsByAddress.length">
 		<div v-for="(r, rAIndex) of resultsByAddress" :key="r._id">
-			<p>
+			<p class="small-txt">
 				<strong>TX {{ rAIndex + 1 }}:</strong><br>
 				<span>{{ r._id }}</span>
+			</p>
+			<p v-if="r._block && r._block.height && r._block.timestamp" class="small-txt">
+				<strong>Block Height: </strong>
+				<span>
+					{{ r._block.height }} ({{ timestampFormat(r._block.timestamp) }})
+				</span>
 			</p>
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
@@ -332,9 +338,13 @@
 						<span>Open in ArCode Studio</span>
 					</a>
 				</p>
-
 			</div>
-			<table class="table" >
+			<div 
+				@click="resultsByAddressMetadata[rAIndex].visible = !resultsByAddressMetadata[rAIndex].visible"
+				class="show-details-link">
+				<span>{{ !resultsByAddressMetadata[rAIndex].visible ? '+ Show' : '- Hide'}} </span> full details
+			</div>
+			<table class="table" v-if="resultsByAddressMetadata[rAIndex].visible">
 				<thead>
 					<tr>
 						<th>
@@ -377,9 +387,15 @@
 	</template>
 	<template v-if="advancedResults && advancedResults.length">
 		<div v-for="(r, rIndex) of advancedResults" :key="r._id">
-			<p>
+			<p class="small-txt">
 				<strong>TX {{ rIndex + 1 }}:</strong><br>
 				<span>{{ r._id }}</span>
+			</p>
+			<p v-if="r._block && r._block.height && r._block.timestamp" class="small-txt">
+				<strong>Block Height: </strong>
+				<span>
+					{{ r._block.height }} ({{ timestampFormat(r._block.timestamp) }})
+				</span>
 			</p>
 			<div v-if="isMainnet" class="link-container text-left">
 				<p v-if="txIsContract(r._tags)">
@@ -407,7 +423,12 @@
 					</a>
 				</p>
 			</div>
-			<table class="table" >
+			<div 
+				@click="advancedResultsMetadata[rIndex].visible = !advancedResultsMetadata[rIndex].visible"
+				class="show-details-link">
+				<span>{{ !advancedResultsMetadata[rIndex].visible ? '+ Show' : '- Hide'}} </span> full details
+			</div>
+			<table class="table" v-if="advancedResultsMetadata[rIndex].visible">
 				<thead>
 					<tr>
 						<th>
@@ -483,7 +504,9 @@ const loadingMoreResults = ref(false);
 const resultsTX = ref({});
 const resultsTXIsContract = ref(false);
 const resultsByAddress = ref([]);
+const resultsByAddressMetadata = ref([]);
 const advancedResults = ref([]);
+const advancedResultsMetadata = ref([]);
 const rdFilter = ref('');
 const rdSortingOrderByAddress = ref('HEIGHT_DESC');
 const rdSortingOrderAdvanced =  ref('HEIGHT_DESC');
@@ -502,7 +525,9 @@ const searchByTX = async (tx: string) => {
 	}
 	resultsTX.value = {};
 	resultsByAddress.value = [];
+	resultsByAddressMetadata.value = [];
 	advancedResults.value = [];
+	advancedResultsMetadata.value = [];
 	loadingSearch.value = true;
 	resultsTXIsContract.value = false;
 	try {
@@ -538,8 +563,10 @@ const searchByTX = async (tx: string) => {
 const searchByAddress = async (address: string, limit: number) => {
 	limit = parseInt(limit);
 	resultsByAddress.value = [];
+	resultsByAddressMetadata.value = [];
 	resultsTX.value = {};
 	advancedResults.value = [];
+	advancedResultsMetadata.value = [];
 	loadingSearch.value = true;
 	const sortOrder = rdSortingOrderByAddress.value;
 	try {
@@ -626,6 +653,10 @@ const searchByAddress = async (address: string, limit: number) => {
 			address, limit, tags, sortOrder
 		);
 
+		for (let i = 0; i < resultsByAddress.value.length; i++) {
+			resultsByAddressMetadata.value.push({ visible: false });
+		}
+
 		
 	} catch (err) {
 		createToast(`${err}`,
@@ -646,6 +677,11 @@ const nextResultsSearchByAddress = async () => {
 		if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
 				nextRes.length) {
 			resultsByAddress.value.push(...nextRes);
+
+			for (let i = 0; i < nextRes.length; i++) {
+				resultsByAddressMetadata.value.push({ visible: false });
+			}
+
 		} else if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
 				nextRes.length === 0) {
 			createToast(`No more results found.`,
@@ -656,6 +692,7 @@ const nextResultsSearchByAddress = async () => {
       });
 		}else if (nextRes && Object.keys(nextRes)) {
 			resultsByAddress.value.push(nextRes);
+			resultsByAddressMetadata.value.push({ visible: false });
 		} else {
 			createToast(`No more results found.`,
       {
@@ -715,6 +752,7 @@ const advancedSearch = async (
 	resultsByAddress.value = [];
 	resultsTX.value = {};
 	advancedResults.value = [];
+	advancedResultsMetadata.value = [];
 	loadingSearch.value = true;
 	const sortOrder = rdSortingOrderAdvanced.value;
 	try {
@@ -757,6 +795,10 @@ const advancedSearch = async (
 			tags,
 			sortOrder);
 
+		for (let i = 0; i < advancedResults.value.length; i++) {
+			advancedResultsMetadata.value.push({ visible: false });
+		}
+
 	} catch (err) {
 		createToast(`${err}`,
       {
@@ -777,6 +819,11 @@ const nextResultsAdvancedSearch = async () => {
 		if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
 				nextRes.length) {
 			advancedResults.value.push(...nextRes);
+
+			for (let i = 0; i < nextRes.length; i++) {
+				advancedResultsMetadata.value.push({ visible: false });
+			}
+			
 		} else if (nextRes && Object.prototype.hasOwnProperty.call(nextRes, 'length') &&
 				nextRes.length === 0) {
 			createToast(`No more results found.`,
@@ -787,6 +834,7 @@ const nextResultsAdvancedSearch = async () => {
       });
 		}else if (nextRes && Object.keys(nextRes)) {
 			advancedResults.value.push(nextRes);
+			advancedResultsMetadata.value.push({ visible: false });
 		} else {
 			createToast(`No more results found.`,
       {
@@ -815,7 +863,9 @@ const resetResults = () => {
 	loadingMoreResults.value = false;
 	resultsTX.value = {};
 	resultsByAddress.value = [];
+	resultsByAddressMetadata.value = [];
 	advancedResults.value = [];
+	advancedResultsMetadata.value = [];
 	loadingSearch.value = false;
 	resultsTXIsContract.value = false;
 	txtTxId.value = '';
@@ -832,6 +882,43 @@ const resetResults = () => {
 	}
 	rdSortingOrderAdvanced.value = 'HEIGHT_DESC';
 	txtResLimitAdvanced.value = 5;
+}
+
+const timestampFormat = (d: number|string) => {
+  if (!d) {
+    return '';
+  }
+  const prev = new Date(+d * 1000);
+  const current = new Date();
+  const millisecondsEllapsed = current.getTime() - prev.getTime(); 
+  const seconds = Math.floor(millisecondsEllapsed / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  if (days) {
+    const month = months[prev.getMonth()];
+    const date = prev.getDate();
+    const year = prev.getFullYear();
+    const currentYear = current.getFullYear();
+    if (currentYear === year) {
+      return `${month} ${date}`;
+    }
+    return `${month} ${date}, ${year}`;
+  } else if (hours) {
+    return `${hours}h`;
+  } else if (minutes) {
+    return `${minutes}m`;
+  } else if (seconds) {
+    return `${seconds}s`;
+  }
+
+
+  return ``;
 }
 
 </script>
@@ -1050,6 +1137,17 @@ const resetResults = () => {
 
 .more-results-btn:hover {
 	background-color: rgba(0,0,0,0.3);
+}
+
+.small-txt {
+	font-size: 12px;
+}
+
+.show-details-link {
+	font-size: 12px;
+	padding: 6px;
+	cursor: pointer;
+	text-align: right;
 }
 
 </style>

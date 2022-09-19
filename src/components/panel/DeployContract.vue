@@ -77,6 +77,9 @@
 				<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
 					class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
 			</li>
+			<li v-if="usageFee">
+				<strong>Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
+			</li>
 			<li class="text-center-f">
 				<button
 					:class="{primary: !loadingDeployContract}" 
@@ -142,6 +145,9 @@
 		<ul class="deploy-menu">
 			<li>
 				<span class="span-balance">{{ balance }}</span> AR
+			</li>
+			<li v-if="usageFee">
+				<strong>Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
 			</li>
 			<li class="text-center-f">
 				<button
@@ -218,7 +224,7 @@ const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
 });
 const appFeeInAr = computed(() => {
-	return globalArweaveWrapper.arweave.ar.winstonToAr(appFeeInWinston.value);
+	return globalArweaveWrapper.winstonToAr(appFeeInWinston.value);
 });
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'));
@@ -482,7 +488,7 @@ const testnetMintTokens = async (qty='1000000000000') => {
 		window.setTimeout(async () => {
 			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweaveWrapper.arweave.ar.winstonToAr(balance.value);
+			balance.value = arweaveWrapper.winstonToAr(balance.value);
 		}, 1500);
 
 
@@ -503,7 +509,7 @@ onMounted(async () => {
 		try {
 			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweaveWrapper.arweave.ar.winstonToAr(balance.value);
+			balance.value = arweaveWrapper.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
 		} catch (err) {
 			createToast(`${err}`,
@@ -540,7 +546,7 @@ watchEffect(async () => {
 		try {
 			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
 			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweaveWrapper.arweave.ar.winstonToAr(balance.value);
+			balance.value = arweaveWrapper.winstonToAr(balance.value);
 			prevNetwork.value = selNetwork.value;
 		} catch (err) {
 			createToast(`${err}`,
@@ -561,6 +567,20 @@ const resetForms = () => {
 	deployedContractTX.value = '';
 	loadingDeployContract.value = false;
 };
+
+const usageFee = computed(() => {
+	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+	const warpContracts = new WarpContracts(arweaveWrapper.arweave);
+	const transfer = warpContracts.getTransferData(
+			pstBalance.value,
+			vipMinimumBalance.value,
+			selNetwork.value,
+			appFeeInWinston.value,
+			mainAddress.value,
+			balances.value
+		);
+	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
+});
 
 </script>
 

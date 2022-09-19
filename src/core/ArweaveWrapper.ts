@@ -151,7 +151,9 @@ export class ArweaveWrapper {
     return arweaveLocalNets.indexOf(this._arweave.api.config.host!) >= 0;
   }
 
-
+  winstonToAr(winston: string) {
+    return this._arweave.ar.winstonToAr(winston);
+  }
 
 
 }
