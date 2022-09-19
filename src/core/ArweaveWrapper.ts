@@ -49,6 +49,8 @@ export class ArweaveWrapper {
   private _port = 0;
   private _protocol = '';
 
+  public secondaryRedstoneGW = 'https://d1o5nlqr4okus2.cloudfront.net';
+
   constructor(network= 'arweave-mainnet', host='', port=0, protocol='') {
     this._initSettings(network, host, port, protocol);
     this._arweave = Arweave.init({
@@ -137,13 +139,19 @@ export class ArweaveWrapper {
     }
 
     // Method 2
+    let errM2 = false;
     if (errM1) {
       try {
         data = await this.arweave.transactions.getData(tx, {decode: true, string: asString});
       } catch (err) {
         console.error('ErrM2: ', err);
-        throw Error('It seems not possible to load tx data');
+        errM2 = true;
       }
+    }
+
+    // Method 3
+    if (errM2) {
+      throw Error('It seems not possible to load tx data');
     }
 
     return data;

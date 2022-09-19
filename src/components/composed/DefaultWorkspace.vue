@@ -315,7 +315,7 @@ onMounted(async () => {
   const tx = props.tx;
   // IF Single File Mode
   if (tx) {
-    createToast(`Running Single File mode.`,
+    createToast(`Running in Single File Mode.`,
       {
         type: 'warning',
         showIcon: true,
@@ -352,9 +352,19 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
   const arweave = arweaveWrapper.arweave;
   const ardbWrapper = new ArDBWrapper(arweave);
   const ardb = ardbWrapper.ardb;
-  const res = await ardb.search('transaction').id(
-    tx
-  ).findOne();
+  const gatewayUrl = arweaveWrapper.secondaryRedstoneGW;
+  let res = undefined;
+
+  try {
+    res = await ardb.search('transaction').id(
+      tx
+    ).findOne();
+  } catch (err) {
+    console.log('loadEditorFromTx', err)
+  }
+  const onlyInParent= false;
+  const inputEvent = new Event('empty-event');
+
   if (res) {
     const tags = {};
     // Get contract if possible
@@ -364,8 +374,6 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
       tags[key] = value;
     });
     const datatype = res.data.type;
-    const onlyInParent= false;
-    const inputEvent = new Event('empty-event');
 
     let data = '';
     let filename = `${tx}`;
@@ -463,9 +471,52 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
 
     if (contractSrc) {
       await loadEditorFromTX(tags['Contract-Src'], path, networkParam);
+    }   
+  } // If tx not found
+  else {
+    try {
+      const gatewayUrl = arweaveWrapper.secondaryRedstoneGW;
+      createToast(`Fetching contract from secondary gw ...`,
+        {
+          type: 'warning',
+          showIcon: true,
+          position: 'bottom-right',
+      });
+      const tmp_res = await fetch(`${gatewayUrl}/gateway/contracts/${tx}`);
+      if (tmp_res.ok) {
+        const tmp_data = JSON.parse(await tmp_res.text());
+        const srcData = tmp_data.src;
+        let initStateData = '';
+
+        console.log(tmp_data)
+
+        if (tmp_data.initState) {
+          const replacer = undefined;
+          const space = 4;
+          initStateData = JSON.stringify(tmp_data.initState, replacer, space);
+        }
+
+        const fileIdJs = workspace.fileTree.findFileIdByName(path, `${tx}.js`);
+        if (fileIdJs < 0) {
+          addEditor(inputEvent, onlyInParent, srcData, `${tx}.js`, path);
+        } else {
+          console.log(`${tx}.js already in workspace!`);
+          workspace.selectEditor(fileIdJs, new Event('selectEditor'));
+        }
+
+        const fileIdJson = workspace.fileTree.findFileIdByName(path, `${tx}.json`);
+        if (fileIdJson < 0) {
+          addEditor(inputEvent, onlyInParent, initStateData, `${tx}.json`, path);
+        } else {
+          console.log(`${tx}.json already in workspace!`);
+          workspace.selectEditor(fileIdJson, new Event('selectEditor'));
+        }
+      }
+    } catch (err) {
+      console.log('loadEditorFromTx2', err)
     }
-    
   }
+
 };
 
 </script>
