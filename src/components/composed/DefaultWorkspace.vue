@@ -83,9 +83,7 @@ import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';
-import { lootContract } from '@/core/contract-sources/LootContract';
-import { token } from '@/core/contract-sources/Token';
-import { tokenPST } from '@/core/contract-sources/TokenPST';
+import { greeterContract } from '@/core/contract-sources/Greeter';
 import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WasmSrc } from '@/core/WarpContracts';
@@ -206,57 +204,24 @@ const updateEditorName = (editorId: number, newName: string) => {
 
 const loadExamples = () => {
   addFolder('/', 'Contracts');
-  // addFolder('/Contracts', 'loot-contract');
-  addFolder('/Contracts', 'token');
-  // addFolder('/Contracts', 'token-pst');
+  addFolder('/Contracts', 'greeter');
   const emptyEvent = new Event('emptyEvent');
-/*
-  addEditor(
-    emptyEvent,
-    false,
-    lootContract.state,
-    lootContract.stateName,
-    '/contracts/loot-contract',
-    false);
-  addEditor(
-    emptyEvent,
-    false,
-    lootContract.contract,
-    lootContract.name,
-    '/contracts/loot-contract',
-    false);
-*/
-  addEditor(
-    emptyEvent,
-    false,
-    token.contract,
-    token.name,
-    '/contracts/token',
-    false);
-  addEditor(
-    emptyEvent,
-    false,
-    token.state,
-    token.stateName,
-    '/contracts/token',
-    false);
-  /*
-  addEditor(
-    emptyEvent,
-    false,
-    tokenPST.contract,
-    tokenPST.name,
-    '/contracts/token-pst',
-    false);
-  addEditor(
-    emptyEvent,
-    false,
-    tokenPST.state,
-    tokenPST.stateName,
-    '/contracts/token-pst',
-    false);
-    */
 
+  addEditor(
+    emptyEvent,
+    false,
+    greeterContract.contract,
+    greeterContract.name,
+    '/contracts/greeter',
+    false);
+  addEditor(
+    emptyEvent,
+    false,
+    greeterContract.state,
+    greeterContract.stateName,
+    '/contracts/greeter',
+    false);
+  
   window.setTimeout(() => {
     workspace.currentContent = '';
   }, 400)

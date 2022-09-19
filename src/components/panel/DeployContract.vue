@@ -78,7 +78,7 @@
 					class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
 			</li>
 			<li v-if="usageFee">
-				<strong>Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
+				<strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
 			</li>
 			<li class="text-center-f">
 				<button
@@ -146,8 +146,12 @@
 			<li>
 				<span class="span-balance">{{ balance }}</span> AR
 			</li>
+			<li class="text-right">
+				<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
+					class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
+			</li>
 			<li v-if="usageFee">
-				<strong>Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
+				<strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
 			</li>
 			<li class="text-center-f">
 				<button
@@ -749,5 +753,8 @@ const usageFee = computed(() => {
 }
 .span-balance{
 	font-size: 16px;
+}
+.usage-fee-txt {
+	color: red !important;
 }
 </style>

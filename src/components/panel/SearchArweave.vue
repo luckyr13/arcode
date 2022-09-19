@@ -285,6 +285,12 @@
 					<span>Open in SonAR</span>
 				</a>
 			</p>
+			<p v-if="resultsTXIsContract">
+				<a :href="`https://arcode.studio/#/${txtTxId}?network=testnet`" target="_blank">
+					<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+					<span>Open in ArCode</span>
+				</a>
+			</p>
 			<p>
 				<a :href="`https://testnet.redstone.tools/${txtTxId}`" target="_blank">
 					<img src="@/assets/img/redstoneSmall.png" />
@@ -358,6 +364,12 @@
 					<a :href="`https://sonar.warp.cc/#/app/contract/${r._id}?network=testnet`" target="_blank">
 						<img src="@/assets/img/warpLogoSmall.png" />
 						<span>Open in SonAR</span>
+					</a>
+				</p>
+				<p v-if="txIsContract(r._tags)">
+					<a :href="`https://arcode.studio/#/${r._id}?network=testnet`" target="_blank">
+						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
+						<span>Open in ArCode Studio</span>
 					</a>
 				</p>
 				<p>

@@ -4,16 +4,16 @@
 </div>
 <div class="run-container" v-if="mainAddress">
 	<div class="form-input">
-		<label>Wallet</label>
-		<input type="text" disabled :value="mainAddress">
-	</div>
-	<div class="form-input">
 		<label>Network</label>
 		<select 
 			:disabled="loadingTX" 
 			v-model.trim="selNetwork">
 			<option v-for="(nItem, nIndex) in networks" v-bind:key="nIndex" :value="nIndex">{{ nItem.host }} ({{ nIndex }})</option>
 		</select>
+	</div>
+	<div class="form-input">
+		<label>Wallet</label>
+		<input type="text" disabled :value="mainAddress">
 	</div>
 	<div class="form-input">
 		<label>Contract Address</label>
@@ -95,6 +95,7 @@
 				icon="codicon-trash" />
 		</div>
 	</div>
+	<h5 class="title-data">Interaction options</h5>
 	<div class="form-radio">
 		<label>
 			<input 
@@ -118,16 +119,19 @@
 			Write Interaction (Create and Post TX)
 		</label>
 	</div>
-	
+	<h5 class="title-data">Balance</h5>
 	<ul class="run-menu">
 		<li>
-			<p>
-				Balance: {{ balance }} AR
+			<p class="text-left-f">
+				<span class="span-balance">{{ balance }}</span> AR
 			</p>
 		</li>
-		<li class="text-right">
+		<li class="text-right-f">
 			<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
 				class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
+		</li>
+		<li v-if="usageFee">
+			<strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
 		</li>
 		<li>
 			<button
@@ -188,18 +192,23 @@
 		<h5>RAW JSON response:</h5>
 		<pre>{{ response }}</pre>
 	</div>
-	<p 
+	<div 
 		class="no-results text-center"
 		v-if="loadingTX">
-		Loading ...
-	</p>
-	<div class="run-container" v-if="contractInteractionTX">
+		<div
+		class="lds-ring lds-ring-small">
+		<div></div><div></div><div></div><div></div></div>
+		<span>Loading ...</span>
+	</div>
+
+
+	<div class="run-container text-center-f" v-if="contractInteractionTX">
 		<DefaultIcon class="icon-run-panel success" icon="codicon-check" />
 		<h3>TX created successfully!</h3>
 		<p class="text-center">TX: {{ contractInteractionTX }}</p>
 	</div>
 </div>
-<div class="run-container" v-else>
+<div class="run-container text-center-f" v-else>
 	<DefaultIcon class="icon-run-panel" icon="codicon-lock" />
 	<p class="text-center no-results">Please login first!</p>
 </div>
@@ -311,6 +320,7 @@ const runInteraction = async (
 		let func = '';
 		const fullPayload = {};
 		response.value = {};
+		contractInteractionTX.value = '';
 		for (const d of data) {
 			let value = d.value;
 			if (!isNaN(value)) {
@@ -355,7 +365,7 @@ const runInteraction = async (
 
 		// View interaction with user's key 
 		if (interaction === 'viewState') {			
-			const { state, result } = await contract.viewState<any, any>(fullPayload);
+			const { result } = await contract.viewState<any, any>(fullPayload);
 			response.value = result;
 			createToast('Success on viewState interaction!',
 			{
@@ -366,7 +376,7 @@ const runInteraction = async (
 		}
 		// Write interaction (Dry-run)
 		else if (interaction === 'writeInteractionDryRun') {
-      const { state, result } = await contract.dryWrite<any>(fullPayload);
+      const result = await contract.dryWrite<any>(fullPayload);
 			response.value = result;
 			createToast('Interaction executed successfully!',
 			{
@@ -514,6 +524,19 @@ watchEffect(async () => {
 	}
 });
 
+const usageFee = computed(() => {
+	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+	const warpContracts = new WarpContracts(arweaveWrapper.arweave);
+	const transfer = warpContracts.getTransferData(
+			pstBalance.value,
+			vipMinimumBalance.value,
+			selNetwork.value,
+			appFeeInWinston.value,
+			mainAddress.value,
+			balances.value
+		);
+	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
+});
 </script>
 
 <style scoped lang="scss">
@@ -526,7 +549,7 @@ watchEffect(async () => {
 
 .run-container {
 	padding: 10px;
-	text-align: center;
+	text-align: left;
 }
 .run-menu {
 	padding: 0px;
@@ -546,18 +569,19 @@ watchEffect(async () => {
 }
 
 .run-menu li button {
-	width: 70%;
+	width: 80%;
 	height: 100%;
-	line-height: 12px;
+	line-height: 14px;
 	border: 0;
 	cursor: pointer;
-	font-size: 12px;
+	font-size: 14px;
 	text-align: center;
   vertical-align: middle;
 	color: gray;
 	cursor: default;
 	background-color: rgba(0,0,0,0.1);
 	height: 36px;
+	border-radius: 6px;
 }
 
 .run-menu li button.primary {
@@ -567,7 +591,7 @@ watchEffect(async () => {
 }
 
 .run-menu li button span {
-	font-size: 12px;
+	font-size: 14px;
 	margin-left: 6px;
 	line-height: 14px;
 
@@ -645,7 +669,7 @@ watchEffect(async () => {
 
 .icon-btn {
 	display: inline !important;
-	line-height: 12px;
+	line-height: 14px;
 	float: right;
 }
 
@@ -706,6 +730,21 @@ watchEffect(async () => {
 	cursor: pointer;
 	text-decoration: underline;
 }
+.span-balance{
+	font-size: 16px;
+}
+.usage-fee-txt {
+	color: red !important;
+}
 
+.text-left-f {
+	text-align: left !important;
+}
+.text-right-f {
+	text-align: right !important;
+}
+.text-center-f {
+	text-align: center !important;
+}
 
 </style>

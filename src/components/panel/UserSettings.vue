@@ -17,7 +17,11 @@
 	<h4>Clear settings:</h4>
 	<ul class="theme-menu">
 		<li>
-			<button tabindex="0" @click="clearSettings()">Reset Workspace</button>
+			<button tabindex="0" @click="clearSettings()">
+				<DefaultIcon 
+					class="icon-action-delete"
+					icon="codicon-trash" />
+				Delete session data</button>
 		</li>
 	</ul>
 </div>
@@ -28,6 +32,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
+import DefaultIcon from '@/components/atomic/DefaultIcon';
+
 const props = defineProps({
 	workspace: Object
 });
@@ -103,5 +109,9 @@ const clearSettings = () => {
 	float: right;
 	cursor: pointer;
 	line-height: 12px;
+}
+
+.icon-action-delete {
+	color: red;
 }
 </style>
