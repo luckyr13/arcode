@@ -278,6 +278,20 @@
 				</a>
 			</p>
 		</div>
+		<div v-if="isTestnet" class="link-container text-left">
+			<p v-if="resultsTXIsContract">
+				<a :href="`https://sonar.warp.cc/#/app/contract/${txtTxId}?network=testnet`" target="_blank">
+					<img src="@/assets/img/warpLogoSmall.png" />
+					<span>Open in SonAR</span>
+				</a>
+			</p>
+			<p>
+				<a :href="`https://testnet.redstone.tools/${txtTxId}`" target="_blank">
+					<img src="@/assets/img/redstoneSmall.png" />
+					<span>Open in Testnet Redstone Tools Gateway</span>
+				</a>
+			</p>
+		</div>
 		<table class="table">
 			<thead>
 				<tr>
@@ -336,6 +350,20 @@
 					<a :href="`https://arcode.studio/#/${r._id}`" target="_blank">
 						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
 						<span>Open in ArCode Studio</span>
+					</a>
+				</p>
+			</div>
+			<div v-if="isTestnet" class="link-container text-left">
+				<p v-if="txIsContract(r._tags)">
+					<a :href="`https://sonar.warp.cc/#/app/contract/${r._id}?network=testnet`" target="_blank">
+						<img src="@/assets/img/warpLogoSmall.png" />
+						<span>Open in SonAR</span>
+					</a>
+				</p>
+				<p>
+					<a :href="`https://testnet.redstone.tools/${r._id}`" target="_blank">
+						<img src="@/assets/img/redstoneSmall.png" />
+						<span>Open in Testnet Redstone Tools Gateway</span>
 					</a>
 				</p>
 			</div>
@@ -423,6 +451,20 @@
 					</a>
 				</p>
 			</div>
+			<div v-if="isTestnet" class="link-container text-left">
+				<p v-if="txIsContract(r._tags)">
+					<a :href="`https://sonar.warp.cc/#/app/contract/${r._id}?network=testnet`" target="_blank">
+						<img src="@/assets/img/warpLogoSmall.png" />
+						<span>Open in SonAR</span>
+					</a>
+				</p>
+				<p>
+					<a :href="`https://testnet.redstone.tools/${r._id}`" target="_blank">
+						<img src="@/assets/img/redstoneSmall.png" />
+						<span>Open in Testnet Redstone Tools Gateway</span>
+					</a>
+				</p>
+			</div>
 			<div 
 				@click="advancedResultsMetadata[rIndex].visible = !advancedResultsMetadata[rIndex].visible"
 				class="show-details-link">
@@ -484,7 +526,9 @@
 <script setup lang="ts">
 import {ref, computed, reactive} from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ArweaveWrapper, arweaveNetworks,onMainnetByString } from '@/core/ArweaveWrapper';
+import { 
+	ArweaveWrapper, arweaveNetworks,onMainnetByString,
+	onTestnetByString } from '@/core/ArweaveWrapper';
 import { ArDBWrapper, ArDBTag } from '@/core/ArDBWrapper';
 import { createToast } from 'mosha-vue-toastify';
 const props = defineProps({
@@ -495,8 +539,8 @@ const props = defineProps({
 
 const txtTxId = ref('');
 const txtAddress = ref('');
-const txtResLimit = ref(5);
-const txtResLimitAdvanced = ref(5);
+const txtResLimit = ref(10);
+const txtResLimitAdvanced = ref(10);
 const selSearchMethod = ref('tx');
 const selNetwork = ref('arweave-mainnet');
 const loadingSearch = ref(false);
@@ -859,6 +903,10 @@ const isMainnet = computed(() => {
 	return onMainnetByString(selNetwork.value);
 });
 
+const isTestnet = computed(() => {
+	return onTestnetByString(selNetwork.value);
+});
+
 const resetResults = () => {
 	loadingMoreResults.value = false;
 	resultsTX.value = {};
@@ -872,7 +920,7 @@ const resetResults = () => {
 	txtAddress.value = '';
 	rdFilter.value = '';
 	rdSortingOrderByAddress.value = 'HEIGHT_DESC';
-	txtResLimit.value = 5;
+	txtResLimit.value = 10;
 	// Advanced
 	while (tagsList.length) {
 		tagsList.pop();
@@ -881,7 +929,7 @@ const resetResults = () => {
 		ownersList.pop();
 	}
 	rdSortingOrderAdvanced.value = 'HEIGHT_DESC';
-	txtResLimitAdvanced.value = 5;
+	txtResLimitAdvanced.value = 10;
 }
 
 const timestampFormat = (d: number|string) => {

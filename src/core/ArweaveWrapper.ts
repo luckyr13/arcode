@@ -34,6 +34,14 @@ export function onMainnetByString(host: string) {
   return arweaveMainNets.indexOf(host) >= 0;
 }
 
+export function onLocalnetByString(host: string) {
+  return arweaveLocalNets.indexOf(host) >= 0;
+}
+
+export function onTestnetByString(host: string) {
+  return arweaveTestNets.indexOf(host) >= 0;
+}
+
 export class ArweaveWrapper {
   private readonly _arweave: Arweave;
   private _host = '';
