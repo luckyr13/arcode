@@ -6,31 +6,55 @@
 	<h4>Useful Links</h4>
 	<ul class="links-menu">
 		<li>
-			<a tabindex="0" href="https://github.com/luckyr13/arcode" target="_blank">ArCode GitHub</a>
+			<a tabindex="0" href="https://github.com/luckyr13/arcode" target="_blank">
+				<img class="invert-colors" src="@/assets/img/social-media/github.png">
+				<span>ArCode GitHub</span>
+			</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg" target="_blank">ArCode PSCommunity</a>
+			<a tabindex="0" href="https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg" target="_blank">
+				<img src="@/assets/img/social-media/communitySmall.png">
+				<span>ArCode Community</span>
+			</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://arweave.org" target="_blank">Arweave.org</a>
+			<a tabindex="0" href="https://sonar.warp.cc/" target="_blank">
+				<img src="@/assets/img/warpLogoSmall.png">
+				<span>SonAR Scanner</span>
+			</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://sonar.warp.cc/" target="_blank">SonAR Scanner</a>
+			<a tabindex="0" href="https://github.com/warp-contracts/warp" target="_blank">
+				<img src="@/assets/img/warpLogoSmall.png">
+				<span>Warp SDK</span>
+			</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://github.com/warp-contracts/warp" target="_blank">Warp SDK</a>
+			<a tabindex="0" href="https://github.com/textury/arlocal" target="_blank">
+				<img class="invert-colors" src="@/assets/img/arweaveSmall.png">
+				<span>arLocal</span>
+			</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://github.com/textury/arlocal" target="_blank">arlocal GitHub</a>
+			<a tabindex="0" href="https://arwiki.wiki" target="_blank">
+				<img class="invert-colors" src="@/assets/img/arweaveSmall.png">
+				<span>Arweave ArWiki</span>
+			</a>
+		</li>
+	</ul>
+	<h4>Best Arweave Wallets</h4>
+	<ul class="links-menu">
+		<li>
+			<a tabindex="0" href="https://arweave.app" target="_blank">
+				<img class="invert-colors" src="@/assets/img/arweaveSmall.png">
+				<span>Arweave.app Wallet</span>
+			</a>
 		</li>
 		<li>
-			<a tabindex="0" href="https://arweave.app" target="_blank">Arweave.app Wallet</a>
-		</li>
-		<li>
-			<a tabindex="0" href="https://arconnect.io" target="_blank">ArConnect Wallet</a>
-		</li>
-		<li>
-			<a tabindex="0" href="https://arwiki.wiki" target="_blank">Arweave wiki: ArWiki</a>
+			<a tabindex="0" href="https://arconnect.io" target="_blank">
+				<img src="@/assets/img/arconnect.png">
+				<span>ArConnect Wallet</span>
+			</a>
 		</li>
 	</ul>
 	<template v-if="Object.keys(tokenState).length > 0">
@@ -75,6 +99,21 @@
 	<p class="text-center sm-text">
 		"As-Is". The Software is provided "as is," with all faults, defects, bugs, and errors.
 	</p>
+	<h4>Powered by</h4>
+	<ul class="links-menu">
+		<li>
+			<a tabindex="0" href="https://arweave.org" target="_blank">
+				<img class="invert-colors" src="@/assets/img/arweaveSmall.png">
+				<span>Arweave</span>
+			</a>
+		</li>
+		<li>
+			<a tabindex="0" href="https://spheron.network/" target="_blank">
+				<img src="@/assets/img/social-media/spheronSmall.png">
+				<span>Spheron</span>
+			</a>
+		</li>
+	</ul>
 
 </div>
 </template>
@@ -159,5 +198,18 @@ a {
 }
 .sm-text {
 	font-size: 11px;
+}
+.links-menu li a img {
+	max-height: 24px;
+	max-width: 24px;
+	line-height: 24px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.links-menu li a span {
+	line-height: 32px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 12px;
 }
 </style>
