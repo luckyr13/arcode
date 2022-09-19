@@ -38,10 +38,11 @@ ArCode Studio is an online IDE for smartweave contracts.
 - Official domain: https://arcode.studio
 - Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg
 - GitHub pages backup: https://luckyr13.github.io/arcode
+- Discord channel: https://discord.gg/KMjZkkWrSS
 
 ## Usage fees:
 - Contract deployment/write interaction: 0.00001 AR
-- VIP users: Use this dApp for free having a minimum balance of 10000 $CODE tokens.
+- VIP users: You can use this dApp for free having a minimum balance of 10000 $CODE tokens.
 
 ## Common ArCode Problems
 Brave Browser and AdBlock users. Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT). To solve this, please do the next steps:

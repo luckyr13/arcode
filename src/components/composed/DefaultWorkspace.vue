@@ -8,9 +8,11 @@
       <h5 class="text-center arcode-instructions">
          Double Click to Start 
       </h5>
-      <h5 v-if="loadingFromTX" class="text-center">
-        Loading data ...
-      </h5>
+      <div v-if="loadingFromTX" class="text-center">
+        <div
+        class="lds-ring lds-ring-small">
+        <div></div><div></div><div></div><div></div></div>
+      </div>
     </div>
     <div class="workspace" @dblclick="addEditor($event, true)">
       <div class="tabs">
@@ -90,7 +92,8 @@ import { WasmSrc } from '@/core/WarpContracts';
 
 const props = defineProps({
   theme: String,
-  tx: String
+  tx: String,
+  networkParam: String
 });
 // const emit = defineEmits(['workspace-change']);
 
@@ -320,8 +323,9 @@ onMounted(async () => {
       });
     loadingFromTX.value = true;
     try {
+      const network = props.networkParam ? props.networkParam : undefined;
       addFolder('/', tx);
-      await loadEditorFromTX(tx, `/${tx}`);
+      await loadEditorFromTX(tx, `/${tx}`, network);
     } catch (err) {
       createToast(`${err}`,
         {
@@ -343,8 +347,8 @@ onMounted(async () => {
 
 });
 
-const loadEditorFromTX = async (tx: string, path: string) => {
-  const arweaveWrapper = new ArweaveWrapper();
+const loadEditorFromTX = async (tx: string, path: string, networkParam?: string) => {
+  const arweaveWrapper = new ArweaveWrapper(networkParam);
   const arweave = arweaveWrapper.arweave;
   const ardbWrapper = new ArDBWrapper(arweave);
   const ardb = ardbWrapper.ardb;
@@ -458,7 +462,7 @@ const loadEditorFromTX = async (tx: string, path: string) => {
       tags['Contract-Src'] : '';
 
     if (contractSrc) {
-      await loadEditorFromTX(tags['Contract-Src'], path);
+      await loadEditorFromTX(tags['Contract-Src'], path, networkParam);
     }
     
   }

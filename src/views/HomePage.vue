@@ -25,6 +25,7 @@
           <DefaultWorkspace 
             ref="workspace"
             :tx="tx"
+            :networkParam="networkParam"
             :theme="theme" />
         </div>
       </div>
@@ -80,7 +81,8 @@ import { tokenContract } from '@/core/contracts/ArcodeCommunity'
 const props = defineProps({
   tx: String,
   hideToolbar: Boolean,
-  theme: String
+  theme: String,
+  networkParam: String
 });
 
 const us: UserSettings = new UserSettings();
@@ -131,7 +133,7 @@ onMounted(async () => {
     iframe.value = iframeBridge.start();
 
     // Load session data
-    if (!iframe.value) {
+    if (!iframe.value && !props.tx) {
       const sessInfo = login.loadSession(settings.stayLoggedIn);
       if (sessInfo.method === 'webwallet') {
         // Throw modal

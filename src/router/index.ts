@@ -10,7 +10,8 @@ const routes: Array<RouteRecordRaw> = [
       return { 
         tx: route.params.tx,
         hideToolbar: !!route.query.hideToolbar,
-        theme: route.query.theme
+        theme: route.query.theme,
+        networkParam: route.query.network
       }
     }
   }
