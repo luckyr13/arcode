@@ -168,16 +168,20 @@ const getFileTree = () => {
   return workspace.fileTree.tree;
 };
 
-const addFolder =  (path: string, folderName: string) => {
+const addFolder =  (path: string, folderName: string, debugInConsole=false) => {
   try {
     workspace.fileTree.addFolder(path, folderName);
   } catch (err) {
-    createToast(`${err}`,
-      {
-        type: 'danger',
-        showIcon: true,
-        position: 'bottom-right',
-      });
+    if (debugInConsole) {
+      console.error('addFolder', err);
+    } else {
+      createToast(`${err}`,
+        {
+          type: 'danger',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+    }
   }
 };
 
@@ -403,8 +407,8 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
     } else if (datatype === 'application/wasm') {
       data = await arweaveWrapper.getTXData(tx, false);
       const buffer = Buffer.from(data);
-      filename = `${tx}.wasm`;
-
+      //filename = `${tx}.wasm`;
+      /*
       const fileId = workspace.fileTree.findFileIdByName(path, filename);
       if (fileId < 0) {
         addEditor(inputEvent, onlyInParent, buffer.toString(), filename, path);
@@ -412,10 +416,10 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
         console.log(`${filename} already in workspace!`);
         workspace.selectEditor(fileId, new Event('selectEditor'));
       }
+      */
 
       const wasmSrc = new WasmSrc(buffer);
       data = await wasmSrc.sourceCode();
-
 
       createToast(`WASM source found!`,
       {
@@ -426,13 +430,33 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
 
       // Load all source files
       for (const tmpFName of data.keys()) {
+        const finalNameArr = tmpFName.split('/');
+        let finalName = '';
+        let finalPath = '';
+        if (finalNameArr.length) {
+          const finalIndex = finalNameArr.length - 1;
+          finalName = finalNameArr[finalIndex];
+
+          // Create new directories
+          if (finalIndex - 1 >= 0) {
+            finalPath = finalNameArr.slice(0, finalIndex).join('/');
+            createDirectoryStructure(path, finalPath);
+          }
+        }
+
         const fileId = workspace.fileTree.findFileIdByName(path, tmpFName);
         if (fileId < 0) {
-          addEditor(inputEvent, onlyInParent, data.get(tmpFName), tmpFName, path);
+          addEditor(
+            inputEvent, 
+            onlyInParent, 
+            data.get(tmpFName), 
+            finalName, 
+            `${path}/${finalPath}`);
         } else {
           console.log(`${tmpFName} already in workspace!`);
           workspace.selectEditor(fileId, new Event('selectEditor'));
         }
+       
       }
       
       // force End wasm
@@ -485,10 +509,8 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
       const tmp_res = await fetch(`${gatewayUrl}/gateway/contracts/${tx}`);
       if (tmp_res.ok) {
         const tmp_data = JSON.parse(await tmp_res.text());
-        const srcData = tmp_data.src;
+        let srcData = tmp_data.src;
         let initStateData = '';
-
-        console.log(tmp_data)
 
         if (tmp_data.initState) {
           const replacer = undefined;
@@ -496,27 +518,93 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
           initStateData = JSON.stringify(tmp_data.initState, replacer, space);
         }
 
-        const fileIdJs = workspace.fileTree.findFileIdByName(path, `${tx}.js`);
-        if (fileIdJs < 0) {
-          addEditor(inputEvent, onlyInParent, srcData, `${tx}.js`, path);
-        } else {
+        // Check if it is WASM
+        let fileNameJs = `${tx}.js`;
+        const WASMbuffer = Buffer.from(tmp_data.srcBinary);
+        if (!srcData && tmp_data.srcBinary) {
+          fileNameJs = `${tx}.wasm`;
+          srcData = undefined;
+        }
+        const fileIdJs = workspace.fileTree.findFileIdByName(path, fileNameJs);
+        if (fileIdJs < 0 && srcData) {
+          addEditor(inputEvent, onlyInParent, srcData, fileNameJs, path);
+        } else if (fileIdJs >= 0) {
           console.log(`${tx}.js already in workspace!`);
           workspace.selectEditor(fileIdJs, new Event('selectEditor'));
         }
 
         const fileIdJson = workspace.fileTree.findFileIdByName(path, `${tx}.json`);
-        if (fileIdJson < 0) {
+        if (fileIdJson < 0 && initStateData) {
           addEditor(inputEvent, onlyInParent, initStateData, `${tx}.json`, path);
-        } else {
+        } else if (fileIdJson >= 0) {
           console.log(`${tx}.json already in workspace!`);
           workspace.selectEditor(fileIdJson, new Event('selectEditor'));
         }
+
+        const wasmSrc = new WasmSrc(WASMbuffer);
+        const sourceCodeObj = await wasmSrc.sourceCode();
+
+        createToast(`WASM source found!`,
+        {
+          type: 'success',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+
+        // Load all source files
+        for (const tmpFName of sourceCodeObj.keys()) {
+          const finalNameArr = tmpFName.split('/');
+          let finalName = '';
+          let finalPath = '';
+          if (finalNameArr.length) {
+            const finalIndex = finalNameArr.length - 1;
+            finalName = finalNameArr[finalIndex];
+
+            // Create new directories
+            if (finalIndex - 1 >= 0) {
+              finalPath = finalNameArr.slice(0, finalIndex).join('/');
+              createDirectoryStructure(path, finalPath);
+            }
+          }
+          
+
+          const fileId = workspace.fileTree.findFileIdByName(path, tmpFName);
+          if (fileId < 0) {
+            addEditor(
+              inputEvent, 
+              onlyInParent, 
+              sourceCodeObj.get(tmpFName), 
+              finalName, 
+              `${path}/${finalPath}`);
+          } else {
+            console.log(`${tmpFName} already in workspace!`);
+            workspace.selectEditor(fileId, new Event('selectEditor'));
+          }
+        }
+        
       }
     } catch (err) {
       console.log('loadEditorFromTx2', err)
     }
   }
 
+};
+
+
+const createDirectoryStructure = (root: string, path: string) => {
+  const elements = path.split('/');
+  let tmpPath = `${root}`;
+  for (const e of elements) {
+    try {
+      addFolder(`${tmpPath}`, e, true);
+      tmpPath += `/${e}`;
+    } catch (err) {
+      console.log('dirStructure:', err);
+    }
+  }
+
+  console.log('ttttt', tmpPath)
+  // 
 };
 
 </script>
