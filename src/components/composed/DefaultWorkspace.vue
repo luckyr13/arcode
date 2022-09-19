@@ -520,10 +520,11 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
 
         // Check if it is WASM
         let fileNameJs = `${tx}.js`;
-        const WASMbuffer = Buffer.from(tmp_data.srcBinary);
+        let WASMbuffer = null;
         if (!srcData && tmp_data.srcBinary) {
           fileNameJs = `${tx}.wasm`;
           srcData = undefined;
+          WASMbuffer = Buffer.from(tmp_data.srcBinary);
         }
         const fileIdJs = workspace.fileTree.findFileIdByName(path, fileNameJs);
         if (fileIdJs < 0 && srcData) {
@@ -539,6 +540,12 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
         } else if (fileIdJson >= 0) {
           console.log(`${tx}.json already in workspace!`);
           workspace.selectEditor(fileIdJson, new Event('selectEditor'));
+        }
+
+        // Load WASM
+        if (!WASMbuffer) {
+          // End function
+          return;
         }
 
         const wasmSrc = new WasmSrc(WASMbuffer);
@@ -566,7 +573,6 @@ const loadEditorFromTX = async (tx: string, path: string, networkParam?: string)
               createDirectoryStructure(path, finalPath);
             }
           }
-          
 
           const fileId = workspace.fileTree.findFileIdByName(path, tmpFName);
           if (fileId < 0) {
@@ -602,9 +608,6 @@ const createDirectoryStructure = (root: string, path: string) => {
       console.log('dirStructure:', err);
     }
   }
-
-  console.log('ttttt', tmpPath)
-  // 
 };
 
 </script>

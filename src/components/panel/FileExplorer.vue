@@ -41,7 +41,7 @@
 			@click="showModalLoadContractFromTX = true; selLoadTXLocation = '/'; txtLoadTXFileName = ''; txtLoadTXGetLastState = false; selNetwork = 'arweave-mainnet'">
 			<DefaultIcon class="menu-icon"
 				icon="codicon-mirror" />
-			<span>Load Contract from TX</span>
+			<span>Import Contract from TX</span>
 		</button>
 	</li>
 </ul>
@@ -92,7 +92,7 @@
 <transition name="fade">
 	<DefaultModal v-if="showModalLoadContractFromTX" @close="showModalLoadContractFromTX = false">
 		<template v-slot:header>
-			<h3>Load Contract from TX</h3>
+			<h3>Import Contract from TX</h3>
 		</template>
 		<template v-slot:body>
 			<template v-if="!loadingContractTX">
@@ -483,11 +483,11 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 		} else if (datatype === 'application/wasm') {
       data = await arweaveWrapper.getTXData(tx, false);
       const buffer = Buffer.from(data);
-      filename = `${tx}.wasm`;
+      //filename = `${tx}.wasm`;
       const wasmSrc = new WasmSrc(buffer);
       data = await wasmSrc.sourceCode();
 
-      workspace.addEditor(inputEvent, onlyInParent, buffer.toString(), filename, path);
+      // workspace.addEditor(inputEvent, onlyInParent, buffer.toString(), filename, path);
       createToast(`WASM source found!`,
       {
         type: 'success',
@@ -497,8 +497,34 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 
       // Load all source files
       for (const tmpFName of data.keys()) {
-        workspace.addEditor(inputEvent, onlyInParent, data.get(tmpFName), tmpFName, path);
+        const finalNameArr = tmpFName.split('/');
+        let finalName = '';
+        let finalPath = '';
+        if (finalNameArr.length) {
+          const finalIndex = finalNameArr.length - 1;
+          finalName = finalNameArr[finalIndex];
+
+          // Create new directories
+          if (finalIndex - 1 >= 0) {
+            finalPath = finalNameArr.slice(0, finalIndex).join('/');
+            createDirectoryStructure(path, finalPath, workspace);
+          }
+        }
+
+        const fileId = workspace.findFileIdByName(path, tmpFName);
+        if (fileId < 0) {
+          workspace.addEditor(
+            inputEvent, 
+            onlyInParent, 
+            data.get(tmpFName), 
+            finalName, 
+            `${path}/${finalPath}`);
+        } else {
+          console.log(`${tmpFName} already in workspace!`);
+          workspace.selectEditor(fileId, new Event('selectEditor'));
+        }
       }
+
       
       // force End wasm
       return;
@@ -530,8 +556,23 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 			await loadEditorFromTX(tags['Contract-Src'], path, workspace);
 		}
 
-		
+	} // If tx not found
+	else {
+		alert('ups')
 	}
+};
+
+const createDirectoryStructure = (root: string, path: string, workspace: DefaultWorkspace) => {
+  const elements = path.split('/');
+  let tmpPath = `${root}`;
+  for (const e of elements) {
+    try {
+      workspace.addFolder(`${tmpPath}`, e, true);
+      tmpPath += `/${e}`;
+    } catch (err) {
+      console.log('dirStructure:', err);
+    }
+  }
 };
 
 const loadLatestContractStateFromTX = async (tx: string, path: string, workspace: DefaultWorkspace) => {

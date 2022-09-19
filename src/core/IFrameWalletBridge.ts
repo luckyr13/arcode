@@ -9,7 +9,8 @@ export class IFrameWalletBridge {
       'http://localhost',
       'https://scanner.redstone.tools',
       'https://sonar.redstone.tools',
-      'https://arweave.app'
+      'https://arweave.app',
+      'https://sonar.warp.cc',
     ];
   }
 
