@@ -64,7 +64,7 @@ export class WarpContracts {
   }
 
   readState(contractAddress: string): Promise<SortKeyCacheResult<EvalStateResult<unknown>>> {
-    const contract = this._warp.contract(contractAddress);
+    const contract = this.warp.contract(contractAddress);
     return contract.readState();
   }
 

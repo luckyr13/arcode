@@ -118,7 +118,7 @@ const addEditor = (
       path, fileName, baseTheme.value,
       active, inFileTree, editorId);
   } catch (err) {
-    createToast(`${err}`,
+    createToast(`editor: ${err}`,
       {
         type: 'danger',
         showIcon: true,
@@ -175,7 +175,7 @@ const addFolder =  (path: string, folderName: string, debugInConsole=false) => {
     if (debugInConsole) {
       console.error('addFolder', err);
     } else {
-      createToast(`${err}`,
+      createToast(`folder: ${err}`,
         {
           type: 'danger',
           showIcon: true,

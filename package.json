@@ -13,7 +13,7 @@
     "@codemirror/commands": "^6.1.0",
     "@codemirror/lang-cpp": "^6.0.1",
     "@codemirror/lang-java": "^6.0.0",
-    "@codemirror/lang-javascript": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.1.0",
     "@codemirror/lang-json": "^6.0.0",
     "@codemirror/lang-python": "^6.0.1",
     "@codemirror/lang-rust": "^6.0.0",
@@ -36,7 +36,7 @@
     "tippy.js": "^6.3.7",
     "vue": "^3.2.39",
     "vue-router": "^4.1.5",
-    "warp-contracts": "^1.2.7"
+    "warp-contracts": "^1.2.10"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.38.0",

@@ -121,11 +121,15 @@ onMounted(async () => {
 
     // Load PST contract state
     loadingAppContract.value = true;
-    const { sortKey, cachedValue } = await warp.readState(tokenContract);
-    const state = cachedValue &&
-      Object.prototype.hasOwnProperty.call(cachedValue, 'state') ?
-      cachedValue.state : {};
-    tokenState.value = state;
+    try {
+      const { sortKey, cachedValue } = await warp.readState(tokenContract);
+      const state = cachedValue &&
+        Object.prototype.hasOwnProperty.call(cachedValue, 'state') ?
+        cachedValue.state : {};
+      tokenState.value = state;
+    } catch (err) {
+      console.log('PSTError', err)
+    }
     loadingAppContract.value = false;
 
     // Is editor inside an iframe?
@@ -143,7 +147,7 @@ onMounted(async () => {
     }
 
   } catch (err) {
-    createToast(`${err}`,
+    createToast(`mount: ${err}`,
     {
       type: 'danger',
       showIcon: true,
