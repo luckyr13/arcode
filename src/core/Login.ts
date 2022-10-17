@@ -1,4 +1,4 @@
-import { ArWallet } from 'redstone-smartweave';
+import { ArWallet } from 'warp-contracts';
  import{
   SignatureOptions,
 } from "arweave/web/lib/crypto/crypto-interface";
