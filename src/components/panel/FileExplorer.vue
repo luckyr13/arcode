@@ -28,11 +28,17 @@
 	</li>
 	<li>
 		<button
-			tabindex="0">
+			tabindex="0"
+			@click="openWorkspace('txt_file_openWorkspace')">
 			<DefaultIcon class="menu-icon"
-				icon="codicon-desktop-download" />
+				icon="codicon-folder-opened" />
 			<span>Open Workspace...</span>
 		</button>
+		<input type="file" 
+			id="txt_file_openWorkspace" 
+			style="display: none" 
+			accept=".zip,application/zip" 
+			@change="openWorkspace_helper($event)">
 	</li>
 	<li>
 		<button
@@ -428,6 +434,75 @@ const openFile_helper = (inputEvent: Event): Promise<string> => {
 };
 
 
+const openWorkspace = (inputId: string) => {
+	if (document.getElementById(inputId)) {
+		document.getElementById(inputId).click();
+	}
+};
+const openWorkspace_helper = (inputEvent: Event): Promise<void> => {
+	txtOpenFileContent.value = '';
+	const zip = new JSZipWrapper();
+  const method = new Promise<string>((resolve, reject) => {
+		const zipFile = inputEvent.target.files.length ? 
+			inputEvent.target.files[0] : null;
+		zip.openZip(zipFile).then((zFile) => {
+			const files = [];
+
+			zFile.forEach(function (relativePath, zipEntry) {
+				if (zipEntry.dir) {
+					const newDirName = zipEntry.name.slice(0, -1);
+					const fragments = newDirName.split('/');
+					let bnfp = '';
+					for (const frag of fragments) {
+						props.workspace.addFolder(bnfp ? bnfp : '/', frag);
+						bnfp += `/${frag}`;
+					}
+					
+				} else {
+					files.push(zipEntry);
+				}
+			});
+
+			// Add files
+			for (const file of files) {
+				const emptyEvent = new Event('emptyEvent');
+				const fragments = file.name.split('/');
+				const realFName = fragments[fragments.length - 1];
+				const path = '/' + file.name.substring(0, file.name.length - (realFName.length + 1));
+				
+				zFile.file(file.name).async("string").then((data) => {
+					props.workspace.addEditor(
+						emptyEvent,
+						false,
+						data,
+						realFName,
+						path,
+						false);
+				}).catch((error) => {
+					console.error('zipFE:', error);
+				})
+
+				
+			}
+			resolve();
+		}).catch((error) => {
+			showModalOpenFile.value = false;
+			createToast(`${error}`,
+			{
+				type: 'danger',
+				showIcon: true,
+				position: 'bottom-right',
+			});
+			reject(error);
+		});
+
+		
+     
+  });
+  return method;
+};
+
+
 const addFolderModal = (workspace: DefaultWorkspace, path: string, folderName: string) => {
 	workspace.addFolder(path, folderName);
 	showModalAddFolder.value = false;
@@ -777,8 +852,6 @@ const getEditor = (editorId: number, workspace: DefaultWorkspace): string => {
 const downloadFile = (doc: EditorViewMetadata) => {
 	fileDownload(doc.view.state.doc.toString(), doc.name);
 }
-
-
 
 const downloadWorkspace = async () => {
 	const zip = new JSZipWrapper();

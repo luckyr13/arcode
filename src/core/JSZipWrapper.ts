@@ -11,6 +11,10 @@ export class JSZipWrapper {
 		this._zip = new JSZip();
 	}
 
+	get zip() {
+		return this._zip;
+	}
+
 	public addFile(fileName: string, content: string) {
 		this._zip.file(fileName, content);
 	}
@@ -48,5 +52,8 @@ export class JSZipWrapper {
 		}
 	}
 
+	async openZip(file: File) {
+		return this._zip.loadAsync(file);		
+	}
 
 }
