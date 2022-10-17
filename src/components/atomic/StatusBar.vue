@@ -32,7 +32,11 @@ const statusBarText = computed(() => {
 	const numLines = content.match(/\n/g) ?
 		content.match(/\n/g).length + 1 :
 		1;
-	const s = `Current file: ${fname} | ${numChar} characters | ${numLines} line${numLines > 1 ? 's' : ''}`;
+  const numBytes = new Blob([content]).size;
+  const pluralLines = numLines != 1 ? 's' : '';
+  const pluralBytes = numBytes != 1 ? 's' : '';
+  const pluralCharacters = numChar != 1 ? 's' : '';
+	const s = `Current file: ${fname} | ${numChar} character${pluralCharacters} | ${numBytes} byte${pluralBytes} | ${numLines} line${pluralLines}`;
 	return s;
 });
 
