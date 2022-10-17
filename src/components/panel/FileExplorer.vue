@@ -28,6 +28,14 @@
 	</li>
 	<li>
 		<button
+			tabindex="0">
+			<DefaultIcon class="menu-icon"
+				icon="codicon-desktop-download" />
+			<span>Open Workspace...</span>
+		</button>
+	</li>
+	<li>
+		<button
 			tabindex="0"
 			@click="showModalAddFolder = true; selNewFolderLocation = '/'; txtNewFolderName='';">
 			<DefaultIcon class="menu-icon"
@@ -80,6 +88,24 @@
 			<span>Download File</span>
 		</button>
 	</li>
+	<li>
+		<button
+			tabindex="0"
+			@click="downloadWorkspace()">
+			<DefaultIcon class="menu-icon"
+				icon="codicon-desktop-download" />
+			<span>Download Workspace</span>
+		</button>
+	</li>
+	<li>
+		<button
+			tabindex="0">
+			<DefaultIcon class="menu-icon"
+				icon="codicon-cloud-upload" />
+			<span>Publish Workspace to Gallery</span>
+		</button>
+	</li>
+	
 </ul>
 <div class="arcode-main-toolbar-panel-title panel-title">
 	Files In Workspace
@@ -337,6 +363,7 @@ import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WarpContracts, WasmSrc } from '@/core/WarpContracts';
 import { createToast } from 'mosha-vue-toastify';
+import { JSZipWrapper } from '@/core/JSZipWrapper';
 
 const showModalLoadContractFromTX = ref(false);
 const loadingContractTX = ref(false);
@@ -749,6 +776,21 @@ const getEditor = (editorId: number, workspace: DefaultWorkspace): string => {
 
 const downloadFile = (doc: EditorViewMetadata) => {
 	fileDownload(doc.view.state.doc.toString(), doc.name);
+}
+
+
+
+const downloadWorkspace = async () => {
+	const zip = new JSZipWrapper();
+	// Get workspace tree
+	const editors = props.workspace.editors;
+	const fileTreeRoot = props.workspace.getFileTree();
+	
+	// Load tree to zip
+	zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
+
+	// Download file
+	await zip.downloadZip('example.zip');
 }
 
 const txtNewFileName = ref('');
