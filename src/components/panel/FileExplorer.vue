@@ -450,14 +450,8 @@ const openWorkspace_helper = (inputEvent: Event): Promise<void> => {
 
 			zFile.forEach(function (relativePath, zipEntry) {
 				if (zipEntry.dir) {
-					const newDirName = zipEntry.name.slice(0, -1);
-					const fragments = newDirName.split('/');
-					let bnfp = '';
-					for (const frag of fragments) {
-						props.workspace.addFolder(bnfp ? bnfp : '/', frag);
-						bnfp += `/${frag}`;
-					}
-					
+          const fullPath = zipEntry.name.slice(0, -1);
+          createDirectoryStructureFromPath(fullPath);
 				} else {
 					files.push(zipEntry);
 				}
@@ -617,7 +611,7 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
           // Create new directories
           if (finalIndex - 1 >= 0) {
             finalPath = finalNameArr.slice(0, finalIndex).join('/');
-            createDirectoryStructure(path, finalPath, workspace);
+            createDirectoryStructure(path, finalPath);
           }
         }
 
@@ -765,12 +759,26 @@ const loadEditorFromTX = async (tx: string, path: string, workspace: DefaultWork
 	}
 };
 
-const createDirectoryStructure = (root: string, path: string, workspace: DefaultWorkspace) => {
+const createDirectoryStructure = (root: string, path: string) => {
   const elements = path.split('/');
   let tmpPath = `${root}`;
   for (const e of elements) {
     try {
-      workspace.addFolder(`${tmpPath}`, e, true);
+      props.workspace.addFolder(`${tmpPath}`, e, true);
+      tmpPath += `/${e}`;
+    } catch (err) {
+      console.log('dirStructure:', err);
+    }
+  }
+};
+
+
+const createDirectoryStructureFromPath = (path: string) => {
+  const elements = path.split('/');
+  let tmpPath = '';
+  for (const e of elements) {
+    try {
+      props.workspace.addFolder(tmpPath ? tmpPath : '/', e, true);
       tmpPath += `/${e}`;
     } catch (err) {
       console.log('dirStructure:', err);
@@ -863,7 +871,9 @@ const downloadWorkspace = async () => {
 	zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
 
 	// Download file
-	await zip.downloadZip('example.zip');
+	const date = new Date();
+	const dateF = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${date.getHours()}_${date.getMinutes()}_${date.getSeconds()}`;
+	await zip.downloadZip(`arcode_workspace_${dateF}.zip`);
 }
 
 const txtNewFileName = ref('');
