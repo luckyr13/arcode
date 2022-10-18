@@ -1,4 +1,6 @@
 import Arweave from 'arweave';
+import { JWKInterface } from 'arweave/web/lib/wallet';
+import Transaction from 'arweave/web/lib/transaction';
 
 export const arweaveMainNets = [
   'arweave-mainnet', 'arweave.net'
@@ -48,6 +50,8 @@ export class ArweaveWrapper {
   private _baseURL = '';
   private _port = 0;
   private _protocol = '';
+  // Limit: 120kb
+  public dataSizeLimitDispatch = 120000;
 
   public secondaryRedstoneGW = 'https://d1o5nlqr4okus2.cloudfront.net';
 
@@ -169,6 +173,105 @@ export class ArweaveWrapper {
 
   winstonToAr(winston: string) {
     return this._arweave.ar.winstonToAr(winston);
+  }
+
+  /*
+  * @dev Upload a file to the permaweb
+  */
+  public async uploadFileToArweave(
+    fileBin: any,
+    contentType: string,
+    key: JWKInterface | "use_wallet",
+    tags: {name: string, value: string}[],
+    loginMethod: string,
+    disableDispatch: boolean,
+    externalProgressObj?: {completed: string, uploaded: string, total: string}|undefined|null): Promise<Transaction|{id: string, type: string}|any> {
+    // Check if the login method allows dispatch
+    if (!disableDispatch) {
+      if (loginMethod !== 'arconnect' && loginMethod !== 'arweavewebwallet') {
+        throw new Error('Dispatch is not available for this login method!');
+      }
+    }
+
+    // Create transaction
+    const transaction = await this._arweave.createTransaction({
+        data: fileBin,
+    }, key);
+
+    transaction.addTag('Content-Type', contentType);
+    for (const t of tags) {
+      transaction.addTag(t.name, t.value);
+    }
+
+    // If ArConnect try Dispatch first
+    if (loginMethod === 'arconnect' && !disableDispatch) {
+      if (!(window && window.arweaveWallet)) {
+        throw new Error('ArConnect method not available!');
+      }
+
+      if (+(transaction.data_size) > this.dataSizeLimitDispatch) {
+        throw new Error(`Dispatch is not available for data size > ${this.dataSizeLimitDispatch} bytes.`);
+      }
+
+      const dispatchResult = await window.arweaveWallet.dispatch(transaction);
+      console.log('Trying dispatch method ...', dispatchResult);
+      // Return Dispatch result
+      return dispatchResult;
+
+    } // Else, try ArConnect Sign method
+    else if (loginMethod === 'arconnect') {
+      if (!(window && window.arweaveWallet)) {
+        throw new Error('ArConnect method not available!');
+      }
+
+      console.log('Signing transaction ...');
+
+      // Sign transaction
+      await this._arweave.transactions.sign(transaction, key);
+      // Submit transaction 
+      const uploader = await this._arweave.transactions.getUploader(transaction);
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk();
+        if (externalProgressObj) {
+          externalProgressObj.completed = `${uploader.pctComplete}%`;
+          externalProgressObj.uploaded = `${uploader.uploadedChunks}`;
+          externalProgressObj.total = `${uploader.totalChunks}`;
+        }
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
+      }
+    } else if (loginMethod === 'arweavewebwallet' && !disableDispatch) {
+      if (!(window && window.arweaveWallet)) {
+        throw new Error('Arweave Wallet method not available!');
+      }
+
+      if (+(transaction.data_size) > this.dataSizeLimitDispatch) {
+        throw new Error(`Dispatch is not available for data size > ${this.dataSizeLimitDispatch} bytes.`);
+      }
+
+      const dispatchResult = await window.arweaveWallet.dispatch(transaction);
+      console.log('Trying dispatch method ...', dispatchResult);
+      // Return Dispatch result
+      return dispatchResult;
+
+    } else {
+      console.log('Signing transaction ...');
+
+      // Sign transaction
+      await this._arweave.transactions.sign(transaction, key);
+      // Submit transaction 
+      const uploader = await this._arweave.transactions.getUploader(transaction);
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk();
+        if (externalProgressObj) {
+          externalProgressObj.completed = `${uploader.pctComplete}%`;
+          externalProgressObj.uploaded = `${uploader.uploadedChunks}`;
+          externalProgressObj.total = `${uploader.totalChunks}`;
+        }
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
+      }
+    }
+
+    return transaction;
   }
 
 

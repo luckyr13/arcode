@@ -37,7 +37,9 @@
 			<FileExplorer 
 					v-if="options['primary']['file-explorer'].active"
 					:tx="tx"
-					:workspace="workspace" />
+					:login="login"
+					:workspace="workspace"
+					:tokenState="tokenState" />
 			<RunAndDebug 
 				:tx="tx"
 				:login="login"
