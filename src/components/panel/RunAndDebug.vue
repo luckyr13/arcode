@@ -130,7 +130,7 @@
 			<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
 				class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
 		</li>
-		<li v-if="usageFee">
+		<li v-if="usageFee && rdFilter === 'writeInteraction' ">
 			<strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
 		</li>
 		<li>
