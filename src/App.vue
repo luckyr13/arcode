@@ -91,4 +91,80 @@ button {
   }
 }
 
+.modal-button {
+  display: inline;
+  margin-top: 1rem;
+  padding: 10px;
+  background-color: rgba(55, 55, 55, 1);
+  color: #FFF;
+  border: 0;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.modal-button:hover {
+  cursor: pointer;
+  background-color: rgba(55, 55, 55, 0.5);
+}
+.modal-button span {
+  margin-left: 4px;
+}
+.modal-button-primary {
+  background-color: var(--app-toolbar-panel-title-bgcolor);
+  color:  var(--app-toolbar-panel-title-color);
+}
+.modal-button-primary:hover {
+  background-color: #000;
+  color: #FFF;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-footer {
+  width: 100%;
+}
+.form-radio {
+  padding: 10px;
+}
+.form-radio label {
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: block;
+}
+.form-radio input
+ {
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--app-background-color);
+  background: inherit;
+  color: inherit;
+}
+
+.form-input {
+  padding: 10px;
+}
+.form-input input,
+.form-input select,
+.form-input textarea
+ {
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--app-background-color);
+  background: inherit;
+  color: inherit;
+}
+.form-input option
+ {
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--app-background-color);
+  background: inherit;
+  color: #000;
+}
+
+.form-input label {
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: block;
+}
 </style>
