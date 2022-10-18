@@ -882,7 +882,6 @@ const txtEditFileName = ref('');
 const txtLoadTXFileName = ref('');
 const selLoadTXLocation = ref('');
 const txtLoadTXGetLastState = ref(false);
-const workspaceSize = ref(0);
 watchEffect(() => {
 	const r = new RegExp('/|\\\\', 'g');
 	txtNewFileName.value = txtNewFileName.value.replace(r, '');
@@ -890,24 +889,6 @@ watchEffect(() => {
 	txtOpenFileName.value = txtOpenFileName.value.replace(r, '');
 	txtEditFileName.value = txtEditFileName.value.replace(r, '');
 });
-
-
-const getWorkspaceSize = async () => {
-	const zip = new JSZipWrapper();
-	// Get workspace tree
-	const editors = props.workspace.editors;
-	const fileTreeRoot = props.workspace.getFileTree();
-	zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
-	const size = await zip.getZipSize();
-	return size;
-};
-
-const getWorkspaceFilesAsString = (): string => {
-	let files = '';
-	// Get workspace tree
-	files += Object.values(props.workspace.getFileTreeFilenames()).join('\n');
-	return files;
-};
 
 </script>
 

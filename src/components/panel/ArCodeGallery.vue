@@ -7,7 +7,7 @@
     v-if="mainAddress">
     <button 
       tabindex="0" 
-      @click="showModalPublishWorkspaceFunc()">
+      @click="showModalMyGalleryOpen()">
       <DefaultIcon class="menu-icon"
       icon="codicon-circuit-board" />
       <span>My Gallery</span>
@@ -85,6 +85,14 @@
         <div v-if="usageFee" class="text-right small-txt">
           <strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
         </div>
+        <div class="text-right form-radio">
+          <label class="">
+            <input 
+              :disabled="!isDispatchAvailable"
+              v-model.trim="txtPublishWorkspaceDispatch" 
+              type="checkbox"> Publish for FREE (Dispatch method)
+          </label>
+        </div>
       </template>
       <template v-if="loadingPublishingWorkspace">
         Loading ... Please hold on!
@@ -121,6 +129,27 @@
     </template>
   </DefaultModal>
 </transition>
+<transition name="fade">
+  <DefaultModal v-if="showModalMyGallery" @close="showModalMyGallery = false">
+    <template v-slot:header>
+      <h3><DefaultIcon class="title-icon"
+        icon="codicon-circuit-board" /><span>My Gallery</span></h3>
+    </template>
+    <template v-slot:body>
+      --
+    </template>
+    <template v-slot:footer>
+      <div class="modal-footer text-right">
+        
+        <button 
+          class="modal-button" 
+          @click="showModalMyGallery = false;">
+          Close
+        </button>
+      </div>
+    </template>
+  </DefaultModal>
+</transition>
 </template>
 
 
@@ -138,8 +167,10 @@ import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { createToast } from 'mosha-vue-toastify';
 import { WarpContracts } from '@/core/WarpContracts';
 import { JSZipWrapper } from '@/core/JSZipWrapper';
+import { protocolName, protocolVersion } from '@/core/AppSettings';
 
 const showModalPublishWorkspace = ref(false);
+const showModalMyGallery = ref(false);
 const loadingPublishingWorkspace = ref(false);
 const selNetwork = ref('arweave-mainnet');
 const networks = computed(() => {
@@ -156,7 +187,9 @@ const props = defineProps({
 const txtPublishWorkspaceName = ref('');
 const txtPublishWorkspaceDescription = ref('');
 const txtPublishWorkspaceFilesList = ref('');
+const txtPublishWorkspaceDispatch = ref(false);
 const publishWorkspaceTxId = ref('');
+const isDispatchAvailable = ref(false);
 const mainAddress = computed(() => {
   return props.login.mainAddress;
 });
@@ -186,16 +219,28 @@ const balances = computed(() => {
   return balances;
 });
 const balance = ref('0');
+const dataSizeLimitDispatch = computed(() => {
+  return globalArweaveWrapper.dataSizeLimitDispatch;
+});
 
 const getWorkspaceSize = async () => {
   const zip = new JSZipWrapper();
-  // Get workspace tree
-  const editors = props.workspace.editors;
-  const fileTreeRoot = props.workspace.getFileTree();
-  zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
-  const size = await zip.getZipSize();
+  let size = 0;
+  try {
+    // Get workspace tree
+    const editors = props.workspace.editors;
+    const fileTreeRoot = props.workspace.getFileTree();
+    zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
+    const nameSize = new Blob([txtPublishWorkspaceName.value]).size;
+    const descriptionSize = new Blob([txtPublishWorkspaceDescription.value]).size;
+    size = await zip.getZipSize();
+    size += nameSize + descriptionSize;  
+  } catch (error) {
+    console.error('workspaceSize', error);
+  }
   return size;
 };
+
 
 const getWorkspaceFilesAsString = (): string => {
   let files = '';
@@ -228,8 +273,8 @@ const publishWorkspaceModal = async () => {
     const contentType = contentBlob.type;
     const key = props.login.key;
     const tags: {name: string, value: string}[] = [
-      { name: 'App-Name', value: 'ArCode' },
-      { name: 'App-Version', value: '0.1' },
+      { name: 'App-Name', value: protocolName },
+      { name: 'App-Version', value: protocolVersion },
       { name: 'Type', value: 'Workspace' },
       { name: 'WorkspaceName', value: name },
       { name: 'WorkspaceDescription', value: description },
@@ -266,10 +311,17 @@ const showModalPublishWorkspaceFunc = () => {
   txtPublishWorkspaceName.value = '';
   txtPublishWorkspaceDescription.value = '';
   publishWorkspaceTxId.value = '';
+  txtPublishWorkspaceDispatch.value = false;
   workspaceSize.value = 0;
   getWorkspaceSize().then((size) => {
     if (size) {
       workspaceSize.value = size;
+      if (size <= dataSizeLimitDispatch.value && !usageFee.value) {
+        isDispatchAvailable.value = true;
+      } else {
+        isDispatchAvailable.value = false;
+        txtPublishWorkspaceDispatch.value = false;
+      }
     }
   }).catch((error) => {
     console.error('showModalPublishFunc', error);
@@ -288,6 +340,28 @@ const usageFee = computed(() => {
       balances.value
     );
   return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
+});
+
+const showModalMyGalleryOpen = () => {
+  showModalMyGallery.value = true;
+};
+
+watchEffect(async () => {
+  try {
+    const size = await getWorkspaceSize();
+    if (size) {
+      workspaceSize.value = size;
+      if (size <= dataSizeLimitDispatch.value && !usageFee.value) {
+        isDispatchAvailable.value = true;
+      } else {
+        isDispatchAvailable.value = false;
+        txtPublishWorkspaceDispatch.value = false;
+      }
+    }
+  } catch (error) {
+    console.error('showModalPublishFunc', error);
+  }
+
 });
 
 </script>

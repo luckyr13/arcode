@@ -275,4 +275,25 @@ export class ArweaveWrapper {
   }
 
 
+  /*
+  * @dev When a dummy file tx
+  */
+  public async getDummyFileTx(
+    fileBin: any,
+    contentType: string,
+    key: JWKInterface | "use_wallet",
+    tags: {name: string, value: string}[]): Promise<Transaction|{id: string, type: string}|any> {
+    
+    // Create transaction
+    const transaction = await this._arweave.createTransaction({
+        data: fileBin,
+    }, key);
+
+    transaction.addTag('Content-Type', contentType);
+    for (const t of tags) {
+      transaction.addTag(t.name, t.value);
+    }
+
+    return transaction;
+  }
 }
