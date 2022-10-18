@@ -48,7 +48,7 @@
 			tabindex="0"
 			@click="openWorkspace('txt_file_openWorkspace')">
 			<DefaultIcon class="menu-icon"
-				icon="codicon-folder-opened" />
+				icon="codicon-root-folder-opened" />
 			<span>Open Workspace...</span>
 		</button>
 		<input type="file" 
@@ -77,15 +77,6 @@
 	</li>
 </ul>
 <ul class="file-menu">
-	<li>
-		<button
-			tabindex="0"
-			@click="downloadWorkspace()">
-			<DefaultIcon class="menu-icon"
-				icon="codicon-desktop-download" />
-			<span>Download Workspace</span>
-		</button>
-	</li>
 	<li 
 		v-if="workspace.getCurrentEditorId() >= 0">
 		<button
@@ -103,21 +94,13 @@
 			<span>Download File</span>
 		</button>
 	</li>
-	<li 
-		v-if="mainAddress">
-		<button 
-			tabindex="0" 
-			@click="showModalPublishWorkspaceFunc()">
+	<li>
+		<button
+			tabindex="0"
+			@click="downloadWorkspace()">
 			<DefaultIcon class="menu-icon"
-			icon="codicon-cloud-upload" />
-			<span>Publish Workspace on Gallery</span>
-		</button>
-	</li>
-	<li v-else>
-		<button class="disabled">
-			<DefaultIcon class="menu-icon"
-			icon="codicon-cloud-upload" />
-			<span>Publish Workspace on Gallery</span>
+				icon="codicon-file-zip" />
+			<span>Download Workspace</span>
 		</button>
 	</li>
 	
@@ -366,76 +349,6 @@
 		</template>
 	</DefaultModal>
 </transition>
-<transition name="fade">
-	<DefaultModal v-if="showModalPublishWorkspace" @close="showModalPublishWorkspace = false">
-		<template v-slot:header>
-			<h3><DefaultIcon class="title-icon"
-				icon="codicon-cloud-upload" /><span>Publish on ArCode Gallery</span></h3>
-		</template>
-		<template v-slot:body>
-			<template v-if="!loadingPublishingWorkspace">
-				<div class="form-input">
-					<label>Workspace Name</label>
-					<input 
-						v-model.trim="txtPublishWorkspaceName"
-						type="text">
-				</div>
-				<div class="form-input">
-					<label>Description</label>
-					<textarea 
-						v-model.trim="txtPublishWorkspaceDescription"></textarea>
-				</div>
-				<div class="form-input">
-					<label>Files in Workspace</label>
-					<textarea 
-						readonly 
-						v-model.trim="txtPublishWorkspaceFilesList"></textarea>
-				</div>
-				<div class="text-right small-txt">
-					<strong>Estimated Data Size: </strong>{{ workspaceSize }}bytes
-				</div>
-				<div class="text-right small-txt">
-					<strong>Wallet: </strong>{{ mainAddress }}
-				</div>
-				<div v-if="usageFee" class="text-right small-txt">
-					<strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
-				</div>
-				<div class="text-right small-txt">
-					<a 
-						href="https://gallery.arcode.studio"
-						target="_blank">ArCode Gallery</a>
-				</div>
-			</template>
-			<template v-if="loadingPublishingWorkspace">
-				Loading ... Please hold on!
-			</template>
-		</template>
-		<template v-slot:footer>
-			<div class="modal-footer text-right">
-				<button 
-					class="modal-button" 
-					:class="{ 'modal-button-primary': txtPublishWorkspaceName }"
-					:disabled="!txtPublishWorkspaceName"
-					v-if="workspace && !loadingPublishingWorkspace"
-					@click="publishWorkspaceModal()">
-					<span >Publish Now!</span >
-				</button>
-				<button 
-					class="modal-button" 
-					disabled
-					v-if="loadingPublishingWorkspace">
-					<span >Loading ...</span >
-				</button>
-
-				<button 
-					class="modal-button" 
-					@click="showModalPublishWorkspace = false; txtPublishWorkspaceFilesList = ''">
-					Close
-				</button>
-			</div>
-		</template>
-	</DefaultModal>
-</transition>
 </template>
 
 
@@ -461,7 +374,6 @@ const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
 const showModalOpenFile = ref(false);
 const showModalEditFile = ref(false);
-const showModalPublishWorkspace = ref(false);
 const selNetwork = ref('arweave-mainnet');
 
 const networks = computed(() => {
@@ -471,8 +383,7 @@ const networks = computed(() => {
 const props = defineProps({
 	workspace: Object,
 	tx: String,
-	login: Object,
-	tokenState: Object
+	login: Object
 });
 
 const openFile = (inputId: string) => {
@@ -971,39 +882,7 @@ const txtEditFileName = ref('');
 const txtLoadTXFileName = ref('');
 const selLoadTXLocation = ref('');
 const txtLoadTXGetLastState = ref(false);
-const txtPublishWorkspaceName = ref('');
-const txtPublishWorkspaceDescription = ref('');
-const txtPublishWorkspaceFilesList = ref('');
-const mainAddress = computed(() => {
-	return props.login.mainAddress;
-});
 const workspaceSize = ref(0);
-const contractSettings = computed(() => {
-	const settings = props.tokenState.settings ? props.tokenState.settings : [];
-	return new Map(settings);
-});
-const appFeeInWinston = computed(() => {
-	return contractSettings.value.get('appFeeInWinston');
-});
-const globalArweaveWrapper = new ArweaveWrapper();
-const appFeeInAr = computed(() => {
-	return globalArweaveWrapper.winstonToAr(appFeeInWinston.value);
-});
-const vipMinimumBalance = computed(() => {
-	return parseInt(contractSettings.value.get('vipMinimumBalance'));
-});
-const pstBalance = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
-	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
-	return res;
-});
-const balances = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
-	return balances;
-});
-const balance = ref('0');
-
 watchEffect(() => {
 	const r = new RegExp('/|\\\\', 'g');
 	txtNewFileName.value = txtNewFileName.value.replace(r, '');
@@ -1029,51 +908,6 @@ const getWorkspaceFilesAsString = (): string => {
 	files += Object.values(props.workspace.getFileTreeFilenames()).join('\n');
 	return files;
 };
-
-const publishWorkspaceModal = async () => {
-	loadingPublishingWorkspace.value = true;
-	try {
-		window.setTimeout(() => {
-			alert('hola')
-	loadingPublishingWorkspace.value = false;
-		}, 1000)
-	} catch (err) {
-		createToast(`${err}`,
-      {
-        type: 'danger',
-        showIcon: true,
-        position: 'bottom-right',
-      });
-	}
-	//loadingPublishingWorkspace.value = false;
-};
-
-const showModalPublishWorkspaceFunc = () => {
-	showModalPublishWorkspace.value = true;
-	txtPublishWorkspaceFilesList.value = getWorkspaceFilesAsString();
-	workspaceSize.value = 0;
-	getWorkspaceSize().then((size) => {
-		if (size) {
-			workspaceSize.value = size;
-		}
-	}).catch((error) => {
-		console.error('showModalPublishFunc', error);
-	});
-};
-
-const usageFee = computed(() => {
-	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-	const warpContracts = new WarpContracts(arweaveWrapper.arweave);
-	const transfer = warpContracts.getTransferData(
-			pstBalance.value,
-			vipMinimumBalance.value,
-			selNetwork.value,
-			appFeeInWinston.value,
-			mainAddress.value,
-			balances.value
-		);
-	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
-});
 
 </script>
 
@@ -1259,11 +1093,5 @@ h3 span {
 }
 .small-txt a {
 	color: inherit;
-}
-.span-balance{
-	font-size: 16px;
-}
-.usage-fee-txt {
-	color: red !important;
 }
 </style>

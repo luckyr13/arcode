@@ -38,8 +38,7 @@
 					v-if="options['primary']['file-explorer'].active"
 					:tx="tx"
 					:login="login"
-					:workspace="workspace"
-					:tokenState="tokenState" />
+					:workspace="workspace"/>
 			<RunAndDebug 
 				:tx="tx"
 				:login="login"
@@ -57,6 +56,12 @@
 				v-if="options['primary']['deploy'].active"
 				:workspace="workspace" 
 				:tokenState="tokenState" />
+			<ArCodeGallery 
+					v-if="options['primary']['gallery'].active"
+					:tx="tx"
+					:login="login"
+					:workspace="workspace"
+					:tokenState="tokenState"/>
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
 			<AccountsManager
 				:login="login"
@@ -84,6 +89,7 @@ import HelpInfo from '@/components/panel/HelpInfo.vue';
 import SearchArweave from '@/components/panel/SearchArweave.vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import tippy from 'tippy.js';
+import ArCodeGallery from '@/components/panel/ArCodeGallery.vue';
 
 const props = defineProps({
 	workspace: Object,
@@ -119,6 +125,18 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 			id: 'compile',
 			icon: 'codicon-debug-alt',
 			label: 'Run and Debug',
+			active: false
+		},
+		'gallery': {
+			id: 'gallery',
+			icon: 'codicon-circuit-board',
+			label: 'ArCode Gallery',
+			active: false
+		},
+		'lab': {
+			id: 'lab',
+			icon: 'codicon-beaker',
+			label: 'Lab',
 			active: false
 		},
 	},
