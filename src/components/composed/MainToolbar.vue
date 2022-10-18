@@ -62,6 +62,12 @@
 					:login="login"
 					:workspace="workspace"
 					:tokenState="tokenState"/>
+			<ArCodeLab
+					v-if="options['primary']['lab'].active"
+					:tx="tx"
+					:login="login"
+					:workspace="workspace"
+					:tokenState="tokenState"/>
 			<UserSettings v-if="options['secondary']['settings'].active" :workspace="workspace" />
 			<AccountsManager
 				:login="login"
@@ -90,6 +96,7 @@ import SearchArweave from '@/components/panel/SearchArweave.vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import tippy from 'tippy.js';
 import ArCodeGallery from '@/components/panel/ArCodeGallery.vue';
+import ArCodeLab from '@/components/panel/ArCodeLab.vue';
 
 const props = defineProps({
 	workspace: Object,

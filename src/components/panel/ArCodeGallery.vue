@@ -1,120 +1,125 @@
 <template>
 <div class="arcode-main-toolbar-panel-title panel-title">
-	ArCode Gallery
+  ArCode Gallery
 </div>
 <ul class="file-menu">
-	<li 
-		v-if="mainAddress">
-		<button 
-			tabindex="0" 
-			@click="showModalPublishWorkspaceFunc()">
-			<DefaultIcon class="menu-icon"
-			icon="codicon-circuit-board" />
-			<span>My Gallery</span>
-		</button>
-	</li>
-	<li v-else>
-		<button class="disabled">
-			<DefaultIcon class="menu-icon"
-			icon="codicon-circuit-board" />
-			<span>My Gallery</span>
-		</button>
-	</li>
-	<li 
-		v-if="mainAddress">
-		<button 
-			tabindex="0" 
-			@click="showModalPublishWorkspaceFunc()">
-			<DefaultIcon class="menu-icon"
-			icon="codicon-cloud-upload" />
-			<span>Publish Workspace</span>
-		</button>
-	</li>
-	<li v-else>
-		<button class="disabled">
-			<DefaultIcon class="menu-icon"
-			icon="codicon-cloud-upload" />
-			<span>Publish Workspace</span>
-		</button>
-	</li>
-	
-	<li>
-		<a 
-			class="gallery-link"
-			tabindex="0" 
-			href="https://gallery.arcode.studio"
-			target="_blank">
-			<DefaultIcon class="menu-icon"
-			icon="codicon-link-external" />
-			<span>Visit ArCode Gallery</span>
-		</a>
-	</li>
-	
+  <li 
+    v-if="mainAddress">
+    <button 
+      tabindex="0" 
+      @click="showModalPublishWorkspaceFunc()">
+      <DefaultIcon class="menu-icon"
+      icon="codicon-circuit-board" />
+      <span>My Gallery</span>
+    </button>
+  </li>
+  <li v-else>
+    <button class="disabled">
+      <DefaultIcon class="menu-icon"
+      icon="codicon-circuit-board" />
+      <span>My Gallery</span>
+    </button>
+  </li>
+  <li 
+    v-if="mainAddress">
+    <button 
+      tabindex="0" 
+      @click="showModalPublishWorkspaceFunc()">
+      <DefaultIcon class="menu-icon"
+      icon="codicon-cloud-upload" />
+      <span>Publish Workspace</span>
+    </button>
+  </li>
+  <li v-else>
+    <button class="disabled">
+      <DefaultIcon class="menu-icon"
+      icon="codicon-cloud-upload" />
+      <span>Publish Workspace</span>
+    </button>
+  </li>
+  
+  <li>
+    <a 
+      class="gallery-link"
+      tabindex="0" 
+      href="https://gallery.arcode.studio"
+      target="_blank">
+      <DefaultIcon class="menu-icon"
+      icon="codicon-link-external" />
+      <span>Visit ArCode Gallery</span>
+    </a>
+  </li>
+  
 </ul>
 <transition name="fade">
-	<DefaultModal v-if="showModalPublishWorkspace" @close="showModalPublishWorkspace = false">
-		<template v-slot:header>
-			<h3><DefaultIcon class="title-icon"
-				icon="codicon-cloud-upload" /><span>Publish on ArCode Gallery</span></h3>
-		</template>
-		<template v-slot:body>
-			<template v-if="!loadingPublishingWorkspace">
-				<div class="form-input">
-					<label>Workspace Name</label>
-					<input 
-						v-model.trim="txtPublishWorkspaceName"
-						type="text">
-				</div>
-				<div class="form-input">
-					<label>Description</label>
-					<textarea 
-						v-model.trim="txtPublishWorkspaceDescription"></textarea>
-				</div>
-				<div class="form-input">
-					<label>Files in Workspace</label>
-					<textarea 
-						readonly 
-						v-model.trim="txtPublishWorkspaceFilesList"></textarea>
-				</div>
-				<div class="text-right small-txt">
-					<strong>Estimated Data Size: </strong>{{ workspaceSize }}bytes
-				</div>
-				<div class="text-right small-txt">
-					<strong>Wallet: </strong>{{ mainAddress }}
-				</div>
-				<div v-if="usageFee" class="text-right small-txt">
-					<strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
-				</div>
-			</template>
-			<template v-if="loadingPublishingWorkspace">
-				Loading ... Please hold on!
-			</template>
-		</template>
-		<template v-slot:footer>
-			<div class="modal-footer text-right">
-				<button 
-					class="modal-button" 
-					:class="{ 'modal-button-primary': txtPublishWorkspaceName }"
-					:disabled="!txtPublishWorkspaceName"
-					v-if="workspace && !loadingPublishingWorkspace"
-					@click="publishWorkspaceModal()">
-					<span >Publish Now!</span >
-				</button>
-				<button 
-					class="modal-button" 
-					disabled
-					v-if="loadingPublishingWorkspace">
-					<span >Loading ...</span >
-				</button>
+  <DefaultModal v-if="showModalPublishWorkspace" @close="showModalPublishWorkspace = false">
+    <template v-slot:header>
+      <h3><DefaultIcon class="title-icon"
+        icon="codicon-cloud-upload" /><span>Publish on ArCode Gallery</span></h3>
+    </template>
+    <template v-slot:body>
+      <template v-if="!loadingPublishingWorkspace && !publishWorkspaceTxId">
+        <div class="form-input">
+          <label>Workspace Name</label>
+          <input 
+            v-model.trim="txtPublishWorkspaceName"
+            type="text">
+        </div>
+        <div class="form-input">
+          <label>Description</label>
+          <textarea 
+            v-model.trim="txtPublishWorkspaceDescription"></textarea>
+        </div>
+        <div class="form-input">
+          <label>Files in Workspace</label>
+          <textarea 
+            readonly 
+            v-model.trim="txtPublishWorkspaceFilesList"></textarea>
+        </div>
+        <div class="text-right small-txt">
+          <strong>Estimated Data Size: </strong>{{ workspaceSize }}bytes
+        </div>
+        <div class="text-right small-txt">
+          <strong>Wallet: </strong>{{ mainAddress }}
+        </div>
+        <div v-if="usageFee" class="text-right small-txt">
+          <strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
+        </div>
+      </template>
+      <template v-if="loadingPublishingWorkspace">
+        Loading ... Please hold on!
+      </template>
+      <template v-if="!loadingPublishingWorkspace && publishWorkspaceTxId">
+        {{ publishWorkspaceTxId }}
+      </template>
+      
+    </template>
+    <template v-slot:footer>
+      <div class="modal-footer text-right">
+        <button 
+          class="modal-button" 
+          :class="{ 'modal-button-primary': txtPublishWorkspaceName }"
+          :disabled="!txtPublishWorkspaceName"
+          v-if="workspace && !loadingPublishingWorkspace"
+          @click="publishWorkspaceModal()">
+          <span >Publish Now!</span >
+        </button>
+        <button 
+          class="modal-button" 
+          disabled
+          v-if="loadingPublishingWorkspace">
+          <span >Loading ...</span >
+        </button>
 
-				<button 
-					class="modal-button" 
-					@click="showModalPublishWorkspace = false; txtPublishWorkspaceFilesList = ''">
-					Close
-				</button>
-			</div>
-		</template>
-	</DefaultModal>
+        <button 
+          :disabled="loadingPublishingWorkspace"
+          class="modal-button" 
+          @click="showModalPublishWorkspace = false; txtPublishWorkspaceFilesList = ''">
+          Close
+        </button>
+      </div>
+    </template>
+  </DefaultModal>
 </transition>
 </template>
 
@@ -138,109 +143,151 @@ const showModalPublishWorkspace = ref(false);
 const loadingPublishingWorkspace = ref(false);
 const selNetwork = ref('arweave-mainnet');
 const networks = computed(() => {
-	return arweaveNetworks;
+  return arweaveNetworks;
 });
 
 const props = defineProps({
-	workspace: Object,
-	tx: String,
-	login: Object,
-	tokenState: Object
+  workspace: Object,
+  tx: String,
+  login: Object,
+  tokenState: Object
 });
 
 const txtPublishWorkspaceName = ref('');
 const txtPublishWorkspaceDescription = ref('');
 const txtPublishWorkspaceFilesList = ref('');
+const publishWorkspaceTxId = ref('');
 const mainAddress = computed(() => {
-	return props.login.mainAddress;
+  return props.login.mainAddress;
 });
 const workspaceSize = ref(0);
 const contractSettings = computed(() => {
-	const settings = props.tokenState.settings ? props.tokenState.settings : [];
-	return new Map(settings);
+  const settings = props.tokenState.settings ? props.tokenState.settings : [];
+  return new Map(settings);
 });
 const appFeeInWinston = computed(() => {
-	return contractSettings.value.get('appFeeInWinston');
+  return contractSettings.value.get('appFeeInWinston');
 });
 const globalArweaveWrapper = new ArweaveWrapper();
 const appFeeInAr = computed(() => {
-	return globalArweaveWrapper.winstonToAr(appFeeInWinston.value);
+  return globalArweaveWrapper.winstonToAr(appFeeInWinston.value);
 });
 const vipMinimumBalance = computed(() => {
-	return parseInt(contractSettings.value.get('vipMinimumBalance'));
+  return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
 const pstBalance = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
-	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
-	return res;
+  const balances = props.tokenState.balances ? props.tokenState.balances : {};
+  const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
+    parseInt(props.tokenState.balances[mainAddress.value]) : 0;
+  return res;
 });
 const balances = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
-	return balances;
+  const balances = props.tokenState.balances ? props.tokenState.balances : {};
+  return balances;
 });
 const balance = ref('0');
 
 const getWorkspaceSize = async () => {
-	const zip = new JSZipWrapper();
-	// Get workspace tree
-	const editors = props.workspace.editors;
-	const fileTreeRoot = props.workspace.getFileTree();
-	zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
-	const size = await zip.getZipSize();
-	return size;
+  const zip = new JSZipWrapper();
+  // Get workspace tree
+  const editors = props.workspace.editors;
+  const fileTreeRoot = props.workspace.getFileTree();
+  zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
+  const size = await zip.getZipSize();
+  return size;
 };
 
 const getWorkspaceFilesAsString = (): string => {
-	let files = '';
-	// Get workspace tree
-	files += Object.values(props.workspace.getFileTreeFilenames()).join('\n');
-	return files;
+  let files = '';
+  // Get workspace tree
+  files += Object.values(props.workspace.getFileTreeFilenames()).join('\n');
+  return files;
 };
 
 const publishWorkspaceModal = async () => {
-	loadingPublishingWorkspace.value = true;
-	try {
-		window.setTimeout(() => {
-			alert('hola')
-	loadingPublishingWorkspace.value = false;
-		}, 1000)
-	} catch (err) {
-		createToast(`${err}`,
+  const zip = new JSZipWrapper();
+  // Get workspace tree
+  const editors = props.workspace.editors;
+  const fileTreeRoot = props.workspace.getFileTree();
+  loadingPublishingWorkspace.value = true;
+  try {
+    const name = txtPublishWorkspaceName.value;
+    const description = txtPublishWorkspaceDescription.value;
+    
+    // Load tree to zip
+    zip.loadTreeToZip(fileTreeRoot, fileTreeRoot.name, editors);
+
+    const contentBlob = await zip.getZipBlob();
+    const content = await contentBlob.arrayBuffer();
+
+    if (!content) {
+      throw Error('Error creating zip file');
+    }
+
+    const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+    const contentType = contentBlob.type;
+    const key = props.login.key;
+    const tags: {name: string, value: string}[] = [
+      { name: 'App-Name', value: 'ArCode' },
+      { name: 'App-Version', value: '0.1' },
+      { name: 'Type', value: 'Workspace' },
+      { name: 'WorkspaceName', value: name },
+      { name: 'WorkspaceDescription', value: description },
+    ]; 
+    const loginMethod = props.login.method;
+    const disableDispatch = true;
+    const tx = await arweaveWrapper.uploadFileToArweave(
+      content,
+      contentType,
+      key,
+      tags,
+      loginMethod,
+      disableDispatch
+    );
+
+    publishWorkspaceTxId.value = tx;
+
+  } catch (err) {
+    createToast(`${err}`,
       {
         type: 'danger',
         showIcon: true,
         position: 'bottom-right',
       });
-	}
-	//loadingPublishingWorkspace.value = false;
+  }
+  loadingPublishingWorkspace.value = false;
 };
 
+
+
 const showModalPublishWorkspaceFunc = () => {
-	showModalPublishWorkspace.value = true;
-	txtPublishWorkspaceFilesList.value = getWorkspaceFilesAsString();
-	workspaceSize.value = 0;
-	getWorkspaceSize().then((size) => {
-		if (size) {
-			workspaceSize.value = size;
-		}
-	}).catch((error) => {
-		console.error('showModalPublishFunc', error);
-	});
+  showModalPublishWorkspace.value = true;
+  txtPublishWorkspaceFilesList.value = getWorkspaceFilesAsString();
+  txtPublishWorkspaceName.value = '';
+  txtPublishWorkspaceDescription.value = '';
+  publishWorkspaceTxId.value = '';
+  workspaceSize.value = 0;
+  getWorkspaceSize().then((size) => {
+    if (size) {
+      workspaceSize.value = size;
+    }
+  }).catch((error) => {
+    console.error('showModalPublishFunc', error);
+  });
 };
 
 const usageFee = computed(() => {
-	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-	const warpContracts = new WarpContracts(arweaveWrapper.arweave);
-	const transfer = warpContracts.getTransferData(
-			pstBalance.value,
-			vipMinimumBalance.value,
-			selNetwork.value,
-			appFeeInWinston.value,
-			mainAddress.value,
-			balances.value
-		);
-	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
+  const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
+  const warpContracts = new WarpContracts(arweaveWrapper.arweave);
+  const transfer = warpContracts.getTransferData(
+      pstBalance.value,
+      vipMinimumBalance.value,
+      selNetwork.value,
+      appFeeInWinston.value,
+      mainAddress.value,
+      balances.value
+    );
+  return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
 });
 
 </script>
@@ -253,83 +300,83 @@ $title-height: 28px;
 }
 
 .panel-title {
-	height: $title-height;
-	line-height: $title-height;
-	font-size: 12px;
-	padding-left: 20px;
+  height: $title-height;
+  line-height: $title-height;
+  font-size: 12px;
+  padding-left: 20px;
 }
 .modal-btn-icon {
-	font-size: 15px;
-	margin-left: 4px;
+  font-size: 15px;
+  margin-left: 4px;
 }
 .menu-icon {
-	float: right;
-	line-height: 15px;
-	font-size: 15px !important;
-	margin-left: 4px;
-	width: 10%;
-	display: inline;
-	text-align: right;
-	padding: 6px 0px;
+  float: right;
+  line-height: 15px;
+  font-size: 15px !important;
+  margin-left: 4px;
+  width: 10%;
+  display: inline;
+  text-align: right;
+  padding: 6px 0px;
 }
 .fd-icon {
-	margin-right: 6px;
+  margin-right: 6px;
 }
 .title-icon {
-	float: left;
-	line-height: 32px;
-	font-size: 32px !important;
+  float: left;
+  line-height: 32px;
+  font-size: 32px !important;
 }
 h3 span {
-	margin-left: 12px;
+  margin-left: 12px;
 }
 
 .file-menu {
-	padding: 0px;
-	margin-top: 0px;
-	margin-bottom: 0px;
+  padding: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 .file-menu li {
-	padding: 0px;
-	height: 32px;
-	list-style: none;
-	width: 100%;
+  padding: 0px;
+  height: 32px;
+  list-style: none;
+  width: 100%;
 }
 
 .file-menu li button, .file-menu li a {
-	width: 100%;
-	height: 100%;
-	line-height: 32px;
-	border: 0;
-	cursor: pointer;
-	text-align: left;
-	font-size: 12px;
-	background-color: inherit;
-	color: inherit;
-	display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 32px;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font-size: 12px;
+  background-color: inherit;
+  color: inherit;
+  display: block;
 }
 
 .file-menu li a {
-	padding: 0px 6px 0px 6px;
+  padding: 0px 6px 0px 6px;
 
 }
 
 .file-menu li button:hover, .file-menu li a:hover {
-	background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0,0,0,0.3);
 }
 
 .file-menu li button.disabled {
-	color: gray;
-	cursor: default;
+  color: gray;
+  cursor: default;
 }
 
 .subheader {
-	font-size: 12px;
-	padding-left: 10px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin-top: 20px;
-	margin-bottom: 0px;
+  font-size: 12px;
+  padding-left: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-top: 20px;
+  margin-bottom: 0px;
 }
 
 
@@ -349,7 +396,7 @@ h3 span {
   background-color: rgba(55, 55, 55, 0.5);
 }
 .modal-button span {
-	margin-left: 4px;
+  margin-left: 4px;
 }
 .modal-button-primary {
   background-color: var(--app-toolbar-panel-title-bgcolor);
@@ -361,54 +408,54 @@ h3 span {
   background-color: rgba(0, 0, 0, 0.5);
 }
 .modal-footer {
-	width: 100%;
+  width: 100%;
 }
 .form-input {
-	padding: 10px;
+  padding: 10px;
 }
 .form-input input,
 .form-input select,
 .form-input textarea
  {
-	width: 100%;
-	padding: 12px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: inherit;
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--app-background-color);
+  background: inherit;
+  color: inherit;
 }
 .form-input option
  {
-	width: 100%;
-	padding: 12px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: #000;
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--app-background-color);
+  background: inherit;
+  color: #000;
 }
 
 .form-input label {
-	font-size: 12px;
-	margin-bottom: 4px;
-	display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: block;
 }
 
 
 .form-radio {
-	padding: 10px;
+  padding: 10px;
 }
 .form-radio label {
-	font-size: 12px;
-	margin-bottom: 4px;
-	display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: block;
 }
 .form-radio input
  {
-	padding: 12px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: inherit;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--app-background-color);
+  background: inherit;
+  color: inherit;
 }
 
 
@@ -422,23 +469,23 @@ h3 span {
   opacity: 0;
 }
 .link {
-	font-size: 12px;
-	cursor: pointer;
-	text-decoration: underline;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
 }
 .small-txt {
-	font-size: 12px;
+  font-size: 12px;
 }
 .small-txt a {
-	color: inherit;
+  color: inherit;
 }
 .span-balance{
-	font-size: 16px;
+  font-size: 16px;
 }
 .usage-fee-txt {
-	color: red !important;
+  color: red !important;
 }
 .gallery-link {
-	margin-top: 40px;
+  margin-top: 40px;
 }
 </style>
