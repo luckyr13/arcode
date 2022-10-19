@@ -1,5 +1,9 @@
 # ArCode versions
 
+## 1.3.1
+Link (2022-10-19): 
+- Fix links
+
 ## 1.3.0
 Link (2022-10-19): https://arweave.net/HRww-Zu2bZiFZZuCYo0fN1e9KWcvTDCP8xW55bkEvwk
 - Fix DefaultWorkspace modal bug.
