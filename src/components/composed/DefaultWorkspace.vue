@@ -72,15 +72,6 @@
     
   </div>
 </div>
-<transition name="fade" v-if="workspace && workspaceReady">
-  <LoadContractFromTxDialog
-    :show="showLoadContractFromTxDialog"
-    :workspace="this"
-    :tx="tx"
-    :txField="tx"
-    :networkParam="networkParam"
-    @close="showLoadContractFromTxDialog = false"></LoadContractFromTxDialog>
-</transition>
 </template>
 
 <script setup lang="ts">
@@ -97,7 +88,6 @@ import { greeterContract } from '@/core/contract-sources/Greeter';
 import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WasmSrc } from '@/core/WarpContracts';
-import LoadContractFromTxDialog from '@/components/dialogs/LoadContractFromTxDialog';
 import { JSZipWrapper } from '@/core/JSZipWrapper';
 
 const props = defineProps({
@@ -113,8 +103,9 @@ const baseTheme = ref(props.theme);
 const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container', props.tx, props.workspaceParam);
 const editors = workspace.editors;
 const loadingFromTX = ref(false);
-const showLoadContractFromTxDialog = ref(false);
 const workspaceReady = ref(false);
+
+const emit = defineEmits(['openDialogLoadContractFromTx']);
 
 const addEditor = (
   event: Event, 
@@ -344,7 +335,7 @@ onMounted(async () => {
     loadingFromTX.value = true;
     try {
       addFolder('/', tx);
-      showLoadContractFromTxDialog.value = true;
+      emit('openDialogLoadContractFromTx');
     } catch (err) {
       createToast(`${err}`,
         {

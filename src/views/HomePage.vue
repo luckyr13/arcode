@@ -25,6 +25,7 @@
         </div>
         <div class="workspace-container">
           <DefaultWorkspace 
+            @openDialogLoadContractFromTx="showLoadContractFromTxDialog = true"
             ref="workspace"
             :tx="tx"
             :networkParam="networkParam"
@@ -62,6 +63,15 @@
       </template>
     </DefaultModal>
   </transition>
+  <transition name="fade">
+    <LoadContractFromTxDialog
+      :show="showLoadContractFromTxDialog"
+      :workspace="workspace"
+      :tx="tx"
+      :txField="tx"
+      :networkParam="networkParam"
+      @close="showLoadContractFromTxDialog = false"></LoadContractFromTxDialog>
+  </transition>
 </template>
 
 
@@ -79,7 +89,8 @@ import { createToast } from 'mosha-vue-toastify';
 import { useRoute } from 'vue-router'
 import { Login } from '@/core/Login';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
-import { tokenContract } from '@/core/contracts/ArcodeCommunity'
+import { tokenContract } from '@/core/contracts/ArcodeCommunity';
+import LoadContractFromTxDialog from '@/components/dialogs/LoadContractFromTxDialog';
 
 const props = defineProps({
   tx: String,
@@ -100,6 +111,7 @@ const workspace = ref(null);
 const loadingAppContract = ref(true);
 const tokenState = ref({});
 const showModalArweaveWebWallet = ref(false);
+const showLoadContractFromTxDialog = ref(false);
 
 const route = useRoute()
 // const tx = ref(route.params.tx);
