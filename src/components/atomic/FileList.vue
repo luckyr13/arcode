@@ -27,7 +27,7 @@
 		<li class="empty" v-if="!fileTree.children.length" >
 			<span :style="{ paddingLeft: `${level * 10}px` }">Empty folder</span> 
 		</li>
-		<template v-for="editor in fileTree.children" :key="editor.id" >
+		<template v-for="editor in sortedFiles()" :key="editor.id" >
 			<li 
 				v-if="editor.type == 'FILE'"
 				class="file"
@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 const props = defineProps({
 	workspace: Object,
@@ -68,6 +68,23 @@ onMounted(() => {
 		showFiles.value = true;
 	}
 })
+
+const sortedFiles = () => {
+	return [...props.fileTree.children].sort((e1, e2) => {
+		if (e1.type === 'FOLDER' && e2.type === 'FILE') {
+			return -1;
+		} else if (e1.type === 'FOLDER' && e2.type === 'FOLDER' && 
+			e1.name.localeCompare(e2.name) < 0 ) {
+			return -1;
+		} else if (e1.type === 'FILE' && e2.type === 'FOLDER') {
+			return 1;
+		} else if (e1.type === 'FILE' && e2.type === 'FILE' && 
+			e1.name.localeCompare(e2.name) < 0) {
+			return -1;
+		}
+		return 0;
+	});
+};
 </script>
 
 <style scoped lang="scss">

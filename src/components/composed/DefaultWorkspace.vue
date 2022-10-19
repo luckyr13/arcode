@@ -199,7 +199,9 @@ const isEditorActive = (editorId: number) => {
 };
 
 const getFileTreePaths = () => {
-  return workspace.fileTree.getTreeAsPathStringArr();
+  const res = workspace.fileTree.getTreeAsPathStringArr();
+  res.sort((a, b) => a.localeCompare(b))
+  return res;
 };
 
 const getFileTreeFilenames = () => {
