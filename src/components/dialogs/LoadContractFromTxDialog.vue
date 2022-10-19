@@ -6,7 +6,7 @@
     </template>
     <template v-slot:body>
       <template v-if="!loadingContractTX">
-        <div class="form-input">
+        <div class="form-input" v-if="workspace && workspace.getFileTreePaths">
           <label>Destination Folder</label>
           <select v-model.trim="selLoadTXLocation">
             <option value="/">/</option>
@@ -28,10 +28,10 @@
         <div class="form-input">
           <label>TX ID</label>
           <input 
-            v-model.trim="txtLoadTXFileName" 
-            @keyup.enter="txtLoadTXFileName != '' ? loadFromTXModal(txtLoadTXFileName, selLoadTXLocation, workspace) : false"
+            v-model.trim="txtLoadTXTxField" 
+            @keyup.enter="txtLoadTXTxField != '' ? loadFromTXModal(txtLoadTXTxField, selLoadTXLocation) : false"
             type="text">
-          <a v-if="tx" class="link" @click="txtLoadTXFileName = tx">Use TX address from URL</a>
+          <a v-if="tx" class="link" @click="txtLoadTXTxField = tx">Use TX address from URL</a>
         </div>
         <div class="text-right form-radio">
           <label class="">
@@ -49,10 +49,10 @@
       <div class="modal-footer text-right">
         <button 
           class="modal-button" 
-          :class="{ 'modal-button-primary': txtLoadTXFileName }"
-          :disabled="!txtLoadTXFileName"
+          :class="{ 'modal-button-primary': txtLoadTXTxField }"
+          :disabled="!txtLoadTXTxField"
           v-if="workspace && !loadingContractTX"
-          @click="loadFromTXModal(txtLoadTXFileName, selLoadTXLocation, workspace)">
+          @click="loadFromTXModal(txtLoadTXTxField, selLoadTXLocation)">
           <span >Load files into Workspace</span >
         </button>
         <button 
@@ -72,7 +72,7 @@
   </DefaultModal>
 </template>
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { ref, watchEffect, onMounted } from 'vue';
 import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WarpContracts, WasmSrc } from '@/core/WarpContracts';
@@ -83,12 +83,13 @@ import DefaultModal from '@/components/atomic/DefaultModal.vue';
 const props = defineProps({
   show: Boolean,
   workspace: Object,
-  tx: String
+  tx: String,
+  txField: String
 });
 const emit = defineEmits(['close']);
 const showTracker = ref(false);
 
-const txtLoadTXFileName = ref('');
+const txtLoadTXTxField = ref('');
 const selLoadTXLocation = ref('');
 const txtLoadTXGetLastState = ref(false);
 const loadingContractTX = ref(false);
@@ -102,7 +103,9 @@ const closeModal = () => {
 const initModalFields = () => {
   // Init fields
   selLoadTXLocation.value = '/';
-  txtLoadTXFileName.value = '';
+  if (!props.txField) {
+    txtLoadTXTxField.value = '';
+  }
   txtLoadTXGetLastState.value = false;
   selNetwork.value = 'arweave-mainnet'
 };
@@ -111,6 +114,13 @@ watchEffect(() => {
   if (props.show && !showTracker.value) {
     showTracker.value = true;
     initModalFields();
+  }
+});
+
+onMounted(() => {
+  if (props.txField) {
+    txtLoadTXTxField.value = props.txField;
+    selLoadTXLocation.value = `${selLoadTXLocation.value}${props.txField}`;
   }
 });
 

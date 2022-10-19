@@ -1,78 +1,85 @@
 <template>
-  <div class="arcode-workspace">
-    <div class="workspace-bg text-center" >
-      <AnimatedLogo />
-      <h4 class="text-center arcode-title" >
-        ArCode Studio v{{ appVersion }}
-      </h4>
-      <h5 class="text-center arcode-instructions">
-         Double Click to Start 
-      </h5>
-      <div v-if="loadingFromTX" class="text-center">
-        <div
-        class="lds-ring lds-ring-small">
-        <div></div><div></div><div></div><div></div></div>
-      </div>
-    </div>
-    <div class="workspace" @dblclick="addEditor($event, true)">
-      <div class="tabs">
-        <div 
-          id="arcode-editor-tabs-container" 
-          class="tabs-container" 
-          @dblclick="addEditor($event, true)">
-          <template
-            v-for="editor in editors"
-            :key="editor.id">
-            <div 
-              class="tab" 
-              @click="selectEditor(editor.id, $event)"
-              v-if="editor.active"
-              :class="{ active: editor.id == getCurrentEditorId() }"> 
-              <div class="tab-button-label">{{ editor.name }}</div>
-              <button 
-                class="button tab-button-close" 
-                type="button" 
-                @click="closeEditor(editor.id, $event)">x</button>
-            </div>
-          </template>
-        </div>
-        <div class="tabs-menu">
-          <button 
-            class="button" 
-            type="button" 
-            @click="addEditor($event)"
-            data-tippy-workspace-content="New File">
-              <DefaultIcon icon="codicon-new-file" />
-          </button>
-          <button 
-            class="button" 
-            type="button" 
-            @click="scrollEditor('left')"
-            data-tippy-workspace-content="Scroll left">
-              <DefaultIcon icon="codicon-chevron-left" />
-          </button>
-          <button 
-            class="button" 
-            type="button" 
-            @click="scrollEditor('right')"
-            data-tippy-workspace-content="Scroll right">
-              <DefaultIcon icon="codicon-chevron-right" />
-          </button>
-        </div>
-      </div>
-
-      <template
-        v-for="editor in editors"
-        :key="editor.id">
-        <div class="editor"
-          v-if="editor.active && getCurrentEditorId() >= 0"
-          :class="{ active: editor.id == getCurrentEditorId() }"
-          :ref="el => { if (el) { divs[editor.id] = el; } }"></div>
-      </template>
-      
+<div class="arcode-workspace">
+  <div class="workspace-bg text-center" >
+    <AnimatedLogo />
+    <h4 class="text-center arcode-title" >
+      ArCode Studio v{{ appVersion }}
+    </h4>
+    <h5 class="text-center arcode-instructions">
+       Double Click to Start 
+    </h5>
+    <div v-if="loadingFromTX" class="text-center">
+      <div
+      class="lds-ring lds-ring-small">
+      <div></div><div></div><div></div><div></div></div>
     </div>
   </div>
-  
+  <div class="workspace" @dblclick="addEditor($event, true)">
+    <div class="tabs">
+      <div 
+        id="arcode-editor-tabs-container" 
+        class="tabs-container" 
+        @dblclick="addEditor($event, true)">
+        <template
+          v-for="editor in editors"
+          :key="editor.id">
+          <div 
+            class="tab" 
+            @click="selectEditor(editor.id, $event)"
+            v-if="editor.active"
+            :class="{ active: editor.id == getCurrentEditorId() }"> 
+            <div class="tab-button-label">{{ editor.name }}</div>
+            <button 
+              class="button tab-button-close" 
+              type="button" 
+              @click="closeEditor(editor.id, $event)">x</button>
+          </div>
+        </template>
+      </div>
+      <div class="tabs-menu">
+        <button 
+          class="button" 
+          type="button" 
+          @click="addEditor($event)"
+          data-tippy-workspace-content="New File">
+            <DefaultIcon icon="codicon-new-file" />
+        </button>
+        <button 
+          class="button" 
+          type="button" 
+          @click="scrollEditor('left')"
+          data-tippy-workspace-content="Scroll left">
+            <DefaultIcon icon="codicon-chevron-left" />
+        </button>
+        <button 
+          class="button" 
+          type="button" 
+          @click="scrollEditor('right')"
+          data-tippy-workspace-content="Scroll right">
+            <DefaultIcon icon="codicon-chevron-right" />
+        </button>
+      </div>
+    </div>
+
+    <template
+      v-for="editor in editors"
+      :key="editor.id">
+      <div class="editor"
+        v-if="editor.active && getCurrentEditorId() >= 0"
+        :class="{ active: editor.id == getCurrentEditorId() }"
+        :ref="el => { if (el) { divs[editor.id] = el; } }"></div>
+    </template>
+    
+  </div>
+</div>
+<transition name="fade" v-if="workspace">
+  <LoadContractFromTxDialog
+    :show="showLoadContractFromTxDialog"
+    :workspace="this"
+    :tx="tx"
+    :txField="tx"
+    @close="showLoadContractFromTxDialog = false"></LoadContractFromTxDialog>
+</transition>
 </template>
 
 <script setup lang="ts">
@@ -89,6 +96,7 @@ import { greeterContract } from '@/core/contract-sources/Greeter';
 import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WasmSrc } from '@/core/WarpContracts';
+import LoadContractFromTxDialog from '@/components/dialogs/LoadContractFromTxDialog';
 
 const props = defineProps({
   theme: String,
@@ -102,6 +110,7 @@ const baseTheme = ref(props.theme);
 const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container', props.tx);
 const editors = workspace.editors;
 const loadingFromTX = ref(false);
+const showLoadContractFromTxDialog = ref(false);
 
 const addEditor = (
   event: Event, 
@@ -329,7 +338,7 @@ onMounted(async () => {
     try {
       const network = props.networkParam ? props.networkParam : undefined;
       addFolder('/', tx);
-      await loadEditorFromTX(tx, `/${tx}`, network);
+      showLoadContractFromTxDialog.value = true;
     } catch (err) {
       createToast(`${err}`,
         {
@@ -351,264 +360,6 @@ onMounted(async () => {
 
 });
 
-const loadEditorFromTX = async (tx: string, path: string, networkParam?: string) => {
-  const arweaveWrapper = new ArweaveWrapper(networkParam);
-  const arweave = arweaveWrapper.arweave;
-  const ardbWrapper = new ArDBWrapper(arweave);
-  const ardb = ardbWrapper.ardb;
-  const gatewayUrl = arweaveWrapper.secondaryRedstoneGW;
-  let res = undefined;
-  const onlyInParent= false;
-  const inputEvent = new Event('empty-event');
-
-  try {
-    res = await ardb.search('transaction').id(
-      tx
-    ).findOne();
-  } catch (err) {
-    console.log('loadEditorFromTx', err)
-  }
-
-  if (res) {
-    const tags = {};
-    // Get contract if possible
-    res.tags.forEach(async tag => {
-      const key = tag.name;
-      const value = tag.value;
-      tags[key] = value;
-    });
-    const datatype = res.data.type;
-
-    let data = '';
-    let filename = `${tx}`;
-    if (datatype === 'application/javascript') {
-      filename = `${tx}.js`;
-      data = await arweaveWrapper.getTXData(tx);
-      createToast(`JS file found!`,
-        {
-          type: 'success',
-          showIcon: true,
-          position: 'bottom-right',
-        });
-    } else if (datatype === 'application/json') {
-      filename = `${tx}.json`;
-      data = await arweaveWrapper.getTXData(tx);
-      const replacer = undefined;
-      const space = 4;
-      if (data) {
-        data = JSON.stringify(JSON.parse(data), replacer, space);
-      }
-      createToast(`JSON file found!`,
-        {
-          type: 'success',
-          showIcon: true,
-          position: 'bottom-right',
-        });
-    } else if (datatype === 'application/wasm') {
-      data = await arweaveWrapper.getTXData(tx, false);
-      const buffer = Buffer.from(data);
-      //filename = `${tx}.wasm`;
-      /*
-      const fileId = workspace.fileTree.findFileIdByName(path, filename);
-      if (fileId < 0) {
-        addEditor(inputEvent, onlyInParent, buffer.toString(), filename, path);
-      } else {
-        console.log(`${filename} already in workspace!`);
-        workspace.selectEditor(fileId, new Event('selectEditor'));
-      }
-      */
-
-      const wasmSrc = new WasmSrc(buffer);
-      data = await wasmSrc.sourceCode();
-
-      createToast(`WASM source found!`,
-      {
-        type: 'success',
-        showIcon: true,
-        position: 'bottom-right',
-      });
-
-      // Load all source files
-      for (const tmpFName of data.keys()) {
-        const finalNameArr = tmpFName.split('/');
-        let finalName = '';
-        let finalPath = '';
-        if (finalNameArr.length) {
-          const finalIndex = finalNameArr.length - 1;
-          finalName = finalNameArr[finalIndex];
-
-          // Create new directories
-          if (finalIndex - 1 >= 0) {
-            finalPath = finalNameArr.slice(0, finalIndex).join('/');
-            createDirectoryStructure(path, finalPath);
-          }
-        }
-
-        const fileId = workspace.fileTree.findFileIdByName(path, tmpFName);
-        if (fileId < 0) {
-          addEditor(
-            inputEvent, 
-            onlyInParent, 
-            data.get(tmpFName), 
-            finalName, 
-            `${path}/${finalPath}`);
-        } else {
-          console.log(`${tmpFName} already in workspace!`);
-          workspace.selectEditor(fileId, new Event('selectEditor'));
-        }
-       
-      }
-      
-      // force End wasm
-      return;
-    } else {
-      data = Object.prototype.hasOwnProperty.call(tags, 'Init-State') ?
-        tags['Init-State'] : '';
-      if (data) {
-        filename = `${tx}.json`;
-        const replacer = undefined;
-        const space = 4;
-        data = JSON.stringify(JSON.parse(data), replacer, space);
-        createToast(`NFT Atomic Asset found! Loading state ...`,
-        {
-          type: 'success',
-          showIcon: true,
-          position: 'bottom-right',
-        });
-      } else {
-        throw Error('Invalid contract source!');
-      }
-    }
-
-    const fileId = workspace.fileTree.findFileIdByName(path, filename);
-    if (fileId < 0) {
-      addEditor(inputEvent, onlyInParent, data, filename, path);
-    } else {
-      console.log(`${filename} already in workspace!`);
-      workspace.selectEditor(fileId, new Event('selectEditor'));
-    }
-    
-    
-    // Search if it has a contract src available
-    const contractSrc = Object.prototype.hasOwnProperty.call(tags, 'Contract-Src') ?
-      tags['Contract-Src'] : '';
-
-    if (contractSrc) {
-      await loadEditorFromTX(tags['Contract-Src'], path, networkParam);
-    }   
-  } // If tx not found
-  else {
-    try {
-      const gatewayUrl = arweaveWrapper.secondaryRedstoneGW;
-      createToast(`Fetching contract from secondary gw ...`,
-        {
-          type: 'warning',
-          showIcon: true,
-          position: 'bottom-right',
-      });
-      const tmp_res = await fetch(`${gatewayUrl}/gateway/contracts/${tx}`);
-      if (tmp_res.ok) {
-        const tmp_data = JSON.parse(await tmp_res.text());
-        let srcData = tmp_data.src;
-        let initStateData = '';
-
-        if (tmp_data.initState) {
-          const replacer = undefined;
-          const space = 4;
-          initStateData = JSON.stringify(tmp_data.initState, replacer, space);
-        }
-
-        // Check if it is WASM
-        let fileNameJs = `${tx}.js`;
-        let WASMbuffer = null;
-        if (!srcData && tmp_data.srcBinary) {
-          fileNameJs = `${tx}.wasm`;
-          srcData = undefined;
-          WASMbuffer = Buffer.from(tmp_data.srcBinary);
-        }
-        const fileIdJs = workspace.fileTree.findFileIdByName(path, fileNameJs);
-        if (fileIdJs < 0 && srcData) {
-          addEditor(inputEvent, onlyInParent, srcData, fileNameJs, path);
-        } else if (fileIdJs >= 0) {
-          console.log(`${tx}.js already in workspace!`);
-          workspace.selectEditor(fileIdJs, new Event('selectEditor'));
-        }
-
-        const fileIdJson = workspace.fileTree.findFileIdByName(path, `${tx}.json`);
-        if (fileIdJson < 0 && initStateData) {
-          addEditor(inputEvent, onlyInParent, initStateData, `${tx}.json`, path);
-        } else if (fileIdJson >= 0) {
-          console.log(`${tx}.json already in workspace!`);
-          workspace.selectEditor(fileIdJson, new Event('selectEditor'));
-        }
-
-        // Load WASM
-        if (!WASMbuffer) {
-          // End function
-          return;
-        }
-
-        const wasmSrc = new WasmSrc(WASMbuffer);
-        const sourceCodeObj = await wasmSrc.sourceCode();
-
-        createToast(`WASM source found!`,
-        {
-          type: 'success',
-          showIcon: true,
-          position: 'bottom-right',
-        });
-
-        // Load all source files
-        for (const tmpFName of sourceCodeObj.keys()) {
-          const finalNameArr = tmpFName.split('/');
-          let finalName = '';
-          let finalPath = '';
-          if (finalNameArr.length) {
-            const finalIndex = finalNameArr.length - 1;
-            finalName = finalNameArr[finalIndex];
-
-            // Create new directories
-            if (finalIndex - 1 >= 0) {
-              finalPath = finalNameArr.slice(0, finalIndex).join('/');
-              createDirectoryStructure(path, finalPath);
-            }
-          }
-
-          const fileId = workspace.fileTree.findFileIdByName(path, tmpFName);
-          if (fileId < 0) {
-            addEditor(
-              inputEvent, 
-              onlyInParent, 
-              sourceCodeObj.get(tmpFName), 
-              finalName, 
-              `${path}/${finalPath}`);
-          } else {
-            console.log(`${tmpFName} already in workspace!`);
-            workspace.selectEditor(fileId, new Event('selectEditor'));
-          }
-        }
-        
-      }
-    } catch (err) {
-      console.log('loadEditorFromTx2', err)
-    }
-  }
-
-};
-
-
-const createDirectoryStructure = (root: string, path: string) => {
-  const elements = path.split('/');
-  let tmpPath = `${root}`;
-  for (const e of elements) {
-    try {
-      addFolder(`${tmpPath}`, e, true);
-      tmpPath += `/${e}`;
-    } catch (err) {
-      console.log('dirStructure:', err);
-    }
-  }
-};
 
 </script>
 
@@ -738,6 +489,15 @@ $workspace-tabs-height: 35px;
   background: black;
   border-radius: 20px;
   color: white;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 </style>
