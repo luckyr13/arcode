@@ -6,17 +6,19 @@ export class FileTree
 	private _tree: FileTreeFolder;
 	private _storage = window.localStorage;
 	private _tx = '';
+	private _workspaceParam = '';
 
-	constructor(tx='') {
+	constructor(tx='', workspaceParam='') {
 		this._tree = {
 			name: '',
 			children: [],
 			type: 'FOLDER'
 		};
-		if (this._storage.getItem('tree') !== null && !tx) {
+		if (this._storage.getItem('tree') !== null && !tx && !workspaceParam) {
 			this._tree = JSON.parse(this._storage.getItem('tree')!);
 		}
 		this._tx = tx;
+		this._workspaceParam = workspaceParam;
 	}
 
 	private _breakPath(path: string) {
@@ -83,7 +85,7 @@ export class FileTree
 
 		// Search in Tree 
 		this._addFolderHelper(this._tree, folders, newFolder);
-		if (!this._tx) {
+		if (!this._tx && !this._workspaceParam) {
 			this._storage.setItem('tree', JSON.stringify(this._tree));
 		}
 	}
@@ -138,7 +140,7 @@ export class FileTree
 		const folders = this._breakPath(path);
 		// Search in Tree 
 		this._addFileHelper(this._tree, folders, file);
-		if (!this._tx) {
+		if (!this._tx && !this._workspaceParam) {
 			this._storage.setItem('tree', JSON.stringify(this._tree));
 		}
 	}
@@ -175,7 +177,7 @@ export class FileTree
 	public removeFolder(path: string): void {
 		const folders = this._breakPath(path);
 		this._removeFolderHelper(this._tree, folders);
-		if (!this._tx) {
+		if (!this._tx && !this._workspaceParam) {
 			this._storage.setItem('tree', JSON.stringify(this._tree));
 		}
 	}
@@ -245,7 +247,7 @@ export class FileTree
 	public removeFile(fileId: number): void {
 		// Search in Tree 
 		this._removeFileHelper(this._tree, fileId);
-		if (!this._tx) {
+		if (!this._tx && !this._workspaceParam) {
 			this._storage.setItem('tree', JSON.stringify(this._tree));
 		}
 	}
@@ -316,7 +318,7 @@ export class FileTree
 	public updateFileById(fileId: number, name: string): void {
 		// Search in Tree 
 		this._updateFileByIdHelper(this._tree, fileId, name);
-		if (!this._tx) {
+		if (!this._tx && !this._workspaceParam) {
 			this._storage.setItem('tree', JSON.stringify(this._tree));
 		}
 	}

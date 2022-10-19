@@ -11,7 +11,8 @@ const routes: Array<RouteRecordRaw> = [
         tx: route.params.tx,
         hideToolbar: !!route.query.hideToolbar,
         theme: route.query.theme,
-        networkParam: route.query.network
+        networkParam: route.query.network,
+        workspaceParam: route.query.workspace
       }
     }
   }

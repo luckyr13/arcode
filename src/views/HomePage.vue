@@ -28,7 +28,8 @@
             ref="workspace"
             :tx="tx"
             :networkParam="networkParam"
-            :theme="theme" />
+            :theme="theme"
+            :workspaceParam="workspaceParam" />
         </div>
       </div>
       <StatusBar :workspace="workspace" />
@@ -84,7 +85,8 @@ const props = defineProps({
   tx: String,
   hideToolbar: Boolean,
   theme: String,
-  networkParam: String
+  networkParam: String,
+  workspaceParam: String
 });
 
 const us: UserSettings = new UserSettings();

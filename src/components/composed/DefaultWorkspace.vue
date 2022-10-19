@@ -98,17 +98,19 @@ import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WasmSrc } from '@/core/WarpContracts';
 import LoadContractFromTxDialog from '@/components/dialogs/LoadContractFromTxDialog';
+import { JSZipWrapper } from '@/core/JSZipWrapper';
 
 const props = defineProps({
   theme: String,
   tx: String,
-  networkParam: String
+  networkParam: String,
+  workspaceParam: String
 });
 // const emit = defineEmits(['workspace-change']);
 
 const divs = ref([]);
 const baseTheme = ref(props.theme);
-const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container', props.tx);
+const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container', props.tx, props.workspaceParam);
 const editors = workspace.editors;
 const loadingFromTX = ref(false);
 const showLoadContractFromTxDialog = ref(false);
@@ -329,9 +331,10 @@ onMounted(async () => {
 
   // Load contract from url
   const tx = props.tx;
+  const workspaceParam = props.workspaceParam;
   // IF Single File Mode
   if (tx) {
-    createToast(`Running in Single File Mode.`,
+    createToast(`Running in Sandbox Mode.`,
       {
         type: 'warning',
         showIcon: true,
@@ -339,7 +342,6 @@ onMounted(async () => {
       });
     loadingFromTX.value = true;
     try {
-      const network = props.networkParam ? props.networkParam : undefined;
       addFolder('/', tx);
       showLoadContractFromTxDialog.value = true;
     } catch (err) {
@@ -351,7 +353,31 @@ onMounted(async () => {
         });
     }
     loadingFromTX.value = false;
-  } else {
+  }
+  // Single File Mode: Workspace
+  else if (workspaceParam) {
+    createToast(`Running in Sandbox Mode.`,
+      {
+        type: 'warning',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+    loadingFromTX.value = true;
+    try {
+      // Load workspace
+      await loadWorkspaceFromParam(workspaceParam);
+    } catch (err) {
+      createToast(`${err}`,
+        {
+          type: 'danger',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+    }
+    loadingFromTX.value = false;
+  }
+  // Else, load stored tree
+  else {
     const tree = getFileTree();
     if (tree.children.length === 0) {
       // Load examples
@@ -363,6 +389,76 @@ onMounted(async () => {
 
 });
 
+const loadWorkspaceFromParam = async (workspaceId: string) => {
+  const arweaveWrapper = new ArweaveWrapper();
+  const asString = false;
+  const file = await arweaveWrapper.getTXData(workspaceId, asString);
+  await openWorkspace_helper(file);
+};
+
+const openWorkspace_helper = (zipFile: File): Promise<void> => {
+  const zip = new JSZipWrapper();
+  const method = new Promise<string>((resolve, reject) => {
+    zip.openZip(zipFile).then((zFile) => {
+      const files = [];
+
+      zFile.forEach(function (relativePath, zipEntry) {
+        if (zipEntry.dir) {
+          const fullPath = zipEntry.name.slice(0, -1);
+          createDirectoryStructureFromPath(fullPath);
+        } else {
+          files.push(zipEntry);
+        }
+      });
+
+      // Add files
+      for (const file of files) {
+        const emptyEvent = new Event('emptyEvent');
+        const fragments = file.name.split('/');
+        const realFName = fragments[fragments.length - 1];
+        const path = '/' + file.name.substring(0, file.name.length - (realFName.length + 1));
+        
+        zFile.file(file.name).async("string").then((data) => {
+          addEditor(
+            emptyEvent,
+            false,
+            data,
+            realFName,
+            path,
+            false);
+        }).catch((error) => {
+          console.error('zipFE:', error);
+        })
+
+        
+      }
+      resolve();
+    }).catch((error) => {
+      createToast(`${error}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+      reject(error);
+    });
+
+  });
+  return method;
+};
+
+const createDirectoryStructureFromPath = (path: string) => {
+  const elements = path.split('/');
+  let tmpPath = '';
+  for (const e of elements) {
+    try {
+      addFolder(tmpPath ? tmpPath : '/', e, true);
+      tmpPath += `/${e}`;
+    } catch (err) {
+      console.log('dirStructure:', err);
+    }
+  }
+};
 
 </script>
 

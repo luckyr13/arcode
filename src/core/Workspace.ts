@@ -22,9 +22,9 @@ export class Workspace extends BaseWorkspace  {
 		return this._fileTree;
 	}
 
-	constructor(theme= '', tabsContainerId= '', tx= '') {
-		super(theme, tx);
-    this._fileTree = <FileTree>reactive(new FileTree(tx));
+	constructor(theme= '', tabsContainerId= '', tx= '', workspaceParam='') {
+		super(theme, tx, workspaceParam);
+    this._fileTree = <FileTree>reactive(new FileTree(tx, workspaceParam));
 		this._tabsContainerId = tabsContainerId;
 	}
 
