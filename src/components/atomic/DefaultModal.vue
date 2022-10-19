@@ -54,6 +54,8 @@ const props = defineProps({
 
 .modal-container {
   max-width: 400px;
+  max-height: 600px;
+  overflow-y: auto;
   margin: 0px auto;
   padding: 20px 20px;
   border-radius: 2px;
@@ -77,6 +79,8 @@ const props = defineProps({
 
 .modal-body {
   margin: 20px 0;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .modal-button {
