@@ -21,7 +21,7 @@
     "@codemirror/legacy-modes": "^6.1.0",
     "@codemirror/state": "^6.1.2",
     "@codemirror/theme-one-dark": "^6.1.0",
-    "@codemirror/view": "^6.3.1",
+    "@codemirror/view": "^6.4.0",
     "@vscode/codicons": "^0.0.32",
     "animejs": "^3.2.1",
     "ardb": "^1.1.10",
@@ -39,8 +39,8 @@
     "warp-contracts": "^1.2.13"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.40.0",
-    "@typescript-eslint/parser": "^5.40.0",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
     "@vue/cli-plugin-babel": "~5.0.4",
     "@vue/cli-plugin-eslint": "~5.0.4",
     "@vue/cli-plugin-pwa": "~5.0.4",
