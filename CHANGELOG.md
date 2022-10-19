@@ -1,14 +1,14 @@
 # ArCode versions
 
 ## 1.2.9
+Link (2022-10-19): https://arweave.net/EBm-uJBJuwBs8qpY862Pq2RaH7DLRszthWWCuPweizA
 - ?workspace: url parameter added. Load workspace from tx
 + ArCode Gallery ready!
 + Fixed bugs on Sandbox modals
 + Dispatch method implemented for publishing in ArCode Gallery
 
 ## 1.2.8
-DEMO: 
-https://arweave.net/n0b8lGXuTWq-KOJfeMqqs5YXYdD_JJFsggsNQczyPRM
+Link (2022-10-19): https://arweave.net/n0b8lGXuTWq-KOJfeMqqs5YXYdD_JJFsggsNQczyPRM
 + ArCode Gallery added:
   - Publish workspace (ready!).
   - My Gallery (pending).
@@ -20,4 +20,4 @@ https://arweave.net/n0b8lGXuTWq-KOJfeMqqs5YXYdD_JJFsggsNQczyPRM
 - Open/Download workspace options added
 
 ## 1.2.6
-DEMO (2022-09-21): https://arweave.net/MacjUiZks6KJajFzUGwe51eR1axxWkKKbFjUbk4XodQ
+Link (2022-09-21): https://arweave.net/MacjUiZks6KJajFzUGwe51eR1axxWkKKbFjUbk4XodQ
