@@ -1,5 +1,8 @@
 # ArCode versions
 
+## 1.3.0
+- Fix DefaultWorkspace modal bug.
+
 ## 1.2.9
 Link (2022-10-19): https://arweave.net/EBm-uJBJuwBs8qpY862Pq2RaH7DLRszthWWCuPweizA
 - ?workspace: url parameter added. Load workspace from tx

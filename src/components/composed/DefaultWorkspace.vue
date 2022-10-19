@@ -72,7 +72,7 @@
     
   </div>
 </div>
-<transition name="fade" v-if="workspace">
+<transition name="fade" v-if="workspace && workspaceReady">
   <LoadContractFromTxDialog
     :show="showLoadContractFromTxDialog"
     :workspace="this"
@@ -114,6 +114,7 @@ const workspace = new Workspace(baseTheme.value, 'arcode-editor-tabs-container',
 const editors = workspace.editors;
 const loadingFromTX = ref(false);
 const showLoadContractFromTxDialog = ref(false);
+const workspaceReady = ref(false);
 
 const addEditor = (
   event: Event, 
@@ -386,6 +387,8 @@ onMounted(async () => {
      loadTree();
     }
   }
+  // Workspace ready!
+  workspaceReady.value = true;
 
 });
 
