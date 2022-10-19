@@ -172,15 +172,27 @@ button {
   display: block;
 }
 
-.title-icon {
-  float: left;
-  line-height: 32px;
-  font-size: 32px !important;
-}
 .small-txt {
   font-size: 12px;
 }
 .small-txt a {
   color: inherit;
+}
+
+$title-icon-size: 32px;
+.title-icon {
+  float: left;
+  line-height: $title-icon-size;
+  font-size: $title-icon-size !important;
+}
+.modal-header h3 span {
+  line-height: $title-icon-size;
+  margin-left: 10px;
+
+}
+.modal-header h3 {
+  line-height: $title-icon-size;
+  font-size: 20px;
+
 }
 </style>

@@ -161,16 +161,6 @@ h3 span {
   color: gray;
   cursor: default;
 }
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
 .gallery-link {
   margin-top: 40px;
 }

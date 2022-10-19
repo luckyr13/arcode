@@ -102,9 +102,9 @@ const closeModal = () => {
 
 const initModalFields = () => {
   // Init fields
-  selLoadTXLocation.value = '/';
   if (!props.txField) {
     txtLoadTXTxField.value = '';
+    selLoadTXLocation.value = '/';
   }
   txtLoadTXGetLastState.value = false;
   selNetwork.value = 'arweave-mainnet'
@@ -120,7 +120,7 @@ watchEffect(() => {
 onMounted(() => {
   if (props.txField) {
     txtLoadTXTxField.value = props.txField;
-    selLoadTXLocation.value = `${selLoadTXLocation.value}${props.txField}`;
+    selLoadTXLocation.value = `/${props.txField}`;
   }
 });
 
