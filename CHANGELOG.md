@@ -1,5 +1,11 @@
 # ArCode versions
 
+## 1.2.9
+- ?workspace: url parameter added. Load workspace from tx
++ ArCode Gallery ready!
++ Fixed bugs on Sandbox modals
++ Dispatch method implemented for publishing in ArCode Gallery
+
 ## 1.2.8
 DEMO: 
 https://arweave.net/n0b8lGXuTWq-KOJfeMqqs5YXYdD_JJFsggsNQczyPRM
