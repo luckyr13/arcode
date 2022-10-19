@@ -16,7 +16,9 @@
         Loading ...
       </div>
       <div class="gallery-card" v-for="g in galleryResults" :key="g.id">
-        {{ formatResultTx(g) }}
+        <h4>Workspace name: {{ g.name }}</h4>
+        <h5>Tx: {{ g.id }}</h5>
+        <p>Description: {{ g.description }}</p>
       </div>
     </template>
     <template v-slot:footer>
@@ -91,12 +93,14 @@ const loadGallery = async (address: string, limit: number) => {
       values: 'Workspace'
     },);
     
-    galleryResults.value = await ardbWrapper.findFromOwners(
+    const tmpRes = await ardbWrapper.findFromOwners(
       address, limit, tags, sortOrder
     );
 
-    for (let i = 0; i < galleryResults.value.length; i++) {
+    for (let i = 0; i < tmpRes.length; i++) {
       galleryResultsMetadata.value.push({ visible: false });
+      const fr = await formatResultTx(tmpRes[i]);
+      galleryResults.value.push(fr);
     }
 
     
@@ -169,14 +173,28 @@ const closeModal = () => {
   emit('close');
 };
 
-const formatResultTx = (tx): GalleryItem => {
+const formatResultTx = async (tx): GalleryItem => {
   const res: GalleryItem = {
     id: tx.id,
     name: '',
     description: ''
-  }
+  };
+  const tags = tx.tags;
+
+  res.name = searchKeyNameInTags(tags, 'WorkspaceName');
+  res.description = searchKeyNameInTags(tags, 'WorkspaceDescription');
+  
   return res;
 };
+
+const searchKeyNameInTags = (_arr: any[], _key: string) => {
+  for (const a of _arr) {
+    if (a.name.toUpperCase() === _key.toUpperCase()) {
+      return a.value;
+    }
+  }
+  return '';
+}
 </script>
 
 <style scoped lang="scss">
