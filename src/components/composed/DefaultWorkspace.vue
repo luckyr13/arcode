@@ -78,6 +78,7 @@
     :workspace="this"
     :tx="tx"
     :txField="tx"
+    :networkParam="networkParam"
     @close="showLoadContractFromTxDialog = false"></LoadContractFromTxDialog>
 </transition>
 </template>

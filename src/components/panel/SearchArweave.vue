@@ -540,13 +540,14 @@ import {ref, computed, reactive} from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { 
 	ArweaveWrapper, arweaveNetworks,onMainnetByString,
-	onTestnetByString } from '@/core/ArweaveWrapper';
+	onTestnetByString, defaultNetwork } from '@/core/ArweaveWrapper';
 import { ArDBWrapper, ArDBTag } from '@/core/ArDBWrapper';
 import { createToast } from 'mosha-vue-toastify';
 const props = defineProps({
 	mainAddress: String,
 	login: Object,
-	tx: String
+	tx: String,
+	networkParam: String
 });
 
 const txtTxId = ref('');
@@ -554,7 +555,8 @@ const txtAddress = ref('');
 const txtResLimit = ref(10);
 const txtResLimitAdvanced = ref(10);
 const selSearchMethod = ref('tx');
-const selNetwork = ref('arweave-mainnet');
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
+const selNetwork = ref(defaultSelNetwork);
 const loadingSearch = ref(false);
 const loadingMoreResults = ref(false);
 const resultsTX = ref({});

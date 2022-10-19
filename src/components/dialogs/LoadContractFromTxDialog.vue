@@ -6,7 +6,7 @@
     </template>
     <template v-slot:body>
       <template v-if="!loadingContractTX">
-        <div class="form-input" v-if="workspace && workspace.getFileTreePaths">
+        <div class="form-input">
           <label>Destination Folder</label>
           <select v-model.trim="selLoadTXLocation">
             <option value="/">/</option>
@@ -51,7 +51,7 @@
           class="modal-button" 
           :class="{ 'modal-button-primary': txtLoadTXTxField }"
           :disabled="!txtLoadTXTxField"
-          v-if="workspace && !loadingContractTX"
+          v-if="!loadingContractTX"
           @click="loadFromTXModal(txtLoadTXTxField, selLoadTXLocation)">
           <span >Load files into Workspace</span >
         </button>
@@ -73,7 +73,7 @@
 </template>
 <script setup lang="ts">
 import { ref, watchEffect, onMounted } from 'vue';
-import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
+import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WarpContracts, WasmSrc } from '@/core/WarpContracts';
 import { createToast } from 'mosha-vue-toastify';
@@ -84,7 +84,8 @@ const props = defineProps({
   show: Boolean,
   workspace: Object,
   tx: String,
-  txField: String
+  txField: String,
+  networkParam: String
 });
 const emit = defineEmits(['close']);
 const showTracker = ref(false);
@@ -93,7 +94,8 @@ const txtLoadTXTxField = ref('');
 const selLoadTXLocation = ref('');
 const txtLoadTXGetLastState = ref(false);
 const loadingContractTX = ref(false);
-const selNetwork = ref('arweave-mainnet');
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
+const selNetwork = ref(defaultSelNetwork);
 
 const closeModal = () => {
   showTracker.value = false;
@@ -107,7 +109,7 @@ const initModalFields = () => {
     selLoadTXLocation.value = '/';
   }
   txtLoadTXGetLastState.value = false;
-  selNetwork.value = 'arweave-mainnet'
+  selNetwork.value = defaultSelNetwork;
 };
 
 watchEffect(() => {

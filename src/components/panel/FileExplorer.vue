@@ -118,6 +118,7 @@
 		:show="showModalLoadContractFromTx"
 		:workspace="workspace"
 		:tx="tx"
+		:networkParam="networkParam"
 		@close="showModalLoadContractFromTx = false"></LoadContractFromTxDialog>
 </transition>
 <transition name="fade">
@@ -195,7 +196,7 @@ import LoadContractFromTxDialog from '@/components/dialogs/LoadContractFromTxDia
 import FileList from '@/components/atomic/FileList.vue';
 import fileDownload from 'js-file-download';
 import { EditorViewMetadata } from '@/core/interfaces/EditorViewMetadata';
-import { ArweaveWrapper } from '@/core/ArweaveWrapper';
+import { ArweaveWrapper, defaultNetwork } from '@/core/ArweaveWrapper';
 import { createToast } from 'mosha-vue-toastify';
 import { JSZipWrapper } from '@/core/JSZipWrapper';
 
@@ -204,12 +205,14 @@ const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
 const showModalOpenFile = ref(false);
 const showModalEditFile = ref(false);
-const selNetwork = ref('arweave-mainnet');
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
+const selNetwork = ref(defaultSelNetwork);
 
 const props = defineProps({
 	workspace: Object,
 	tx: String,
-	login: Object
+	login: Object,
+	networkParam: String
 });
 
 const openFile = (inputId: string) => {

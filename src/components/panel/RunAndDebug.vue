@@ -218,7 +218,7 @@
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { UserSettings } from '@/core/UserSettings';
-import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
+import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper';
 import { createToast } from 'mosha-vue-toastify';
 import { WarpContracts, Tags, ArTransfer } from '@/core/WarpContracts';
 
@@ -231,7 +231,8 @@ const networks = computed(() => {
 });
 const rdFilter = ref('viewState');
 const rdInputDataType = ref('input');
-const selNetwork = ref('arweave-mainnet');
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
+const selNetwork = ref(defaultSelNetwork);
 const prevNetwork = ref(selNetwork.value);
 const txtContract = ref('');
 const response = ref({});
@@ -247,7 +248,8 @@ const props = defineProps({
 	tokenState: Object,
 	login: Object,
 	tx: String,
-	iframe: Boolean
+	iframe: Boolean,
+	networkParam: String
 });
 
 const mainAddress = ref(props.login.mainAddress);

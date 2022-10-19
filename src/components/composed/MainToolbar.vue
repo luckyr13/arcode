@@ -35,25 +35,29 @@
 		</div>
 		<div class="side-container" :style="{ width: `${sideContainerWidth}px` }" v-if="showPanel">
 			<FileExplorer 
-					v-if="options['primary']['file-explorer'].active"
-					:tx="tx"
-					:login="login"
-					:workspace="workspace"/>
+				v-if="options['primary']['file-explorer'].active"
+				:tx="tx"
+				:login="login"
+				:networkParam="networkParam"
+				:workspace="workspace"/>
 			<RunAndDebug 
+				v-if="options['primary']['compile'].active" 
 				:tx="tx"
 				:login="login"
 				:iframe="iframe"
-				v-if="options['primary']['compile'].active" 
+				:networkParam="networkParam"
 				:workspace="workspace"
 				:tokenState="tokenState" />
 			<SearchArweave
 				:tx="tx"
 				:login="login"
+				:networkParam="networkParam"
 				v-if="options['primary']['explore'].active" />
 			<DeployContract
+				v-if="options['primary']['deploy'].active"
 				:login="login"
 				:iframe="iframe"
-				v-if="options['primary']['deploy'].active"
+				:networkParam="networkParam"
 				:workspace="workspace" 
 				:tokenState="tokenState" />
 			<ArCodeGallery 
@@ -104,7 +108,8 @@ const props = defineProps({
 	iframe: Boolean,
 	tx: String,
 	hideToolbar: Boolean,
-	login: Object
+	login: Object,
+	networkParam: String
 });
 const showPanel = ref(false);
 const selectedOption = ref('');

@@ -189,7 +189,7 @@ import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { UserSettings } from '@/core/UserSettings';
 import { Login } from '@/core/Login';
-import { ArweaveWrapper, arweaveNetworks } from '@/core/ArweaveWrapper';
+import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper';
 import { 
 	WarpContracts, ContractData, ArWallet, 
 	FromSrcTxContractData, ArTransfer, Tags } from '@/core/WarpContracts';
@@ -210,13 +210,15 @@ const selDeployFileStateLocation2 = ref('');
 const deployedContractTX = ref('');
 const loadingDeployContract = ref(false);
 const selDeployMethod = ref('contract-src-file');
-const selNetwork = ref('arweave-mainnet');
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
+const selNetwork = ref(defaultSelNetwork);
 const prevNetwork = ref(selNetwork.value);
 const props = defineProps({
 	iframe: Boolean,
 	workspace: Object,
 	tokenState: Object,
-	login: Object
+	login: Object,
+	networkParam: String
 });
 const tagsList1 = reactive<Tags>([]);
 const tagsList2 = reactive<Tags>([]);

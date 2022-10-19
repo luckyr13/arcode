@@ -71,7 +71,7 @@ const initModalFields = () => {
 };
 
 watchEffect(() => {
-	if (props.size && !showTracker.value) {
+	if (props.show && !showTracker.value) {
 		showTracker.value = true;
 		initModalFields();
 	}

@@ -14,6 +14,8 @@ export const arweaveLocalNets = [
   'arlocal-localhost', 'localhost'
 ];
 
+export const defaultNetwork = 'arweave-mainnet';
+
 export const arweaveNetworks: Record<string, {host: string, port: number, protocol: string}> = {
   'arlocal-localhost': {
     host: 'localhost',
@@ -55,7 +57,7 @@ export class ArweaveWrapper {
 
   public secondaryRedstoneGW = 'https://d1o5nlqr4okus2.cloudfront.net';
 
-  constructor(network= 'arweave-mainnet', host='', port=0, protocol='') {
+  constructor(network= defaultNetwork, host='', port=0, protocol='') {
     this._initSettings(network, host, port, protocol);
     this._arweave = Arweave.init({
       host: this.host,
@@ -64,7 +66,7 @@ export class ArweaveWrapper {
     });
   }
 
-  private _initSettings(network= 'arweave-mainnet', host='', port=0, protocol='') {
+  private _initSettings(network= defaultNetwork, host='', port=0, protocol='') {
     if (network) {
       this.port = arweaveNetworks[network].port;
       this.protocol = arweaveNetworks[network].protocol;

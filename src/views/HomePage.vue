@@ -19,7 +19,9 @@
             :workspace="workspace"
             :hideToolbar="hideToolbar"
             :login="login"
-            :theme="theme" :tokenState="tokenState" />
+            :theme="theme"
+            :tokenState="tokenState"
+            :networkParam="networkParam" />
         </div>
         <div class="workspace-container">
           <DefaultWorkspace 
