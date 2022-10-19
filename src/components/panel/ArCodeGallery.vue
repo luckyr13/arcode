@@ -67,6 +67,7 @@
 <transition name="fade">
   <MyGalleryDialog
     :show="showModalMyGallery"
+    :login="login"
     @close="showModalMyGallery = false"></MyGalleryDialog>
 </transition>
 </template>
