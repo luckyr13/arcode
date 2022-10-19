@@ -650,51 +650,14 @@ const usageFee = computed(() => {
 }
 
 
-.form-input {
-	padding: 10px;
-}
 .form-input input,
 .form-input select
  {
-	width: 100%;
 	padding: 6px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: inherit;
 }
 .form-input option
  {
-	width: 100%;
 	padding: 6px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: #000;
-}
-
-.form-input label {
-	font-size: 12px;
-	margin-bottom: 4px;
-	display: block;
-}
-
-
-.form-radio {
-	padding: 10px;
-}
-.form-radio label {
-	font-size: 12px;
-	margin-bottom: 4px;
-	display: block;
-}
-.form-radio input
- {
-	padding: 12px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: inherit;
 }
 
 .icon-btn {

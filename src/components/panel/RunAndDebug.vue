@@ -601,54 +601,17 @@ const usageFee = computed(() => {
 	background-color: rgba(0,0,0,0.3);
 }
 
-
-.form-input {
-	padding: 10px;
-}
 .form-input input,
 .form-input select,
 .form-input textarea,
  {
-	width: 100%;
 	padding: 6px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: inherit;
 }
 .form-input option
  {
-	width: 100%;
 	padding: 6px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: #000;
 }
 
-.form-input label {
-	font-size: 12px;
-	margin-bottom: 4px;
-	display: block;
-}
-
-
-.form-radio {
-	padding: 10px;
-}
-.form-radio label {
-	font-size: 12px;
-	margin-bottom: 4px;
-	display: block;
-}
-.form-radio input
- {
-	padding: 12px;
-	border-radius: 4px;
-	border: 1px solid var(--app-background-color);
-	background: inherit;
-	color: inherit;
-}
 
 .form-radio-linear {
 	padding: 10px;

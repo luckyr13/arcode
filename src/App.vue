@@ -132,6 +132,7 @@ button {
   font-size: 12px;
   margin-bottom: 4px;
   display: block;
+  cursor: pointer;
 }
 .form-radio input
  {

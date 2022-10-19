@@ -1,7 +1,12 @@
 <template>
   <div class="modal-mask">
     <div class="modal-wrapper">
-      <div class="modal-container">
+      <div
+        :class="{
+            'modal-container': true,
+            'modal-container-big': modalSize === 'big',
+            'modal-container-medium': modalSize === 'medium'  
+          } ">
         <div class="modal-header">
           <slot name="header">
             default header
@@ -25,10 +30,9 @@
 </template>
 
 <script setup lang="ts">
-	// Modal example from Vue3 docs
-	// https://v3.vuejs.org/examples/modal.html
-
-
+const props = defineProps({
+  modalSize: String
+});
 </script>
 
 <style scoped lang="scss">
@@ -55,6 +59,15 @@
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   font-family: Helvetica, Arial, sans-serif;
+}
+
+.modal-container-big {
+  max-width: 800px !important;
+
+}
+.modal-container-medium {
+  max-width: 600px !important;
+
 }
 
 .modal-header h3 {

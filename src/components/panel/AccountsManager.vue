@@ -7,13 +7,13 @@
 		<h4>Login options:</h4>
 		<ul class="accounts-menu">
 			<li>
-				<button :disabled="iframe && !isBridgeActive" @click="arConnect(chkStayLoggedIn)">
-					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
+				<button @click="arweaveWebWallet(chkStayLoggedIn)">
+					<img class="logo" src="@/assets/img/logo.png"><span>Arweave.app</span>
 				</button>
 			</li>
 			<li>
-				<button @click="arweaveWebWallet(chkStayLoggedIn)">
-					<img class="logo" src="@/assets/img/logo.png"><span>Arweave.app</span>
+				<button :disabled="iframe && !isBridgeActive" @click="arConnect(chkStayLoggedIn)">
+					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
 				</button>
 			</li>
 			<li>

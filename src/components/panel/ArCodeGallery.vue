@@ -38,7 +38,7 @@
     </button>
   </li>
 </ul>
-<div class="text-center-f" v-else-if="!mainAddress">
+<div class="text-center-f " v-else-if="!mainAddress">
   <DefaultIcon class="icon-login" icon="codicon-lock" />
   <p class="text-center no-results">Please login first!</p>
 </div>
@@ -175,9 +175,12 @@ h3 span {
 }
 
 .icon-login {
-  margin-top: 20px;
+  margin-top: 30px;
   margin-bottom: 20px;
   font-size: 36px !important;
+}
+.no-results {
+  font-size: 12px;
 }
 
 </style>

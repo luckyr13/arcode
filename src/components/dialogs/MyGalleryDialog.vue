@@ -1,5 +1,5 @@
 <template>
-  <DefaultModal v-if="show">
+  <DefaultModal v-if="show" modalSize="medium">
     <template v-slot:header>
       <h3>
         <DefaultIcon class="title-icon"

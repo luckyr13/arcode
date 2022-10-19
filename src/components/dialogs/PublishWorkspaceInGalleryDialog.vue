@@ -48,7 +48,9 @@
         Loading ... Please hold on!
       </template>
       <template v-if="!loadingPublishingWorkspace && publishWorkspaceTxId">
-        {{ publishWorkspaceTxId }}
+        🥳Workspace succesfully published!
+        <br>
+        Tx Id: {{ publishWorkspaceTxId }}
       </template>
       
     </template>
@@ -58,7 +60,7 @@
           class="modal-button" 
           :class="{ 'modal-button-primary': txtPublishWorkspaceName }"
           :disabled="!txtPublishWorkspaceName"
-          v-if="workspace && !loadingPublishingWorkspace"
+          v-if="workspace && !loadingPublishingWorkspace && !publishWorkspaceTxId"
           @click="publishWorkspaceModal()">
           <span >Publish Now!</span >
         </button>
@@ -190,6 +192,7 @@ const publishWorkspaceModal = async () => {
   const editors = props.workspace.editors;
   const fileTreeRoot = props.workspace.getFileTree();
   loadingPublishingWorkspace.value = true;
+  publishWorkspaceTxId.value = '';
   try {
     const name = txtPublishWorkspaceName.value;
     const description = txtPublishWorkspaceDescription.value;
@@ -225,7 +228,7 @@ const publishWorkspaceModal = async () => {
       disableDispatch
     );
 
-    publishWorkspaceTxId.value = tx;
+    publishWorkspaceTxId.value = tx.id;
 
   } catch (err) {
     createToast(`${err}`,
