@@ -218,7 +218,7 @@ const publishWorkspaceModal = async () => {
       { name: 'WorkspaceDescription', value: description },
     ]; 
     const loginMethod = props.login.method;
-    const disableDispatch = true;
+    const disableDispatch = !txtPublishWorkspaceDispatch.value;
     const tx = await arweaveWrapper.uploadFileToArweave(
       content,
       contentType,

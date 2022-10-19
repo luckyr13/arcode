@@ -19,7 +19,7 @@ import '@vscode/codicons/dist/codicon.css';
 }
 
 
-button {
+button, a {
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -101,6 +101,8 @@ button {
   margin-left: 8px;
   cursor: pointer;
   border-radius: 4px;
+  font-size: 12px;
+  text-decoration: none;
 }
 .modal-button:hover {
   cursor: pointer;
