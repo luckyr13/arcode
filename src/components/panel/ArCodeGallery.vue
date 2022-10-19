@@ -90,8 +90,6 @@ const mainAddress = computed(() => {
 const showModalPublishWorkspaceFunc = () => {
   showModalPublishWorkspace.value = true;
 };
-
-
 const showModalMyGalleryOpen = () => {
   showModalMyGallery.value = true;
 };

@@ -1,8 +1,11 @@
 <template>
   <DefaultModal v-if="show">
     <template v-slot:header>
-      <h3><DefaultIcon class="title-icon"
-        icon="codicon-cloud-upload" /><span>Publish on ArCode Gallery</span></h3>
+      <h3>
+        <DefaultIcon class="title-icon"
+        icon="codicon-cloud-upload" />
+        <span>Publish on ArCode Gallery</span>
+      </h3>
     </template>
     <template v-slot:body>
       <template v-if="!loadingPublishingWorkspace && !publishWorkspaceTxId">
@@ -69,7 +72,7 @@
         <button 
           :disabled="loadingPublishingWorkspace"
           class="modal-button" 
-          @click="$emit('close'); txtPublishWorkspaceFilesList = ''">
+          @click="closeModal()">
           Close
         </button>
       </div>
@@ -94,7 +97,8 @@ const props = defineProps({
   tokenState: Object,
   show: Boolean
 });
-
+const emit = defineEmits(['close']);
+const showTracker = ref(false);
 const mainAddress = computed(() => {
   return props.login.mainAddress;
 });
@@ -257,11 +261,19 @@ const initModalFields = () => {
   });
 };
 
+const closeModal = () => {
+  txtPublishWorkspaceFilesList.value = '';
+  showTracker.value = false;
+  emit('close');
+};
+
 watchEffect(async () => {
   try {
-    if (props.show) {
+    if (props.show && !showTracker.value) {
+      showTracker.value = true;
       initModalFields();
     }
+    
     const size = await getWorkspaceSize();
     if (size) {
       workspaceSize.value = size;
@@ -281,13 +293,6 @@ watchEffect(async () => {
 
 </script>
 <style scoped lang="scss">
-  
-.title-icon {
-  float: left;
-  line-height: 32px;
-  font-size: 32px !important;
-}
-
 .small-txt {
   font-size: 12px;
 }

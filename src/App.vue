@@ -106,6 +106,10 @@ button {
   cursor: pointer;
   background-color: rgba(55, 55, 55, 0.5);
 }
+.modal-btn-icon {
+  font-size: 15px;
+  margin-left: 4px;
+}
 .modal-button span {
   margin-left: 4px;
 }
@@ -166,5 +170,17 @@ button {
   font-size: 12px;
   margin-bottom: 4px;
   display: block;
+}
+
+.title-icon {
+  float: left;
+  line-height: 32px;
+  font-size: 32px !important;
+}
+.small-txt {
+  font-size: 12px;
+}
+.small-txt a {
+  color: inherit;
 }
 </style>
