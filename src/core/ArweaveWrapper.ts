@@ -190,7 +190,7 @@ export class ArweaveWrapper {
     externalProgressObj?: {completed: string, uploaded: string, total: string}|undefined|null): Promise<Transaction|{id: string, type: string}|any> {
     // Check if the login method allows dispatch
     if (!disableDispatch) {
-      if (loginMethod !== 'arconnect' && loginMethod !== 'arweavewebwallet') {
+      if (loginMethod !== 'arconnect' && loginMethod !== 'webwallet') {
         throw new Error('Dispatch is not available for this login method!');
       }
     }
@@ -241,7 +241,7 @@ export class ArweaveWrapper {
         }
         console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
       }
-    } else if (loginMethod === 'arweavewebwallet' && !disableDispatch) {
+    } else if (loginMethod === 'webwallet' && !disableDispatch) {
       if (!(window && window.arweaveWallet)) {
         throw new Error('Arweave Wallet method not available!');
       }
@@ -297,5 +297,17 @@ export class ArweaveWrapper {
     }
 
     return transaction;
+  }
+
+  async getCurrentHeight(): Promise<number> {
+    let networkInfo: any = {};
+    let maxHeight = 0;
+    try {
+      networkInfo = await this._arweave.network.getInfo();
+      maxHeight = networkInfo.height ? networkInfo.height : 0;
+    } catch (error) {
+      throw Error(`${error}`);
+    }
+    return maxHeight;
   }
 }

@@ -30,11 +30,12 @@ export class ArDBWrapper {
 		owners: string[]|string,
 		limit=10,
 		tags: ArDBTag[] = [],
-		sortingOrder: 'HEIGHT_DESC'|'HEIGHT_ASC' = 'HEIGHT_DESC') {
+		sortingOrder: 'HEIGHT_DESC'|'HEIGHT_ASC' = 'HEIGHT_DESC',
+    maxHeight = 0) {
 		let tmpRes = null;
 		let query = this._ardb.search(
 				'transactions'
-			).limit(limit).sort(sortingOrder);
+			).limit(limit).max(maxHeight).sort(sortingOrder);
 		// Filters
 		if (tags && tags.length) {
 			query = query.tags(tags);

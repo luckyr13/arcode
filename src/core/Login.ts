@@ -103,6 +103,10 @@ export class Login {
     if (!window.arweaveWallet) {
       throw Error('ArConnect not found!');
     }
+    await window.arweaveWallet.connect([
+      'ACCESS_ADDRESS', 'ACCESS_ALL_ADDRESSES',
+      'SIGN_TRANSACTION', 'DISPATCH'
+    ]);
     const address = await arweave.wallets.getAddress();
     this.setAccount(address, null, stayLoggedIn);
     this.method = 'arconnect';
