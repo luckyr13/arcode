@@ -286,7 +286,7 @@
 				</a>
 			</p>
 			<p v-if="resultsTXIsContract">
-				<a :href="`https://arcode.studio/#/${txtTxId}?network=testnet`" target="_blank">
+				<a :href="`https://arcode.studio/#/${txtTxId}?network=redstone-testnet`" target="_blank">
 					<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
 					<span>Open in ArCode</span>
 				</a>
@@ -367,7 +367,7 @@
 					</a>
 				</p>
 				<p v-if="txIsContract(r._tags)">
-					<a :href="`https://arcode.studio/#/${r._id}?network=testnet`" target="_blank">
+					<a :href="`https://arcode.studio/#/${r._id}?network=redstone-testnet`" target="_blank">
 						<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
 						<span>Open in ArCode Studio</span>
 					</a>

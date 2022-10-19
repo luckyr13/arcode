@@ -180,7 +180,17 @@
 <div class="deploy-container text-center-f" v-else-if="deployedContractTX">
 	<DefaultIcon class="icon-deploy-login success" icon="codicon-check" />
 	<h3>Contract deployed successfully!</h3>
-	<p class="text-center">TX: {{ deployedContractTX }}</p>
+	<p class="text-center">
+		<strong>Contract TX:</strong><br>
+		<span>{{ deployedContractTX.contractTxId }}</span>
+	</p>
+	<p class="text-center">
+		<strong>Contract Src TX:</strong><br>
+		<span>{{ deployedContractTX.srcTxId }}</span>
+	</p>
+	<p>
+		<a class="link" :href="arcodePreviewUrl(deployedContractTX.contractTxId)" target="_blank">Preview in ArCode</a>
+	</p>
 </div>
 </template>
 
@@ -248,6 +258,9 @@ const balances = computed(() => {
 });
 const balance = ref('0');
 const isBridgeActive = ref(false);
+const arcodePreviewUrl = (tx) => {
+	return `https://arcode.studio/#/${tx}?network=${selNetwork.value}`;
+};
 
 const deployContract = async (
 	statePath: string,
@@ -712,6 +725,7 @@ const usageFee = computed(() => {
 	font-size: 12px;
 	cursor: pointer;
 	text-decoration: underline;
+	color: inherit;
 }
 .text-center-f {
 	text-align: center !important;
