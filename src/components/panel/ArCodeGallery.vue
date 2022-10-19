@@ -2,74 +2,76 @@
 <div class="arcode-main-toolbar-panel-title panel-title">
   ArCode Gallery
 </div>
-<ul class="file-menu" v-if="mainAddress">
-  <li 
-    v-if="mainAddress">
-    <button 
-      tabindex="0" 
-      @click="showModalMyGalleryOpen()">
-      <DefaultIcon class="menu-icon"
-      icon="codicon-circuit-board" />
-      <span>My Gallery</span>
-    </button>
-  </li>
-  <li v-else>
-    <button class="disabled">
-      <DefaultIcon class="menu-icon"
-      icon="codicon-circuit-board" />
-      <span>My Gallery</span>
-    </button>
-  </li>
-  <li 
-    v-if="mainAddress">
-    <button 
-      tabindex="0" 
-      @click="showModalPublishWorkspaceFunc()">
-      <DefaultIcon class="menu-icon"
-      icon="codicon-cloud-upload" />
-      <span>Publish Workspace</span>
-    </button>
-  </li>
-  <li v-else>
-    <button class="disabled">
-      <DefaultIcon class="menu-icon"
-      icon="codicon-cloud-upload" />
-      <span>Publish Workspace</span>
-    </button>
-  </li>
-</ul>
-<div class="text-center-f " v-else-if="!mainAddress">
-  <DefaultIcon class="icon-login" icon="codicon-lock" />
-  <p class="text-center no-results">Please login first!</p>
-</div>
+<div class="gallery-container" >
+  <ul class="gallery-menu" v-if="mainAddress">
+    <li 
+      v-if="mainAddress">
+      <button 
+        tabindex="0" 
+        @click="showModalMyGalleryOpen()">
+        <DefaultIcon class="menu-icon"
+        icon="codicon-circuit-board" />
+        <span>My Gallery</span>
+      </button>
+    </li>
+    <li v-else>
+      <button class="disabled">
+        <DefaultIcon class="menu-icon"
+        icon="codicon-circuit-board" />
+        <span>My Gallery</span>
+      </button>
+    </li>
+    <li 
+      v-if="mainAddress">
+      <button 
+        tabindex="0" 
+        @click="showModalPublishWorkspaceFunc()">
+        <DefaultIcon class="menu-icon"
+        icon="codicon-cloud-upload" />
+        <span>Publish Workspace</span>
+      </button>
+    </li>
+    <li v-else>
+      <button class="disabled">
+        <DefaultIcon class="menu-icon"
+        icon="codicon-cloud-upload" />
+        <span>Publish Workspace</span>
+      </button>
+    </li>
+  </ul>
+  <div class="text-center-f " v-else-if="!mainAddress">
+    <DefaultIcon class="icon-login" icon="codicon-lock" />
+    <p class="text-center no-results">Please login first!</p>
+  </div>
 
-<ul class="file-menu">
-  <li>
-    <a 
-      class="gallery-link"
-      tabindex="0" 
-      href="https://gallery.arcode.studio"
-      target="_blank">
-      <DefaultIcon class="menu-icon"
-      icon="codicon-link-external" />
-      <span>Visit ArCode Gallery</span>
-    </a>
-  </li>
-</ul>
-<transition name="fade">
-  <PublishWorkspaceInGalleryDialog
-    :show="showModalPublishWorkspace"
-    :workspace="workspace"
-    :login="login"
-    :tokenState="tokenState"
-    @close="showModalPublishWorkspace= false"></PublishWorkspaceInGalleryDialog>
-</transition>
-<transition name="fade">
-  <MyGalleryDialog
-    :show="showModalMyGallery"
-    :login="login"
-    @close="showModalMyGallery = false"></MyGalleryDialog>
-</transition>
+  <ul class="bottom-menu">
+    <li>
+      <a 
+        class="gallery-link"
+        tabindex="0" 
+        href="https://gallery.arcode.studio"
+        target="_blank">
+        <DefaultIcon class="menu-icon"
+        icon="codicon-link-external" />
+        <span>Visit ArCode Gallery</span>
+      </a>
+    </li>
+  </ul>
+  <transition name="fade">
+    <PublishWorkspaceInGalleryDialog
+      :show="showModalPublishWorkspace"
+      :workspace="workspace"
+      :login="login"
+      :tokenState="tokenState"
+      @close="showModalPublishWorkspace= false"></PublishWorkspaceInGalleryDialog>
+  </transition>
+  <transition name="fade">
+    <MyGalleryDialog
+      :show="showModalMyGallery"
+      :login="login"
+      @close="showModalMyGallery = false"></MyGalleryDialog>
+  </transition>
+</div>
 </template>
 
 
@@ -129,19 +131,20 @@ h3 span {
   margin-left: 12px;
 }
 
-.file-menu {
+.gallery-menu, .bottom-menu {
   padding: 0px;
   margin-top: 0px;
   margin-bottom: 0px;
 }
-.file-menu li {
+.gallery-menu li, .bottom-menu li {
   padding: 0px;
   height: 32px;
   list-style: none;
   width: 100%;
 }
 
-.file-menu li button, .file-menu li a {
+.gallery-menu li button, .gallery-menu li a,
+.bottom-menu li button, .bottom-menu li a {
   width: 100%;
   height: 100%;
   line-height: 32px;
@@ -154,21 +157,25 @@ h3 span {
   display: block;
 }
 
-.file-menu li a {
+.gallery-menu li a,
+.bottom-menu li a {
   padding: 0px 6px 0px 6px;
 
 }
 
-.file-menu li button:hover, .file-menu li a:hover {
+.gallery-menu li button:hover, .gallery-menu li a:hover,
+.bottom-menu li button:hover, .bottom-menu li a:hover {
   background-color: rgba(0,0,0,0.3);
 }
 
-.file-menu li button.disabled {
+.gallery-menu li button.disabled {
   color: gray;
   cursor: default;
 }
+
+.bottom-menu {
+}
 .gallery-link {
-  margin-top: 40px;
 }
 
 .text-center-f {
@@ -182,6 +189,14 @@ h3 span {
 }
 .no-results {
   font-size: 12px;
+}
+
+.gallery-container {
+  width: 100%;
+  height: calc(100% - $title-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 </style>
