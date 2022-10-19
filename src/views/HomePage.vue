@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition name="fadeSlow">
     <div class="loading-container text-center" v-if="loadingAppContract">
       <div class="loading-body">
         <div class="lds-ripple"><div></div><div></div></div>
@@ -9,7 +9,7 @@
       </div>
     </div>
   </transition>
-  <transition name="fade">
+  <transition name="fadeSlow">
     <div class="main-container" v-if="!loadingAppContract">
       <div class="toolbar-and-workspace">
         <div class="toolbar-container">
@@ -192,15 +192,6 @@ onMounted(async () => {
 .xterm .xterm-screen {
   width: 100% !important;
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
 
 .sub-main-container {
   width: 100%;
@@ -286,6 +277,15 @@ onMounted(async () => {
   background-color: #000;
   color: #FFF;
   background-color: rgba(0, 0, 0, 0.5);
+}
+.fadeSlow-enter-active,
+.fadeSlow-leave-active {
+  transition: opacity 1s ease;
+}
+
+.fadeSlow-enter-from,
+.fadeSlow-leave-to {
+  opacity: 0;
 }
 
 </style>

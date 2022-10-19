@@ -2,7 +2,7 @@
 <div class="arcode-main-toolbar-panel-title panel-title">
   ArCode Gallery
 </div>
-<ul class="file-menu">
+<ul class="file-menu" v-if="mainAddress">
   <li 
     v-if="mainAddress">
     <button 
@@ -37,7 +37,13 @@
       <span>Publish Workspace</span>
     </button>
   </li>
-  
+</ul>
+<div class="text-center-f" v-else-if="!mainAddress">
+  <DefaultIcon class="icon-login" icon="codicon-lock" />
+  <p class="text-center no-results">Please login first!</p>
+</div>
+
+<ul class="file-menu">
   <li>
     <a 
       class="gallery-link"
@@ -49,7 +55,6 @@
       <span>Visit ArCode Gallery</span>
     </a>
   </li>
-  
 </ul>
 <transition name="fade">
   <PublishWorkspaceInGalleryDialog
@@ -164,4 +169,15 @@ h3 span {
 .gallery-link {
   margin-top: 40px;
 }
+
+.text-center-f {
+  text-align: center !important;
+}
+
+.icon-login {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 36px !important;
+}
+
 </style>

@@ -492,14 +492,5 @@ $workspace-tabs-height: 35px;
   border-radius: 20px;
   color: white;
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
 
 </style>
