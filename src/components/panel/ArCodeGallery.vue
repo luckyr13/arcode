@@ -46,15 +46,14 @@
 
   <ul class="bottom-menu">
     <li>
-      <a 
+      <router-link 
         class="gallery-link"
         tabindex="0" 
-        href="https://gallery.arcode.studio"
-        target="_blank">
+        to="/gallery">
         <DefaultIcon class="menu-icon"
         icon="codicon-link-external" />
         <span>Visit ArCode Gallery</span>
-      </a>
+      </router-link>
     </li>
   </ul>
   <transition name="fade">

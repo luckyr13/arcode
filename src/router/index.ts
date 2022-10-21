@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
+import GalleryPage from '../views/GalleryPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -15,6 +16,11 @@ const routes: Array<RouteRecordRaw> = [
         workspaceParam: route.query.workspace
       }
     }
+  },
+  {
+    path: '/gallery',
+    name: 'GalleryPage',
+    component: GalleryPage
   }
 ]
 

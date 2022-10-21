@@ -44,7 +44,19 @@
 	</div>
 	<div v-else>
 		<h4>Wallet Address</h4>
-		<p class="address">{{ mainAddress }}</p>
+		<p class="address">
+			<ArweaveAddress
+				:address="mainAddress"
+				:isAddress="true"
+				:showProfileImage="true"
+				:showHandleInAddress="true"
+				:showHandleOnly="true"
+				:showLinks="false">
+			</ArweaveAddress>
+		</p>
+		<p class="address">
+			{{ mainAddress }}
+		</p>
 		<h4>Balance</h4>
 		<p class="text-center">{{ pstBalance }} $CODE</p>
 		<p class="text-center">{{ balance }} AR</p>
@@ -52,6 +64,11 @@
 		<p>{{ method }}</p>
 		<br>
 		<ul class="accounts-menu">
+			<li class="text-center">
+				<button class="primary" @click="openLink('https://account.metaweave.xyz/')">
+					<DefaultIcon class="icon-btn" icon="codicon-account" /><span>Edit Profile</span>
+				</button>
+			</li>
 			<li class="text-center">
 				<button class="primary" @click="logout()">
 					<DefaultIcon class="icon-btn" icon="codicon-sign-out" /><span>Logout</span>
@@ -69,6 +86,7 @@ import { ref, onMounted, watchEffect, computed } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { ArweaveWrapper } from '@/core/ArweaveWrapper';
+import ArweaveAddress from '@/components/atomic/ArweaveAddress.vue'
 
 const props = defineProps({
 	iframe: Boolean,
@@ -240,6 +258,10 @@ watchEffect(async () => {
 		}
 	}
 });
+
+function openLink(url) {
+	window.open(url, '_blank')
+}
 const pstBalance = computed(() => {
 	const balances = props.tokenState && props.tokenState.balances ? props.tokenState.balances : {};
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
@@ -269,6 +291,7 @@ const balance = ref('0');
 	padding: 0px;
 	height: 32px;
 	list-style: none;
+	margin-bottom: 12px;
 }
 .accounts-menu li button {
 	width: 100%;

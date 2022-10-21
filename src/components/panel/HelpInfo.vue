@@ -12,6 +12,12 @@
 			</a>
 		</li>
 		<li>
+			<router-link tabindex="0" to="/gallery">
+				<img class="invert-colors" src="@/assets/img/arweaveSmall.png">
+				<span>ArCode Gallery</span>
+			</router-link>
+		</li>
+		<li>
 			<a tabindex="0" href="https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg" target="_blank">
 				<img src="@/assets/img/social-media/communitySmall.png">
 				<span>ArCode Community</span>
