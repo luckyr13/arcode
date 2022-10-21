@@ -1,6 +1,7 @@
 # ArCode versions
 
 ## 1.3.2
+Link (2022-10-20): https://arweave.net/UqfZglruOie6rsh1g3I7S0Tz6cJmEy3wQ976TOJ98Dw
 - Add ArCode Gallery section.
 - Load user profile from arweave-account.
 
