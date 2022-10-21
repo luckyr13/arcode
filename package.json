@@ -15,7 +15,7 @@
     "@codemirror/lang-java": "^6.0.0",
     "@codemirror/lang-javascript": "^6.1.0",
     "@codemirror/lang-json": "^6.0.0",
-    "@codemirror/lang-python": "^6.0.2",
+    "@codemirror/lang-python": "^6.0.3",
     "@codemirror/lang-rust": "^6.0.0",
     "@codemirror/language": "^6.2.1",
     "@codemirror/legacy-modes": "^6.1.0",
