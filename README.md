@@ -5,6 +5,14 @@
 # ArCode Studio: Smartweave editor and deployer
 ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the browser all the files are saved in cache memory and removed when the cache is cleared.
 
+## Links
+- ArCode Studio: https://arcode.studio
+- ArCode Studio Gallery: https://arcode.studio/#/gallery
+- Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg
+- GitHub pages backup: https://luckyr13.github.io/arcode
+- Discord channel: https://discord.gg/KMjZkkWrSS
+- Changelog: https://github.com/luckyr13/arcode/blob/master/CHANGELOG.md
+
 ## Current features
 ++ Workspace and File Explorer:
 - Create, edit and store your JS and JSON files in ArCode with syntax highlighting from your browser.
@@ -35,16 +43,8 @@ ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the 
 - Write interaction (Create and post tx).
 - Interact with contracts on the Arweave Mainnet or to a local gateway.
 
-++ Multiple skins to customize your IDE.
+++ Many themes for customize your IDE.
 
-
-## Links
-- ArCode Studio: https://arcode.studio
-- ArCode Studio Gallery: https://arcode.studio/#/gallery
-- Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg
-- GitHub pages backup: https://luckyr13.github.io/arcode
-- Discord channel: https://discord.gg/KMjZkkWrSS
-- Changelog: https://github.com/luckyr13/arcode/blob/master/CHANGELOG.md
 
 ## Usage fees:
 - Contract deployment/write interaction: 0.00001 AR
