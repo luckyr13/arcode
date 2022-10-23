@@ -118,6 +118,11 @@
 				name="runFilter" value="writeInteraction" v-model.trim="rdFilter">
 			Write Interaction (Create and Post TX)
 		</label>
+		<label class="">
+      <input  
+        v-model.trim="txtAllowUnsafeClient" 
+        type="checkbox"> allowUnsafeClient, allowBigInt, internalWrites (Insecure)
+    </label>
 	</div>
 	<h5 class="title-data">Balance</h5>
 	<ul class="run-menu">
@@ -153,7 +158,9 @@
 			<button
 				:class="{primary: (txtContract) && !loadingTX}" 
 				:disabled="(!txtContract) || loadingTX"
-				@click="runInteraction(txtContract, inputList, rdFilter, tagsList)">
+				@click="runInteraction(
+					txtContract, inputList, rdFilter, tagsList, txtAllowUnsafeClient
+				)">
 				<DefaultIcon class="icon-btn" icon="codicon-debug-alt" /><span>Run Interaction</span>
 			</button>
 		</li>
@@ -238,6 +245,7 @@ const txtContract = ref('');
 const response = ref({});
 const contractInteractionTX = ref('');
 const loadingTX = ref(false);
+const txtAllowUnsafeClient = ref(false);
 const inputList = reactive<any[]>([{ key: 'function', value: '' }]);
 const inputListJSON = computed(() => {
 	return JSON.stringify(inputList);
@@ -303,7 +311,8 @@ const runInteraction = async (
 	contractTX: string,
 	data: any[],
 	interaction: string,
-	tags: Tags) => {
+	tags: Tags,
+	allowUnsafeClient: boolean) => {
 	loadingTX.value = true;
 	try {
 		// Check balance
@@ -348,6 +357,14 @@ const runInteraction = async (
 				// with this flag set to true, the write will wait for the transaction to be confirmed
 				waitForConfirmation: false,
 			});
+
+		if (allowUnsafeClient) {
+			contract.setEvaluationOptions({
+        allowUnsafeClient: true,
+        allowBigInt: true,
+        internalWrites: true
+      });
+		}
 			const transfer = warp.getTransferData(
 				pstBalance.value,
 				vipMinimumBalance.value,
