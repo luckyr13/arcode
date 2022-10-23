@@ -39,6 +39,11 @@
               v-model.trim="txtLoadTXGetLastState" 
               type="checkbox"> Get last state (it can take longer to load)
           </label>
+          <label class="">
+            <input  
+              v-model.trim="txtAllowUnsafeClient" 
+              type="checkbox"> allowUnsafeClient, allowBigInt, internalWrites (Insecure)
+          </label>
         </div>
       </template>
       <template v-if="loadingContractTX">
@@ -93,6 +98,7 @@ const showTracker = ref(false);
 const txtLoadTXTxField = ref('');
 const selLoadTXLocation = ref('');
 const txtLoadTXGetLastState = ref(false);
+const txtAllowUnsafeClient = ref(false);
 const loadingContractTX = ref(false);
 const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
 const selNetwork = ref(defaultSelNetwork);
@@ -109,6 +115,7 @@ const initModalFields = () => {
     selLoadTXLocation.value = '/';
   }
   txtLoadTXGetLastState.value = false;
+  txtAllowUnsafeClient.value = false;
   selNetwork.value = defaultSelNetwork;
 };
 
@@ -132,7 +139,7 @@ const loadFromTXModal = async (tx: string, path: string) => {
     await loadEditorFromTX(tx, path);
 
     if (txtLoadTXGetLastState.value) {
-      await loadLatestContractStateFromTX(tx, path);
+      await loadLatestContractStateFromTX(tx, path, txtAllowUnsafeClient.value);
     }
   } catch (err) {
     createToast(`${err}`,
@@ -376,11 +383,14 @@ const loadEditorFromTX = async (tx: string, path: string) => {
 };
 
 
-const loadLatestContractStateFromTX = async (tx: string, path: string) => {
+const loadLatestContractStateFromTX = async (
+  tx: string, path: string, allowUnsafeClient: boolean) => {
   const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
   const arweave = arweaveWrapper.arweave;
   const warpContracts = new WarpContracts(arweave);
-  const { sortKey, cachedValue } = await warpContracts.readState(tx);
+  const { sortKey, cachedValue } = await warpContracts.readState(
+    tx, allowUnsafeClient
+  );
   const state = cachedValue &&
     Object.prototype.hasOwnProperty.call(cachedValue, 'state') ?
     cachedValue.state : {};

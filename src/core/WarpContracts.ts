@@ -63,8 +63,15 @@ export class WarpContracts {
     return this._warp;
   }
 
-  readState(contractAddress: string): Promise<SortKeyCacheResult<EvalStateResult<unknown>>> {
+  readState(contractAddress: string, allowUnsafeClient = false): Promise<SortKeyCacheResult<EvalStateResult<unknown>>> {
     const contract = this.warp.contract(contractAddress);
+    if (allowUnsafeClient) {
+      contract.setEvaluationOptions({
+        allowUnsafeClient: true,
+        allowBigInt: true,
+        internalWrites: true
+      });
+    }
     return contract.readState();
   }
 
