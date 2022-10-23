@@ -3,12 +3,12 @@
 </p>
 
 # ArCode Studio: Smartweave editor and deployer
-ArCode Studio is an online IDE for smartweave contracts.
+ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the browser all the files are saved in cache memory and removed when the cache is cleared.
 
 ## Current features
 ++ Workspace and File Explorer:
-- The workspace is the tree of all your files stored in the ArCode IDE. ArCode is an IDE for the web browser, so all the files are stored in the browsers cache memory (and removed when the cache is cleared).
-- Create, edit and store your JS and JSON files in ArCode with syntax highlighting (python, rust and go  supported as well).
+- Create, edit and store your JS and JSON files in ArCode with syntax highlighting from your browser.
+- Other languages supported: python, rust and go.
 - Create/edit/remove folders.
 - Load contracts sources and state into the workspace directly from their Arweave TXs.
 - Import/Export your workspace to .zip file.
