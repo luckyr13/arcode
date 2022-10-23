@@ -6,7 +6,8 @@
       :name="e.name"
       :description="e.description"
       :owner="e.owner"
-      :deployingDate="e.deployingDate"></BasicCard>
+      :deployingDate="e.deployingDate"
+      :dataSize="parseInt(e.dataSize)"></BasicCard>
   </li>
 </ul>
 </template>

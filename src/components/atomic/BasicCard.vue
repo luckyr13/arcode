@@ -8,6 +8,12 @@
 				<template v-slot:label><strong>Id:</strong></template>
 			</ArweaveAddress>
 		</p>
+		<p class="tx" v-if="dataSize">
+			<strong>Data size: </strong> {{ dataSize }} bytes / {{ byte2kb(dataSize) }} kb / {{ kb2mb(byte2kb(dataSize)) }} mb
+		</p>
+		<p class="tx" v-if="dataSize && kb2mb(byte2kb(dataSize)) >= 1">
+			<strong class="warning">Overflow Warning!</strong> Data size is too big.
+		</p>
 		<p class="owner">
 			<ArweaveAddress
 				:address="owner"
@@ -20,12 +26,12 @@
 		<p class="deployingDate"><strong>Created at:</strong> {{ deployingDate }}</p>
 		<p class="description">{{ description }}</p>
 		<p class="actions">
-			<a 
+			<router-link 
 				class="btn"
-				:href="`https://arcode.studio/#/?workspace=${ id }`"
+				:to="`/?workspace=${ id }`"
 				target="_blank">
 				OPEN IN ArCode
-			</a>
+			</router-link>
 		</p>
 	</div>
 </template>
@@ -37,8 +43,17 @@ const props = defineProps({
 	name: String,
 	description: String,
 	owner: String,
-	deployingDate: String
+	deployingDate: String,
+	dataSize: Number
 });
+
+function byte2kb(bytes: number) {
+	return (bytes / 1024).toFixed(4);
+}
+
+function kb2mb(kb: number) {
+	return (kb / 1024).toFixed(4);
+}
 </script>
 <style scoped>
 :root {
@@ -137,5 +152,9 @@ strong {
   .actions .btn {
     font-size: 12px !important;
   }
+}
+
+.warning {
+	color:  red;
 }
 </style>

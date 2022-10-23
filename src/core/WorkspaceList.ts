@@ -37,7 +37,8 @@ export class WorkspaceList {
     const description = this._ardbWrapper.searchKeyNameInTags(tags, 'WorkspaceDescription')
     const owner = tx.owner && tx.owner.address ? tx.owner.address : ''
     const deployingDate = this._ardbWrapper.timestampTodate(tx.block.timestamp)
-    return { id: tx.id, name, description, owner, deployingDate }
+    const dataSize = tx.data && tx.data.size ? tx.data.size : 0
+    return { id: tx.id, name, description, owner, deployingDate, dataSize }
   }
 
 

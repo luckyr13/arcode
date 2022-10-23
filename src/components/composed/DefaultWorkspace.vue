@@ -88,7 +88,6 @@ import { greeterContract } from '@/core/contract-sources/Greeter';
 import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
 import { WasmSrc } from '@/core/WarpContracts';
-import { JSZipWrapper } from '@/core/JSZipWrapper';
 
 const props = defineProps({
   theme: String,
@@ -105,7 +104,10 @@ const editors = workspace.editors;
 const loadingFromTX = ref(false);
 const workspaceReady = ref(false);
 
-const emit = defineEmits(['openDialogLoadContractFromTx']);
+const emit = defineEmits([
+  'openDialogLoadContractFromTx',
+  'openDialogLoadWorkspaceFromTx'
+]);
 
 const addEditor = (
   event: Event, 
@@ -357,7 +359,8 @@ onMounted(async () => {
     loadingFromTX.value = true;
     try {
       // Load workspace
-      await loadWorkspaceFromParam(workspaceParam);
+      emit('openDialogLoadWorkspaceFromTx');
+      // await loadWorkspaceFromParam(workspaceParam);
     } catch (err) {
       createToast(`${err}`,
         {
@@ -383,76 +386,7 @@ onMounted(async () => {
 
 });
 
-const loadWorkspaceFromParam = async (workspaceId: string) => {
-  const arweaveWrapper = new ArweaveWrapper();
-  const asString = false;
-  const file = await arweaveWrapper.getTXData(workspaceId, asString);
-  await openWorkspace_helper(file);
-};
 
-const openWorkspace_helper = (zipFile: File): Promise<void> => {
-  const zip = new JSZipWrapper();
-  const method = new Promise<string>((resolve, reject) => {
-    zip.openZip(zipFile).then((zFile) => {
-      const files = [];
-
-      zFile.forEach(function (relativePath, zipEntry) {
-        if (zipEntry.dir) {
-          const fullPath = zipEntry.name.slice(0, -1);
-          createDirectoryStructureFromPath(fullPath);
-        } else {
-          files.push(zipEntry);
-        }
-      });
-
-      // Add files
-      for (const file of files) {
-        const emptyEvent = new Event('emptyEvent');
-        const fragments = file.name.split('/');
-        const realFName = fragments[fragments.length - 1];
-        const path = '/' + file.name.substring(0, file.name.length - (realFName.length + 1));
-        
-        zFile.file(file.name).async("string").then((data) => {
-          addEditor(
-            emptyEvent,
-            false,
-            data,
-            realFName,
-            path,
-            false);
-        }).catch((error) => {
-          console.error('zipFE:', error);
-        })
-
-        
-      }
-      resolve();
-    }).catch((error) => {
-      createToast(`${error}`,
-      {
-        type: 'danger',
-        showIcon: true,
-        position: 'bottom-right',
-      });
-      reject(error);
-    });
-
-  });
-  return method;
-};
-
-const createDirectoryStructureFromPath = (path: string) => {
-  const elements = path.split('/');
-  let tmpPath = '';
-  for (const e of elements) {
-    try {
-      addFolder(tmpPath ? tmpPath : '/', e, true);
-      tmpPath += `/${e}`;
-    } catch (err) {
-      console.log('dirStructure:', err);
-    }
-  }
-};
 
 </script>
 

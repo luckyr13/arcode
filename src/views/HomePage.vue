@@ -26,6 +26,7 @@
         <div class="workspace-container">
           <DefaultWorkspace 
             @openDialogLoadContractFromTx="showLoadContractFromTxDialog = true"
+            @openDialogLoadWorkspaceFromTx = "showLoadWorkspaceFromTxDialog = true"
             ref="workspace"
             :tx="tx"
             :networkParam="networkParam"
@@ -72,6 +73,15 @@
       :networkParam="networkParam"
       @close="showLoadContractFromTxDialog = false"></LoadContractFromTxDialog>
   </transition>
+  <transition name="fade">
+    <LoadWorkspaceFromTxDialog
+      :show="showLoadWorkspaceFromTxDialog"
+      :workspace="workspace"
+      :tx="workspaceParam"
+      :txField="workspaceParam"
+      :networkParam="networkParam"
+      @close="showLoadWorkspaceFromTxDialog = false"></LoadWorkspaceFromTxDialog>
+  </transition>
 </template>
 
 
@@ -91,6 +101,7 @@ import { Login } from '@/core/Login';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import { tokenContract } from '@/core/contracts/ArcodeCommunity';
 import LoadContractFromTxDialog from '@/components/dialogs/LoadContractFromTxDialog';
+import LoadWorkspaceFromTxDialog from '@/components/dialogs/LoadWorkspaceFromTxDialog';
 
 const props = defineProps({
   tx: String,
@@ -112,6 +123,9 @@ const loadingAppContract = ref(true);
 const tokenState = ref({});
 const showModalArweaveWebWallet = ref(false);
 const showLoadContractFromTxDialog = ref(false);
+const showLoadWorkspaceFromTxDialog = ref(false);
+
+
 
 const route = useRoute()
 // const tx = ref(route.params.tx);

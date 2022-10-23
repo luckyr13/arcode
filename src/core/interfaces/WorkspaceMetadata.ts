@@ -4,4 +4,5 @@ export interface WorkspaceMetadata {
 	description: string;
 	owner: string;
 	deployingDate: string;
+	dataSize: number;
 }
