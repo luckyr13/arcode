@@ -10,9 +10,12 @@ ArCode Studio is an online IDE for smartweave contracts.
 - Create, edit and store your JS and JSON files in ArCode.
 - Create/edit/remove folders.
 - Load contracts sources and state into the workspace directly from their Arweave TXs.
+- Import/Export your workspace to .zip file.
+- Publish your workspace to Arweave.
+- ArCode Gallery: A public list of all the workspaces published in ArCode.
 
 ++ Arweave explorer
-- Explore the Arweave Mainnet, a local gateway or the Redstone Testnet Gateway.
+- Explore the Arweave Mainnet or a local gateway.
 - Get detailed info about a particular Arweave tx.
 - Get detailed info about a particular Arweave address.
 - Advanced search (search by custom tags and tx owners).
@@ -35,11 +38,12 @@ ArCode Studio is an online IDE for smartweave contracts.
 
 
 ## Links
-- Official domain: https://arcode.studio
+- ArCode Studio: https://arcode.studio
+- ArCode Studio Gallery: https://arcode.studio/#/gallery
 - Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg
 - GitHub pages backup: https://luckyr13.github.io/arcode
 - Discord channel: https://discord.gg/KMjZkkWrSS
-- Arweave permanent backup link (21SEP2022 - v1.2.6): https://arweave.net/MacjUiZks6KJajFzUGwe51eR1axxWkKKbFjUbk4XodQ
+- Changelog: https://github.com/luckyr13/arcode/blob/master/CHANGELOG.md
 
 ## Usage fees:
 - Contract deployment/write interaction: 0.00001 AR
@@ -76,6 +80,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
