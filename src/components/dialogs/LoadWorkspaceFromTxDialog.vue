@@ -29,7 +29,7 @@
           </label>
         </div>
         <p class="tx" v-if="txDataSize && kb2mb(byte2kb(txDataSize)) >= 1">
-          <strong class="warning">Overflow Warning!</strong> Data size is too big.
+          <strong class="warning">⚠️ Overflow Warning!</strong> Data size is too big.
         </p>
       </template>
       <template v-if="loadingContractTX">
@@ -289,7 +289,7 @@ function kb2mb(kb: number) {
   color:  red;
 }
 .tx {
-  font-size: 10px;
+  font-size: 16px;
   margin-bottom: 12px;
   text-align: center;
 }
