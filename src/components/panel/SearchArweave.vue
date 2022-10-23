@@ -278,26 +278,6 @@
 				</a>
 			</p>
 		</div>
-		<div v-if="isTestnet" class="link-container text-left">
-			<p v-if="resultsTXIsContract">
-				<a :href="`https://sonar.warp.cc/#/app/contract/${txtTxId}?network=testnet`" target="_blank">
-					<img src="@/assets/img/warpLogoSmall.png" />
-					<span>Open in SonAR</span>
-				</a>
-			</p>
-			<p v-if="resultsTXIsContract">
-				<a :href="`https://arcode.studio/#/${txtTxId}?network=redstone-testnet`" target="_blank">
-					<img class="invert-colors" src="@/assets/img/arweaveSmall.png" />
-					<span>Open in ArCode</span>
-				</a>
-			</p>
-			<p>
-				<a :href="`https://testnet.redstone.tools/${txtTxId}`" target="_blank">
-					<img src="@/assets/img/redstoneSmall.png" />
-					<span>Open in Testnet Redstone Tools Gateway</span>
-				</a>
-			</p>
-		</div>
 		<table class="table">
 			<thead>
 				<tr>

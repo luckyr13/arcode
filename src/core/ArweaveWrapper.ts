@@ -6,8 +6,8 @@ export const arweaveMainNets = [
   'arweave-mainnet', 'arweave.net'
 ];
 
-export const arweaveTestNets = [
-  'redstone-testnet', 'testnet.redstone.tools'
+export const arweaveTestNets: string[] = [
+  
 ];
 
 export const arweaveLocalNets = [
@@ -21,11 +21,6 @@ export const arweaveNetworks: Record<string, {host: string, port: number, protoc
     host: 'localhost',
     port: 1984,
     protocol: 'http'
-  },
-  'redstone-testnet': {
-    host: 'testnet.redstone.tools',
-    port: 443,
-    protocol: 'https'
   },
   'arweave-mainnet': {
     host: 'arweave.net',
