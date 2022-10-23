@@ -95,44 +95,37 @@ const closeModal = () => {
   emit('close');
 };
 
-const initModalFields = () => {
+const initModalFields = async () => {
   // Init fields
-  if (!props.txField) {
-    txtLoadTXTxField.value = props.txField;
-    selLoadTXLocation.value = '/';
-  }
+  txtLoadTXTxField.value = props.txField;
+  selLoadTXLocation.value = '/';
+  await loadTxMetadata();
   selNetwork.value = defaultSelNetwork;
 };
 
-onMounted(async () => {
-  if (props.txField) {
-    txtLoadTXTxField.value = props.txField;
-    selLoadTXLocation.value = `/`;
+async function loadTxMetadata() {
+  loadingMetadata.value = true;
+  try {
+    // Load metadata
+    const arweaveWrapper = new ArweaveWrapper();
+    const ardbWrapper = new ArDBWrapper(arweaveWrapper.arweave);
+    const txMetadata = await ardbWrapper.findOneTx(props.txField);
+    txDataSize.value = 0;
 
-    loadingMetadata.value = true;
-    try {
-      // Load metadata
-      const arweaveWrapper = new ArweaveWrapper();
-      const ardbWrapper = new ArDBWrapper(arweaveWrapper.arweave);
-      const txMetadata = await ardbWrapper.findOneTx(props.txField);
-      txDataSize.value = 0;
-
-      if (txMetadata && txMetadata.data && txMetadata.data.size) {
-        txDataSize.value = parseInt(txMetadata.data.size);
-      }
-
-    } catch (error) {
-      createToast(`${error}`,
-        {
-          type: 'danger',
-          showIcon: true,
-          position: 'bottom-right',
-        });
+    if (txMetadata && txMetadata.data && txMetadata.data.size) {
+      txDataSize.value = parseInt(txMetadata.data.size);
     }
-    loadingMetadata.value = false;
-  }
 
-});
+  } catch (error) {
+    createToast(`${error}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+  }
+  loadingMetadata.value = false;
+}
 
 watchEffect(() => {
   if (props.show && !showTracker.value) {
@@ -187,7 +180,9 @@ const openWorkspace_helper = (zipFile: File, path: string): Promise<void> => {
         const emptyEvent = new Event('emptyEvent');
         const fragments = file.name.split('/');
         const realFName = fragments[fragments.length - 1];
-        const tmpPath = path + file.name.substring(0, file.name.length - (realFName.length + 1));
+        const rootPath = path.length && path[path.length - 1] !== '/' ?
+          `${path}/` : path;
+        const tmpPath = rootPath + file.name.substring(0, file.name.length - (realFName.length + 1));
         
         zFile.file(file.name).async("string").then((data) => {
           addEditor(

@@ -19,11 +19,18 @@
         <span>Loading ...</span>
       </div>
       <div class="gallery-card" v-for="g in galleryResults" :key="g.id">
-        <h4>Workspace: {{ g.name }}</h4>
+        <h4>{{ g.name }}</h4>
         <h5>Tx: {{ g.id }}</h5>
         <h5>Created: {{ g.date }}</h5>
-        <p>Description: {{ g.description }}</p>
+        <h5>Description:</h5>
+        <p>{{ g.description }}</p>
         <div class="text-right card-footer">
+          <button 
+            class="modal-button modal-button-primary"
+            @click="loadToWorkspace(g.id)" 
+            >
+            Load to workspace
+          </button>
           <a 
             class="modal-button modal-button-primary" 
             :href="`./#/?workspace=${g.id}`"
@@ -36,7 +43,7 @@
         class="more-results"
         @click="nextResultsSearchByAddress()"
         v-if="galleryResults.length && !loading && !loadingMore && !noMoreResults">
-        Load more results
+        + Load more results
       </div>
       <div class="no-results" v-if="!galleryResults.length && !loading">
         No results.
@@ -76,7 +83,7 @@ const props = defineProps({
   login: Object
 });
 const showTracker = ref(false);
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'closeAndOpenLoadWorkspaceDialog']);
 const mainAddress = computed(() => {
   return props.login.mainAddress;
 });
@@ -182,6 +189,7 @@ watchEffect(async () => {
   const limit = 10;
   if (props.show && !showTracker.value) {
     showTracker.value = true;
+    noMoreResults.value = false;
     await loadGallery(mainAddress.value, limit);
   }
 });
@@ -252,6 +260,11 @@ const dateFormat = (d: number|string) => {
 
   return ``;
 }
+
+function loadToWorkspace(txId: string) {
+  showTracker.value = false;
+  emit('closeAndOpenLoadWorkspaceDialog', txId);
+}
 </script>
 
 <style scoped lang="scss">
@@ -270,9 +283,10 @@ hr {
 }
 
 .card-footer {
-  height: 42px;
-  border-bottom: 1px solid;
+  min-height: 42px;
+  border-bottom: 1px dashed;
   border-color: inherit;
+  padding-bottom: 20px;
 }
 
 .no-results {

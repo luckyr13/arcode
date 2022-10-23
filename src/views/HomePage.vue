@@ -167,7 +167,7 @@ onMounted(async () => {
     iframe.value = iframeBridge.start();
 
     // Load session data
-    if (!iframe.value && !props.tx) {
+    if (!iframe.value && !props.tx && !props.workspaceParam) {
       const sessInfo = login.loadSession(settings.stayLoggedIn);
       if (sessInfo.method === 'webwallet') {
         // Throw modal

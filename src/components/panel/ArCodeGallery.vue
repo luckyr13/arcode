@@ -68,7 +68,19 @@
     <MyGalleryDialog
       :show="showModalMyGallery"
       :login="login"
-      @close="showModalMyGallery = false"></MyGalleryDialog>
+      @close="showModalMyGallery = false"
+      @closeAndOpenLoadWorkspaceDialog="(tx) => {
+        closeAndOpenLoadWorkspaceDialog(tx);
+
+      }"></MyGalleryDialog>
+  </transition>
+  <transition name="fade">
+    <LoadWorkspaceFromTxDialog
+      :show="showLoadWorkspaceFromTxDialog"
+      :workspace="workspace"
+      :tx="loadWorkspaceTX"
+      :txField="loadWorkspaceTX"
+      @close="showLoadWorkspaceFromTxDialog = false"></LoadWorkspaceFromTxDialog>
   </transition>
 </div>
 </template>
@@ -80,9 +92,11 @@ import { ref, computed } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import MyGalleryDialog from '@/components/dialogs/MyGalleryDialog.vue';
 import PublishWorkspaceInGalleryDialog from '@/components/dialogs/PublishWorkspaceInGalleryDialog.vue';
-
+import LoadWorkspaceFromTxDialog from '@/components/dialogs/LoadWorkspaceFromTxDialog';
 const showModalPublishWorkspace = ref(false);
 const showModalMyGallery = ref(false);
+const showLoadWorkspaceFromTxDialog = ref(false);
+const loadWorkspaceTX = ref('');
 
 const props = defineProps({
   workspace: Object,
@@ -100,6 +114,12 @@ const showModalPublishWorkspaceFunc = () => {
 const showModalMyGalleryOpen = () => {
   showModalMyGallery.value = true;
 };
+
+function closeAndOpenLoadWorkspaceDialog(tx) {
+  showModalMyGallery.value = false; 
+  loadWorkspaceTX.value = tx;
+  showLoadWorkspaceFromTxDialog.value = true;
+}
 
 </script>
 
