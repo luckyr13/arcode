@@ -5,6 +5,8 @@
 # ArCode Studio: Smartweave editor and deployer
 ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the browser all the files are saved in cache memory and removed when the cache is cleared.
 
+`Smartweave contracts` are the Arweave `smart contracts`. You can learn more in the ArWiki: https://arwiki.wiki/#/en/smartweave
+
 ## Links
 - ArCode Studio: https://arcode.studio
 - ArCode Studio Gallery: https://arcode.studio/#/gallery
