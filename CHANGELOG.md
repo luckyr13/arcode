@@ -40,3 +40,6 @@ Link (2022-10-19): https://arweave.net/n0b8lGXuTWq-KOJfeMqqs5YXYdD_JJFsggsNQczyP
 
 ## 1.2.6
 Link (2022-09-21): https://arweave.net/MacjUiZks6KJajFzUGwe51eR1axxWkKKbFjUbk4XodQ
+
+## 1.1.3
+Link (2022-04-18): https://arweave.net/ChsTudctLbGfqvDwTnVqZqzdThVR3A4qasT_JirayO0
