@@ -85,6 +85,7 @@ arweave-mainnet
 `?theme=`
 
 theme-dark  
+dark-blue  
 aura  
 github-dark  
 github-light  
