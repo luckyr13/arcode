@@ -13,6 +13,7 @@ export class UserSettings {
 	private _menuThemes: Record<string, string> = {
 		'': 'default',
 		'theme-dark': 'theme-dark',
+		'dark-blue': 'dark-blue',
 		'aura': 'aura',
 		'github-dark': 'github-dark',
 		'github-light': 'github-light',
