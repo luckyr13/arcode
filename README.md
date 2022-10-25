@@ -75,7 +75,7 @@ https://arcode.studio/#/CONTRACTID
 ### SETTINGS:
 - Set a specific network
 
-?network=
+`?network=`
 
 arlocal-localhost
 
@@ -83,7 +83,7 @@ arweave-mainnet
 
 - Set a specific theme
 
-?theme=
+`?theme=`
 
 theme-dark
 
@@ -105,7 +105,8 @@ material-light
 
 
 - Hide toolbar
-?hideToolbar=true
+
+`?hideToolbar=true`
 
 ### Examples:
 
