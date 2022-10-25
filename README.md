@@ -77,35 +77,25 @@ https://arcode.studio/#/CONTRACTID
 
 `?network=`
 
-arlocal-localhost
-
+arlocal-localhost  
 arweave-mainnet
 
 - Set a specific theme
 
 `?theme=`
 
-theme-dark
-
-aura
-
-github-dark
-
-github-light
-
-dracula
-
-solarized-dark
-
-solarized-light
-
-material-dark
-
+theme-dark  
+aura  
+github-dark  
+github-light  
+dracula  
+solarized-dark  
+solarized-light  
+material-dark  
 material-light
 
 
-- Hide toolbar
-
+- Hide toolbar  
 `?hideToolbar=true`
 
 ### Examples:
