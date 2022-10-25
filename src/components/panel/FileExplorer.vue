@@ -40,7 +40,7 @@
 		<input type="file" 
 			id="txt_file_openFile" 
 			style="display: none" 
-			accept=".json,application/json,.js,text/javascript" 
+			:accept="acceptedFileTypes" 
 			@change="openFile_helper($event, workspace)">
 	</li>
 	<li>
@@ -207,6 +207,7 @@ const showModalOpenFile = ref(false);
 const showModalEditFile = ref(false);
 const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
 const selNetwork = ref(defaultSelNetwork);
+const acceptedFileTypes = ref('.json,application/json,.js,text/javascript,.ts,.py,rs,.java,.cpp,.erl,.go,.html,.xml,.graphql,.gql,.sql,.css,.scss');
 
 const props = defineProps({
 	workspace: Object,

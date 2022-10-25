@@ -10,6 +10,7 @@ import {json} from "@codemirror/lang-json";
 import {python} from "@codemirror/lang-python";
 import {java} from "@codemirror/lang-java";
 import {cpp} from "@codemirror/lang-cpp";
+import {html, xml} from "@codemirror/legacy-modes/mode/xml"
 import { oneDark } from "@codemirror/theme-one-dark";
 import { autocompletion, completionKeymap, closeBrackets } from "@codemirror/autocomplete";
 import { GenericWorkspace } from './interfaces/GenericWorkspace';
@@ -25,6 +26,8 @@ import { solarizedDark } from '@ddietr/codemirror-themes/solarized-dark';
 import { solarizedLight } from '@ddietr/codemirror-themes/solarized-light';
 import { materialDark} from '@ddietr/codemirror-themes/material-dark';
 import { materialLight} from '@ddietr/codemirror-themes/material-light';
+import {css, sCSS} from "@codemirror/legacy-modes/mode/css";
+import {standardSQL, gql} from "@codemirror/legacy-modes/mode/sql";
 
 export class BaseWorkspace implements GenericWorkspace
 {
@@ -117,6 +120,7 @@ export class BaseWorkspace implements GenericWorkspace
 	}
 
 	private _getLangExtension(lang: string): Extension {
+		lang = lang.toLowerCase();
 		if (lang == 'js') {
 			return javascript();
 		} else if (lang == 'ts') {
@@ -136,6 +140,18 @@ export class BaseWorkspace implements GenericWorkspace
 			return StreamLanguage.define(erlang);
 		} else if (lang == 'go') {
 			return StreamLanguage.define(go);
+		} else if (lang == 'html') {
+			return StreamLanguage.define(html);
+		} else if (lang == 'xml') {
+			return StreamLanguage.define(xml);
+		} else if (lang == 'css') {
+			return StreamLanguage.define(css);
+		} else if (lang == 'scss') {
+			return StreamLanguage.define(sCSS);
+		} else if (lang === 'graphql' || lang === 'gql') {
+			return StreamLanguage.define(gql);
+		} else if (lang === 'sql') {
+			return StreamLanguage.define(standardSQL);
 		}
 		
 		return [];
