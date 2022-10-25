@@ -69,6 +69,7 @@ If you wanna embed ArCode Studio in your own project as an iframe you can pass t
 
 ### RUNNING IN SINGLE FILE MODE:
 https://arcode.studio/#/?workspace=WORKSPACEID
+
 https://arcode.studio/#/CONTRACTID
 
 ### SETTINGS:
@@ -92,7 +93,15 @@ material-light
 - Hide toolbar
 ?hideToolbar=true
 
-Example: https://arcode.studio/#/?hideToolbar=true&theme=dracula
+### Examples:
+
+Customizing the editor: https://arcode.studio/#/?hideToolbar=true&theme=dracula
+
+Loading a workspace: https://arcode.studio/#/?workspace=G2SvgF0-JFdti5X7FNzmpzC647z-u8odVvcvxiWallA
+
+Loading a contract: https://arcode.studio/#/ewepANKEVffP0cm_XKjwTYhSBqaiQrJbVrCcBiWqw-s
+
+
 
 ## Project setup
 If you want to compile and run your own ArCode copy on your localhost first install the required packages using your favorite package manager.
