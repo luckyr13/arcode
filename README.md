@@ -63,8 +63,39 @@ Brave Browser and AdBlock users. Some users have reported issues when trying to 
 ###  No Warranty
 "As-Is". The Software is provided "as is," with all faults, defects, bugs, and errors.
 
+
+## FOR DEVS
+If you wanna embed ArCode Studio in your own project as an iframe you can pass the next parameters in the url to customize the IDE.
+
+### RUNNING IN SINGLE FILE MODE:
+https://arcode.studio/#/?workspace=WORKSPACEID
+https://arcode.studio/#/CONTRACTID
+
+### SETTINGS:
+- Set a specific network
+?network=
+arlocal-localhost
+arweave-mainnet
+
+- Set a specific theme
+?theme=
+theme-dark
+aura
+github-dark
+github-light
+dracula
+solarized-dark
+solarized-light
+material-dark
+material-light
+
+- Hide toolbar
+?hideToolbar=true
+
+Example: https://arcode.studio/#/?hideToolbar=true&theme=dracula
+
 ## Project setup
-If you want to run your own ArCode instance on localhost please install this dapp as an usual Vue app. 
+If you want to compile and run your own ArCode copy on your localhost first install the required packages using your favorite package manager.
 ```
 npm install
 ```
