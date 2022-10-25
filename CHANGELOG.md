@@ -1,5 +1,10 @@
 # ArCode versions
 
+## 1.3.4
+- Support for more languages (typescript, gql, html)!
+- Search now is possible in the editor using Codemirror Search panel (CTRL+F).
+- New themes added!
+
 ## 1.3.3
 Link (2022-10-23): https://arweave.net/NNnl1gzisL8j7xpb01zBW6Qg7BjU-oh6h_2qDQvwImA
 - My Gallery: Now is possible to load your previous workspaces saved in ArCode Gallery into current workspace from My Gallery.
