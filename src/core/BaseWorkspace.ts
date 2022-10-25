@@ -100,7 +100,7 @@ export class BaseWorkspace implements GenericWorkspace
 
 
 	private _getThemeExtension(theme: string): Extension {
-		if (theme == 'theme-dark') {
+		if (theme == 'theme-dark' || theme == 'dark-blue') {
 			return oneDark;
 		} else if (theme === 'aura') {
 			return aura;
