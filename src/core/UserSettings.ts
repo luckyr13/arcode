@@ -10,25 +10,18 @@ interface ThemeColor {
 export class UserSettings {
 	private _settings: Settings;
 	private _storage = window.localStorage;
-	private _menuThemes: Record<string, ThemeColor> = {
-		'': {
-      primary: '#FEFEFF',
-      secondary: '#F1F0F1',
-      tertiary: '#CDE8FE',
-      textColor: '#000000'
-		},
-		'theme-dark': {
-      primary: '#252526',
-      secondary: '#252526',
-      tertiary: '#084671',
-      textColor: '#CDCCCD'
-    },
-		'dark-blue': {
-      primary: '#001B48',
-      secondary: '#02457a',
-      tertiary: '#018abe',
-      textColor: '#fff'
-    }
+	private _menuThemes: Record<string, string> = {
+		'': 'default',
+		'theme-dark': 'theme-dark',
+		'aura': 'aura',
+		'github-dark': 'github-dark',
+		'github-light': 'github-light',
+		'dracula': 'dracula',
+		'solarized-dark': 'solarized-dark',
+		'solarized-light': 'solarized-light',
+		'material-dark': 'material-dark',
+		'material-light': 'material-light'
+		
 	}
 
 	constructor() {
@@ -49,10 +42,10 @@ export class UserSettings {
 		this._storage.setItem('settings', JSON.stringify(v));
 		this._settings = v;
 	}
-	public get menuTheme(): ThemeColor {
+	public get menuTheme(): string {
 		return this._menuThemes[this._settings.theme];
 	}
-	public get themes(): Record<string, ThemeColor> {
+	public get themes(): Record<string, string> {
 		return this._menuThemes;
 	}
 

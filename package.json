@@ -22,6 +22,7 @@
     "@codemirror/state": "^6.1.2",
     "@codemirror/theme-one-dark": "^6.1.0",
     "@codemirror/view": "^6.4.0",
+    "@ddietr/codemirror-themes": "^1.2.1",
     "@vscode/codicons": "^0.0.32",
     "animejs": "^3.2.1",
     "ardb": "^1.1.10",

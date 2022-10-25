@@ -17,6 +17,14 @@ import { EditorViewMetadata } from './interfaces/EditorViewMetadata';
 import { ref } from 'vue';
 import {erlang} from "@codemirror/legacy-modes/mode/erlang";
 import {go} from "@codemirror/legacy-modes/mode/go";
+import { aura } from '@ddietr/codemirror-themes/aura';
+import { githubDark } from '@ddietr/codemirror-themes/github-dark';
+import { githubLight } from '@ddietr/codemirror-themes/github-light';
+import { dracula } from '@ddietr/codemirror-themes/dracula';
+import { solarizedDark } from '@ddietr/codemirror-themes/solarized-dark';
+import { solarizedLight } from '@ddietr/codemirror-themes/solarized-light';
+import { materialDark} from '@ddietr/codemirror-themes/material-dark';
+import { materialLight} from '@ddietr/codemirror-themes/material-light';
 
 export class BaseWorkspace implements GenericWorkspace
 {
@@ -84,9 +92,26 @@ export class BaseWorkspace implements GenericWorkspace
 		this._currentContent.value = content;
 	}
 
+
 	private _getThemeExtension(theme: string): Extension {
-		if (theme == 'theme-dark' || theme == 'dark-blue') {
+		if (theme == 'theme-dark') {
 			return oneDark;
+		} else if (theme === 'aura') {
+			return aura;
+		} else if (theme === 'github-dark') {
+			return githubDark;
+		} else if (theme === 'github-light') {
+			return githubLight;
+		} else if (theme === 'dracula') {
+			return dracula;
+		} else if (theme === 'solarized-dark') {
+			return solarizedDark;
+		} else if (theme === 'solarized-light') {
+			return solarizedLight;
+		} else if (theme === 'material-dark') {
+			return materialDark;
+		} else if (theme === 'material-light') {
+			return materialLight;
 		}
 		return syntaxHighlighting(defaultHighlightStyle);
 	}
@@ -94,6 +119,9 @@ export class BaseWorkspace implements GenericWorkspace
 	private _getLangExtension(lang: string): Extension {
 		if (lang == 'js') {
 			return javascript();
+		} else if (lang == 'ts') {
+			const config = { typescript: true };
+			return javascript(config);
 		} else if (lang == 'rs') {
 			return rust();
 		} else if (lang == 'json') {

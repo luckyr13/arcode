@@ -25,10 +25,9 @@
   --color-neon-green: #39ff14;
   --color-neon-green-rgba: rgba(57,255,20,0.2);
   --color-neon-pink-rgba: rgba(255,16,240,0.2);
-	
 }
 
-.theme-dark {
+.theme-dark, .github-dark, .material-dark {
 	--app-background-bgcolor: #1E1E1E;
 	--app-background-color: #FFFFFF;
 	--app-toolbar-bgcolor: #333333;
@@ -48,7 +47,7 @@
 	--app-tabs-button-color-hoverbg: #424242;
 }
 
-.dark-blue {
+.dracula, .aura {
 	--app-background-bgcolor: #2A2C3F;
 	--app-background-color: #FFFFFF;
 	--app-toolbar-bgcolor: #2A2C3F;
@@ -66,4 +65,45 @@
 	--app-invert-img: 0.8;
 	--app-toolbar-panel-resize-bgcolor: #0099FF;
 	--app-tabs-button-color-hoverbg: #424242;
+}
+
+.solarized-dark {
+	--app-background-bgcolor: #002B36;
+	--app-background-color: #FFF;
+	--app-toolbar-bgcolor: #003847;
+	--app-toolbar-color: #CCC;
+	--app-toolbar-color-hover: #FEFEFF;
+	--app-toolbar-color-onactive: #017ED4;
+	--app-toolbar-panel-bgcolor: #00212B;
+	--app-toolbar-panel-color: #FFFFFF;
+	--app-toolbar-panel-title-bgcolor: #001217;
+	--app-toolbar-panel-title-color: #FFFFFF;
+	--app-notification-bgcolor: #094771;
+	--app-notification-color: #FFFFFF;
+	--app-statusbar-bgcolor: #001217;
+	--app-statusbar-color: #FFFFFF;
+	--app-invert-img: 0.8;
+	--app-toolbar-panel-resize-bgcolor: #0099FF;
+	--app-tabs-button-color-hoverbg: #424242;
+}
+
+
+.solarized-light {
+	--app-background-bgcolor: #FDF6E3;
+	--app-background-color: #000;
+	--app-toolbar-bgcolor: #f6e3fd;
+	--app-toolbar-color: #727F7F;
+	--app-toolbar-color-hover: #000000;
+	--app-toolbar-color-onactive: #CCCCCC;
+	--app-toolbar-panel-bgcolor: #EEE8D5;
+	--app-toolbar-panel-color: #000000;
+	--app-toolbar-panel-title-bgcolor: #5F5D55;
+	--app-toolbar-panel-title-color: #FFFFFF;
+	--app-notification-bgcolor: #094771;
+	--app-notification-color: #FFFFFF;
+	--app-statusbar-bgcolor: rgba(0, 0, 0, 0.6);
+	--app-statusbar-color: #FFFFFF;
+	--app-invert-img: 0;
+	--app-toolbar-panel-resize-bgcolor: #0099FF;
+	--app-tabs-button-color-hoverbg: #dbdbdb;
 }
