@@ -1,7 +1,7 @@
 # ArCode versions
 
 ## 1.3.4
-Link (2022-10-24): https://arweave.net/EJh2qn8zIn0l6SanN6V_v6h_njXK_IzeK4kOmlaKKB0
+Link (2022-10-24): https://arweave.net/t15fHCq3NOG6G6ihrLmsepAGVvJzmngzXKLrGRWw_0g
 - Support for more languages (typescript, gql, html)!
 - Search now is possible in the editor using Codemirror Search panel (CTRL+F).
 - New themes added!
