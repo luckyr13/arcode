@@ -74,21 +74,35 @@ https://arcode.studio/#/CONTRACTID
 
 ### SETTINGS:
 - Set a specific network
+
 ?network=
+
 arlocal-localhost
+
 arweave-mainnet
 
 - Set a specific theme
+
 ?theme=
+
 theme-dark
+
 aura
+
 github-dark
+
 github-light
+
 dracula
+
 solarized-dark
+
 solarized-light
+
 material-dark
+
 material-light
+
 
 - Hide toolbar
 ?hideToolbar=true
