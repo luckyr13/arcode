@@ -95,7 +95,8 @@ material-dark
 material-light
 
 
-- Hide toolbar  
+- Hide toolbar
+
 `?hideToolbar=true`
 
 ### Examples:
