@@ -28,6 +28,7 @@ import { materialDark} from '@ddietr/codemirror-themes/material-dark';
 import { materialLight} from '@ddietr/codemirror-themes/material-light';
 import {css, sCSS} from "@codemirror/legacy-modes/mode/css";
 import {standardSQL, gql} from "@codemirror/legacy-modes/mode/sql";
+import { searchKeymap, highlightSelectionMatches } from "@codemirror/search";
 
 export class BaseWorkspace implements GenericWorkspace
 {
@@ -55,9 +56,11 @@ export class BaseWorkspace implements GenericWorkspace
 			bracketMatching(),
 			closeBrackets(),
 			autocompletion(),
+			highlightSelectionMatches(),
       keymap.of([...defaultKeymap, indentWithTab]),
       keymap.of(historyKeymap),
 			keymap.of(completionKeymap),
+			keymap.of(searchKeymap)
 		);
 		
 		this._extensions.push(
