@@ -91,6 +91,7 @@ function compile(outDir: string, entryFile: string) {
       '/node_modules/es2015/lib.es2015.symbol.d.ts',
       '/node_modules/es2015/lib.es2015.symbol.wellknown.d.ts',
       '/node_modules/es2015/lib.es5.d.ts',
+      '/node_modules/smartweave/contract-executor.d.ts',
     ],
     outDir: outDir,
     esModuleInterop: true,
@@ -153,6 +154,18 @@ const loadNodeModulesToWorkspace = async () => {
         position: 'bottom-right',
       });
   }
+
+  // Add smartweave types
+  try {
+    await loadSmartweave()
+  } catch (error) {
+    createToast(`${error}`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      });
+  }
   
   // Add Verto Flex lib
 
@@ -204,6 +217,47 @@ async function loadES2015() {
         src,
         fileName,
         '/node_modules/es2015',
+        false)
+
+    }
+  }
+
+}
+
+
+async function loadSmartweave() {
+  const files = [
+    'node-modules-sources/smartweave/contract-executor.d.ts',
+  ]
+  const path = '/node_modules/smartweave/'
+  const emptyEvent = new Event('empty')
+  props.workspace.addFolder('/node_modules', 'smartweave')
+
+  for (const f of files) {
+    const fileNameFragments = f.split('/')
+    const fileName = fileNameFragments[fileNameFragments.length - 1]
+    if (props.workspace.findFileIdByName(path, fileName) >= 0) {
+      continue
+    } else {
+      let src = ''
+      try {
+        src = await downloadContent(f)
+      } catch (error) {
+        createToast(`Error downloading source file.`,
+        {
+          type: 'danger',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+        // Skip rest of the code
+        continue
+      }
+      props.workspace.addEditor(
+        emptyEvent,
+        false,
+        src,
+        fileName,
+        '/node_modules/smartweave',
         false)
 
     }
