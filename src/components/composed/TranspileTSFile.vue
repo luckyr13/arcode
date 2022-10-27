@@ -1,4 +1,5 @@
 <template>
+  <h3><img src="@/assets/img/typescript.png">Typescript Transpiler</h3>
   <div class="form-input">
     <label>Entry File</label>
     <select 
@@ -332,6 +333,17 @@ button:hover {
   padding:  20px;
   font-size:  12px;
   text-align: center;
+}
+h3 {
+  padding: 0px 12px 12px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 0px;
+}
+h3 img {
+  width: 20px;
+  float: left;
+  margin-right: 6px;
 }
 
 </style>

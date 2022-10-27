@@ -64,6 +64,8 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
         path = '/'
       }
 
+    contents = this.addExportsTransform(contents)
+
     this._workspace.addEditor(
       emptyEvent,
       false,
@@ -124,6 +126,23 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
     }
 
     return false
+  }
+
+  addExportsTransform(contents: string) {
+    const lines = contents.split("\n")
+    const hasExports = contents.indexOf('exports') >= 0
+    const newLines = []
+
+    if (lines.length) {
+      newLines.push(lines[0])
+      if (hasExports) {
+        newLines.push("var exports = {};")
+      }
+      if (lines.length > 1) {
+        newLines.push(...lines.slice(1, lines.length - 1))
+      }
+    }
+    return newLines.join("\n");
   }
 /*
   babelTransform(contents: string) {
