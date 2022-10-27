@@ -5,7 +5,7 @@
 # ArCode Studio: Smartweave editor and deployer
 ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the browser all the files are saved in cache memory and removed when the cache is cleared.
 
-**Smartweave contracts** are the Arweave **smart contracts**. You can learn more in the ArWiki: https://arwiki.wiki/#/en/smartweave
+**Smartweave contracts** are the Arweave **smart contracts**. You can learn more in the [ArWiki](https://arwiki.wiki/#/en/smartweave).
 
 ## Links
 - ArCode Studio: https://arcode.studio
@@ -23,7 +23,8 @@ ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the 
 - Load contracts sources and state into the workspace directly from their Arweave TXs.
 - Import/Export your workspace to .zip file.
 - Publish your workspace to Arweave.
-- ArCode Gallery: A public list of all the workspaces published in ArCode.
+- ArCode Gallery: The public list of all the workspaces published in ArCode (using Arcode Protocol).
+- ArCode Lab: Amazing features, like our Typescript Transpiler!
 
 ++ Arweave explorer
 - Explore the Arweave Mainnet or a local gateway.
@@ -49,6 +50,7 @@ ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the 
 
 
 ## Usage fees:
+ArCode is a permaweb app that has its own PST token called $CODE.
 - Contract deployment/write interaction: 0.00001 AR
 - VIP users: You can use this dApp for free having a minimum balance of 10000 $CODE tokens.
 
