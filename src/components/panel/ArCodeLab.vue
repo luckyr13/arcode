@@ -3,16 +3,29 @@
   ArCode Lab
 </div>
 <div>
-  <h3>
-    👷 Coming Soon ...
-  </h3>
+  
+  <div class="form-input">
+    <label>Method</label>
+    <select 
+      @change="resetForms()"
+      v-model.trim="selOption">
+      <option value="transpile-src-file">Transpile TS File</option>
+    </select>
+  </div>
+  <template v-if="selOption === 'transpile-src-file'">
+    <TranspileTSFile
+      :workspace="workspace"></TranspileTSFile>
+  </template>
 </div>
 </template>
 
 
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
-import { ref, watchEffect, computed } from 'vue';
+import { ref, watchEffect, computed } from 'vue'
+import TranspileTSFile from '@/components/composed/TranspileTSFile'
+
+const selOption = ref('transpile-src-file')
 
 const props = defineProps({
   workspace: Object,
@@ -20,8 +33,6 @@ const props = defineProps({
   login: Object,
   tokenState: Object
 });
-
-
 </script>
 
 <style scoped lang="scss">
@@ -67,4 +78,9 @@ h3 span {
   margin-left: 12px;
 }
 
+.form-input input,
+.form-input select
+ {
+  padding: 6px;
+}
 </style>

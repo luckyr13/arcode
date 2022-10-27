@@ -95,7 +95,6 @@ const props = defineProps({
   networkParam: String,
   workspaceParam: String
 });
-// const emit = defineEmits(['workspace-change']);
 
 const divs = ref([]);
 const baseTheme = ref(props.theme);

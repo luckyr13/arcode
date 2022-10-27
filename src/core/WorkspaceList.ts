@@ -20,9 +20,9 @@ export class WorkspaceList {
       { name: 'Type', values: 'Workspace' },
     ]
     const order = 'HEIGHT_DESC'
-    const data = await this._ardbWrapper.findFromOwners(
+    const data: ArdbTransaction[] = await this._ardbWrapper.findFromOwners(
       owners, limit, tags, order, maxHeight
-    )
+    ) as ArdbTransaction[]
     
     this._list = data.map((tx) => {
       return this._reduceToMetadata(tx)

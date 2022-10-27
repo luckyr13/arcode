@@ -195,34 +195,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
-import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { UserSettings } from '@/core/UserSettings';
-import { Login } from '@/core/Login';
-import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper';
+import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
+import DefaultIcon from '@/components/atomic/DefaultIcon'
+import { UserSettings } from '@/core/UserSettings'
+import { Login } from '@/core/Login'
+import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper'
 import { 
 	WarpContracts, ContractData, ArWallet, 
-	FromSrcTxContractData, ArTransfer, Tags } from '@/core/WarpContracts';
-import { createToast } from 'mosha-vue-toastify';
+	FromSrcTxContractData, ArTransfer, Tags } from '@/core/WarpContracts'
+import { createToast } from 'mosha-vue-toastify'
 import { DefaultWorkspace } from '@/components/composed/DefaultWorkspace'
  
-const userSettings = new UserSettings();
-const settings = userSettings.settings;
-const globalArweaveWrapper = new ArweaveWrapper();
+const userSettings = new UserSettings()
+const settings = userSettings.settings
+const globalArweaveWrapper = new ArweaveWrapper()
 
 const networks = computed(() => {
-	return arweaveNetworks;
+	return arweaveNetworks
 });
-const selDeployFileContractLocation = ref('');
-const txtDeployFileContractLocationByTx = ref('');
-const selDeployFileStateLocation = ref('');
-const selDeployFileStateLocation2 = ref('');
-const deployedContractTX = ref('');
-const loadingDeployContract = ref(false);
-const selDeployMethod = ref('contract-src-file');
-const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
-const selNetwork = ref(defaultSelNetwork);
-const prevNetwork = ref(selNetwork.value);
+const selDeployFileContractLocation = ref('')
+const txtDeployFileContractLocationByTx = ref('')
+const selDeployFileStateLocation = ref('')
+const selDeployFileStateLocation2 = ref('')
+const deployedContractTX = ref('')
+const loadingDeployContract = ref(false)
+const selDeployMethod = ref('contract-src-file')
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork
+const selNetwork = ref(defaultSelNetwork)
+const prevNetwork = ref(selNetwork.value)
 const props = defineProps({
 	iframe: Boolean,
 	workspace: Object,
@@ -230,36 +230,36 @@ const props = defineProps({
 	login: Object,
 	networkParam: String
 });
-const tagsList1 = reactive<Tags>([]);
-const tagsList2 = reactive<Tags>([]);
+const tagsList1 = reactive<Tags>([])
+const tagsList2 = reactive<Tags>([])
 const contractSettings = computed(() => {
 	const settings = props.tokenState.settings ? props.tokenState.settings : [];
 	return new Map(settings);
-});
+})
 const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
-});
+})
 const appFeeInAr = computed(() => {
-	return globalArweaveWrapper.winstonToAr(appFeeInWinston.value);
-});
+	return globalArweaveWrapper.winstonToAr(appFeeInWinston.value)
+})
 const vipMinimumBalance = computed(() => {
-	return parseInt(contractSettings.value.get('vipMinimumBalance'));
-});
-const mainAddress = ref(props.login.mainAddress);
+	return parseInt(contractSettings.value.get('vipMinimumBalance'))
+})
+const mainAddress = ref(props.login.mainAddress)
 const pstBalance = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const balances = props.tokenState.balances ? props.tokenState.balances : {}
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
-	return res;
-});
+		parseInt(props.tokenState.balances[mainAddress.value]) : 0
+	return res
+})
 const balances = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const balances = props.tokenState.balances ? props.tokenState.balances : {}
 	return balances;
-});
-const balance = ref('0');
-const isBridgeActive = ref(false);
+})
+const balance = ref('0')
+const isBridgeActive = ref(false)
 const arcodePreviewUrl = (tx) => {
-	return `https://arcode.studio/#/${tx}?network=${selNetwork.value}`;
+	return `https://arcode.studio/#/${tx}?network=${selNetwork.value}`
 };
 
 const deployContract = async (
@@ -267,46 +267,46 @@ const deployContract = async (
 	contractSrcPath: string,
 	workspace: DefaultWorkspace,
 	tags: Tags) => {
-	let contractSrc = ``;
-	let initStateSrc = ``;
-	loadingDeployContract.value = true;
+	let contractSrc = ``
+	let initStateSrc = ``
+	loadingDeployContract.value = true
 	try {
 		// Check balance
 		if (balance.value == 0) {
-			throw Error('Not enough balance!');
+			throw Error('Not enough balance!')
 		}
 
-		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-		const arweave = arweaveWrapper.arweave;
-		const warpContracts = new WarpContracts(arweave);
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+		const arweave = arweaveWrapper.arweave
+		const warpContracts = new WarpContracts(arweave)
 
 		// Iframe fix
-		const loginMethod = props.login.method;
+		const loginMethod = props.login.method
 		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
-			props.login.hijackArweavePostAPI(arweave);
+			props.login.hijackArweavePostAPI(arweave)
 		}
-		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
-		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
+		const stateName2 = statePath.split('/')[statePath.split('/').length - 1]
+		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/')
 		if (statePath2 === '') {
-			statePath2 = '/';
+			statePath2 = '/'
 		}
-		const stateFileId = workspace.findFileIdByName(statePath2, stateName2);
-		const iState = workspace.editors.findIndex(ed => ed.id == stateFileId);
+		const stateFileId = workspace.findFileIdByName(statePath2, stateName2)
+		const iState = workspace.editors.findIndex(ed => ed.id == stateFileId)
 	
-		const contractName2 = contractSrcPath.split('/')[contractSrcPath.split('/').length - 1];
-		let contractPath2 = contractSrcPath.split('/').splice(0, contractSrcPath.split('/').length - 1).join('/');
+		const contractName2 = contractSrcPath.split('/')[contractSrcPath.split('/').length - 1]
+		let contractPath2 = contractSrcPath.split('/').splice(0, contractSrcPath.split('/').length - 1).join('/')
 		if (contractPath2 === '') {
-			contractPath2 = '/';
+			contractPath2 = '/'
 		}
-		const contractFileId = workspace.findFileIdByName(contractPath2, contractName2);
-		const iContract = workspace.editors.findIndex(ed => ed.id == contractFileId);
+		const contractFileId = workspace.findFileIdByName(contractPath2, contractName2)
+		const iContract = workspace.editors.findIndex(ed => ed.id == contractFileId)
 		
 		
 		if (iState < 0 || iContract < 0) {
-			throw Error(`Invalid state or contract id ${iState} ${iContract}`);
+			throw Error(`Invalid state or contract id ${iState} ${iContract}`)
 		}
-		contractSrc = workspace.editors[iContract].view.state.doc.toString();
-		initStateSrc = workspace.editors[iState].view.state.doc.toString();
+		contractSrc = workspace.editors[iContract].view.state.doc.toString()
+		initStateSrc = workspace.editors[iState].view.state.doc.toString()
 
 		const transfer = warpContracts.getTransferData(
 			pstBalance.value,
@@ -315,9 +315,9 @@ const deployContract = async (
 			appFeeInWinston.value,
 			mainAddress.value,
 			balances.value
-		);
+		)
 
-		const wallet: ArWallet = props.login.key;
+		const wallet: ArWallet = props.login.key
 		
 		const contract: ContractData = {
 			wallet: wallet,
@@ -325,52 +325,52 @@ const deployContract = async (
 			src: contractSrc,
 			tags: tags,
 			transfer: transfer
-		};
+		}
 
-		const tx = await warpContracts.createContract(contract);
+		const tx = await warpContracts.createContract(contract)
 
 		if (tx) {
-			deployedContractTX.value = tx;
+			deployedContractTX.value = tx
 			createToast('Contract deployed!',
 			{
 				type: 'success',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 
 			if (warpContracts.onLocalnet(arweave)) {
 				// Call mine 
-				const miningRes = await arweaveWrapper.arlocalMine();
-				console.log('Confirmed tx: ', miningRes);
+				const miningRes = await arweaveWrapper.arlocalMine()
+				console.log('Confirmed tx: ', miningRes)
 				createToast('Transaction confirmed!',
 				{
 					type: 'success',
 					showIcon: true,
 					position: 'bottom-right',
-				});
+				})
 			}
 
 		} else {
-			throw Error('Error creating tx', tx);
+			throw Error('Error creating tx', tx)
 		}
 		
 		
 	} catch (err) {
-		let error = `${err}`;
+		let error = `${err}`
 		if (typeof(err) === 'object' &&
 				Object.prototype.hasOwnProperty.call(err, 'message')) {
-			error = err.message;
+			error = err.message
 		}
 		createToast(error,
     {
       type: 'danger',
       showIcon: true,
       position: 'bottom-right',
-    });
+    })
 	}
 	
 
-	loadingDeployContract.value = false;
+	loadingDeployContract.value = false
 };
 
 
@@ -380,36 +380,36 @@ const deployContractFromTX = async (
 	contractSrcTX: string,
 	workspace: DefaultWorkspace,
 	tags: Tags) => {
-	let initStateSrc = ``;
-	loadingDeployContract.value = true;
+	let initStateSrc = ``
+	loadingDeployContract.value = true
 	try {
 		// Check balance
 		if (balance.value == 0) {
-			throw Error('Not enough balance!');
+			throw Error('Not enough balance!')
 		}
 
-		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-		const arweave = arweaveWrapper.arweave;
-		const warpContracts = new WarpContracts(arweave);
-		const warp = warpContracts.warp;
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+		const arweave = arweaveWrapper.arweave
+		const warpContracts = new WarpContracts(arweave)
+		const warp = warpContracts.warp
 		// Iframe fix
-		const loginMethod = props.login.method;
+		const loginMethod = props.login.method
 		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
-			props.login.hijackArweavePostAPI(arweave.arweave);
+			props.login.hijackArweavePostAPI(arweave.arweave)
 		}
 
-		const stateName2 = statePath.split('/')[statePath.split('/').length - 1];
-		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/');
+		const stateName2 = statePath.split('/')[statePath.split('/').length - 1]
+		let statePath2 = statePath.split('/').splice(0, statePath.split('/').length - 1).join('/')
 		if (statePath2 === '') {
-			statePath2 = '/';
+			statePath2 = '/'
 		}
-		const stateFileId = workspace.findFileIdByName(statePath2, stateName2);
-		const iState = workspace.editors.findIndex(ed => ed.id == stateFileId);
-		const wallet: ArWallet = props.login.key;
+		const stateFileId = workspace.findFileIdByName(statePath2, stateName2)
+		const iState = workspace.editors.findIndex(ed => ed.id == stateFileId)
+		const wallet: ArWallet = props.login.key
 		if (iState < 0 || !contractSrcTX) {
-			throw Error(`Invalid state or contract id ${iState} ${contractSrcTX}`);
+			throw Error(`Invalid state or contract id ${iState} ${contractSrcTX}`)
 		}
-		initStateSrc = workspace.editors[iState].view.state.doc.toString();
+		initStateSrc = workspace.editors[iState].view.state.doc.toString()
 		
 		const transfer = warpContracts.getTransferData(
 			pstBalance.value,
@@ -418,97 +418,97 @@ const deployContractFromTX = async (
 			appFeeInWinston.value,
 			mainAddress.value,
 			balances.value
-		);
+		)
 		const contract: FromSrcTxContractData = {
 			wallet: wallet,
 			initState: initStateSrc,
 			srcTxId: contractSrcTX,
 			tags: tags,
 			transfer: transfer
-		};
+		}
 		
-		const tx = await warpContracts.createContractFromTX(contract);
+		const tx = await warpContracts.createContractFromTX(contract)
 		
 		if (tx) {
-			deployedContractTX.value = tx;
+			deployedContractTX.value = tx
 			createToast('Contract deployed!',
 			{
 				type: 'success',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 
 			if (warpContracts.onLocalnet(arweave)) {
 				// Call mine 
-				const miningRes = await arweaveWrapper.arlocalMine();
-				console.log('Confirmed tx: ', miningRes);
+				const miningRes = await arweaveWrapper.arlocalMine()
+				console.log('Confirmed tx: ', miningRes)
 				createToast('Transaction confirmed!',
 				{
 					type: 'success',
 					showIcon: true,
 					position: 'bottom-right',
-				});
+				})
 			}
 
 		} else {
-			throw Error('Error creating tx', tx);
+			throw Error('Error creating tx', tx)
 		}
 		
 		
 	} catch (err) {
-		let error = `${err}`;
+		let error = `${err}`
 		if (typeof(err) === 'object' &&
 				Object.prototype.hasOwnProperty.call(err, 'message')) {
-			error = err.message;
+			error = err.message
 		}
 		createToast(error,
     {
       type: 'danger',
       showIcon: true,
       position: 'bottom-right',
-    });
+    })
 	}
 	
 
-	loadingDeployContract.value = false;
+	loadingDeployContract.value = false
 };
 
 const removeTag = (index: number, tags: Tags) => {
-	tags.splice(index, 1);
+	tags.splice(index, 1)
 };
 
 const addTag = (key: string, value: string, tags: Tags) => {
-	tags.push({ key, value });
+	tags.push({ key, value })
 };
 
 const testnetMintTokens = async (qty='1000000000000') => {
 	try {
-		const net = networks.value[selNetwork.value];
-		const url = `${net.protocol}://${net.host}:${net.port}/mint/${mainAddress.value}/${qty}`;
-		const res = await fetch(url);
+		const net = networks.value[selNetwork.value]
+		const url = `${net.protocol}://${net.host}:${net.port}/mint/${mainAddress.value}/${qty}`
+		const res = await fetch(url)
 		if (res.status === 200) {
 		createToast('Tokens minted!',
 			{
 				type: 'success',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		} else {
-			console.log('Error:', res);
+			console.log('Error:', res)
 			createToast('Tokens not minted!',
 			{
 				type: 'danger',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 
 		// Update balance after 1 second 
 		window.setTimeout(async () => {
-			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweaveWrapper.winstonToAr(balance.value);
-		}, 1500);
+			const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value)
+			balance.value = arweaveWrapper.winstonToAr(balance.value)
+		}, 1500)
 
 
 	} catch (err) {
@@ -524,28 +524,28 @@ const testnetMintTokens = async (qty='1000000000000') => {
 onMounted(async () => {
 	// Get wallet balance
 	if (mainAddress.value) {
-		balance.value = 0;
+		balance.value = 0
 		try {
-			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweaveWrapper.winstonToAr(balance.value);
-			prevNetwork.value = selNetwork.value;
+			const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value)
+			balance.value = arweaveWrapper.winstonToAr(balance.value)
+			prevNetwork.value = selNetwork.value
 		} catch (err) {
 			createToast(`${err}`,
 			{
 				type: 'danger',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 	}
 
 	// Check ifarme conditions
-	isBridgeActive.value = false;
+	isBridgeActive.value = false
 	if (props.iframe) {
 		// Start handshake with parent 
 		try {
-			isBridgeActive.value = await props.login.isBridgeActive();
+			isBridgeActive.value = await props.login.isBridgeActive()
 
 		} catch (err) {
 			createToast(`${err}`,
@@ -561,11 +561,11 @@ onMounted(async () => {
 watchEffect(async () => {
 	// Balance for Method 1
 	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
-		balance.value = 0;
+		balance.value = 0
 		try {
-			const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweaveWrapper.winstonToAr(balance.value);
+			const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+			balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value)
+			balance.value = arweaveWrapper.winstonToAr(balance.value)
 			prevNetwork.value = selNetwork.value;
 		} catch (err) {
 			createToast(`${err}`,
@@ -579,17 +579,17 @@ watchEffect(async () => {
 });
 
 const resetForms = () => {
-	selDeployFileContractLocation.value = '';
-	txtDeployFileContractLocationByTx.value = '';
-	selDeployFileStateLocation.value = '';
-	selDeployFileStateLocation2.value = '';
-	deployedContractTX.value = '';
-	loadingDeployContract.value = false;
+	selDeployFileContractLocation.value = ''
+	txtDeployFileContractLocationByTx.value = ''
+	selDeployFileStateLocation.value = ''
+	selDeployFileStateLocation2.value = ''
+	deployedContractTX.value = ''
+	loadingDeployContract.value = false
 };
 
 const usageFee = computed(() => {
-	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-	const warpContracts = new WarpContracts(arweaveWrapper.arweave);
+	const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+	const warpContracts = new WarpContracts(arweaveWrapper.arweave)
 	const transfer = warpContracts.getTransferData(
 			pstBalance.value,
 			vipMinimumBalance.value,
@@ -597,9 +597,9 @@ const usageFee = computed(() => {
 			appFeeInWinston.value,
 			mainAddress.value,
 			balances.value
-		);
-	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
-});
+		)
+	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0
+})
 
 </script>
 

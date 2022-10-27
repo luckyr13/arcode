@@ -41,7 +41,7 @@ export class FileTree
 			// Is the name already taken?
 			const findName = this.findFolderInChildrenByName(newFolder.name, tree);
 			if (findName) {
-				throw Error(`Name ${newFolder.name} already taken!`);
+				throw Error(`Name ${newFolder.name} already exists!`);
 			}
 
 			tree.children.push(newFolder);
@@ -59,7 +59,7 @@ export class FileTree
 				// Is the name already taken?
 				const findName = this.findFolderInChildrenByName(newFolder.name, c2);
 				if (findName) {
-					throw Error(`Name ${newFolder.name} already taken!`);
+					throw Error(`Name ${newFolder.name} already exists!`);
 				}
 				
 				c2.children.push(newFolder);
@@ -101,7 +101,7 @@ export class FileTree
 			// Is the name already taken?
 			const findName = this.findFileInChildrenByName(newFile.name, tree);
 			if (findName) {
-				throw Error(`Name ${newFile.name} already taken!`);
+				throw Error(`Name ${newFile.name} already exists!`);
 			}
 
 			tree.children.push(newFile);
@@ -118,7 +118,7 @@ export class FileTree
 				// Is the name already taken?
 				const findName = this.findFileInChildrenByName(newFile.name, <FileTreeFolder>c);
 				if (findName) {
-					throw Error(`Name ${newFile.name} already taken! Please use a different name.`);
+					throw Error(`Name ${newFile.name} already exists! Please use a different name.`);
 				}
 
 				const c2: FileTreeFolder = <FileTreeFolder>c;
@@ -300,7 +300,7 @@ export class FileTree
 				if (c2.id === fileId) {
 					// Check if the name is already in use
 					if (this.findFileInChildrenByName(newName, tree)) {
-						throw Error(`Name ${newName} already taken!`);
+						throw Error(`Name ${newName} already exists!`);
 					}
 					tree.children[i].name = newName;
 					return;
