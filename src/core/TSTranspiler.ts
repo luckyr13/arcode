@@ -20,28 +20,26 @@ export class TSTranspiler {
     return result
   }
 
-  public compile(fileNames: string[]): void {
+  public compile(fileNames: string[]): string[] {
     const program = ts.createProgram(fileNames, this._compilerOptions, this._host)
     const res = program.emit()
     const diagnostics = this.getDiagnostics(program, res)
-    if (diagnostics) {
-      throw new Error(diagnostics)
-    }
+    return diagnostics
   }
 
-  public getDiagnostics(program: ts.Program, res: ts.EmitResult): string {
+  public getDiagnostics(program: ts.Program, res: ts.EmitResult): string[] {
     const allDiagnostics = ts
       .getPreEmitDiagnostics(program)
       .concat(res.diagnostics)
-    let diagnostics = ''
+    const diagnostics: string[] = []
 
     allDiagnostics.forEach(diagnostic => {
       if (diagnostic.file) {
         const { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!)
         const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")
-        diagnostics += `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`
+        diagnostics.push(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`)
       } else {
-        diagnostics = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")
+        diagnostics.push(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"))
       }
     });
 

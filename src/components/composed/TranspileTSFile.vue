@@ -5,22 +5,21 @@
       :disabled="loading"
       v-model.trim="selEntryFileLocation">
       <template v-for="path of workspace.getFileTreeFilenames()" :key="path">
-        <option v-if="path && path.search(/.ts$/) >= 0" :value="path">{{ path }}</option>
+        <option
+          v-if="path && path.search(/.ts$/) >= 0 && path.search(/node_modules/) < 0"
+          :value="path">{{ path }}</option>
       </template>
     </select>
   </div>
   <div class="form-input">
-    <label>Workspace Location</label>
+    <label>Output Location</label>
     <select v-model.trim="selOutputLocation">
       <option value="/">/</option>
       <template v-for="path of workspace.getFileTreePaths()" :key="path">
-        <option v-if="path" :value="path">{{ path }}</option>
+        <option v-if="path && path.search(/node_modules/) < 0" :value="path">{{ path }}</option>
       </template>
       
     </select>
-  </div>
-  <div class="error-container">
-    {{ diagnostics }}
   </div>
   <div class="text-center actions">
     <button
@@ -34,6 +33,17 @@
       @click="loadNodeModulesToWorkspace()">
       Install node_modules dependencies
     </button>
+  </div>
+  <div class="loader-container" v-if="loading">
+    <div
+      class="lds-ring lds-ring-small">
+      <div></div><div></div><div></div><div></div></div>
+    <span>Loading ...</span>
+  </div>
+  <div class="error-container" v-if="diagnostics">
+    <ul v-for="(d, index) in diagnostics" :key="index">
+      <li>{{ d }}</li>
+    </ul>
   </div>
 </template>
 <script setup lang="ts">
@@ -49,10 +59,19 @@ const props = defineProps({
 
 const loading = ref(false)
 const selEntryFileLocation = ref('')
-const selOutputLocation = ref('')
-const diagnostics = ref('')
+const selOutputLocation = ref('/')
+const diagnostics = ref([])
 
 function compile(outDir: string, entryFile: string) {
+  if (!entryFile) {
+    createToast(`Please select a file!`,
+      {
+        type: 'danger',
+        showIcon: true,
+        position: 'bottom-right',
+      })
+    return
+  }
   const compilerOptions = {
     noEmitOnError: true,
     strict: true,
@@ -60,8 +79,18 @@ function compile(outDir: string, entryFile: string) {
     target: ts.ScriptTarget.ES6,
     module: ts.ModuleKind.ES6,
     lib: [
-      '/node_modules/es2015/lib.es2015.core.d.ts',
       '/node_modules/es2015/lib.dom.d.ts',
+      '/node_modules/es2015/lib.dom.iterable.d.ts',
+      '/node_modules/es2015/lib.es2015.collection.d.ts',
+      '/node_modules/es2015/lib.es2015.core.d.ts',
+      '/node_modules/es2015/lib.es2015.generator.d.ts',
+      '/node_modules/es2015/lib.es2015.iterable.d.ts',
+      '/node_modules/es2015/lib.es2015.promise.d.ts',
+      '/node_modules/es2015/lib.es2015.proxy.d.ts',
+      '/node_modules/es2015/lib.es2015.reflect.d.ts',
+      '/node_modules/es2015/lib.es2015.symbol.d.ts',
+      '/node_modules/es2015/lib.es2015.symbol.wellknown.d.ts',
+      '/node_modules/es2015/lib.es5.d.ts',
     ],
     outDir: outDir,
     esModuleInterop: true,
@@ -71,14 +100,19 @@ function compile(outDir: string, entryFile: string) {
     allowUnreachableCode: false,
     exactOptionalPropertyTypes: true,
     noImplicitReturns: true,
-    noImplicitThis: true
+    noImplicitThis: true,
+    noImplicitAny: false
   };
-  diagnostics.value = ''
+  diagnostics.value = []
   const transpiler = new TSTranspiler(compilerOptions, props.workspace)
   const fileNames = [entryFile]
+  loading.value = true
 
   try {
-    transpiler.compile(fileNames)
+    diagnostics.value = transpiler.compile(fileNames)
+    if (diagnostics.value.length) {
+      throw new Error('Error on transpilation!');
+    }
     createToast(`Success!`,
       {
         type: 'success',
@@ -86,7 +120,6 @@ function compile(outDir: string, entryFile: string) {
         position: 'bottom-right',
       });
   } catch(error) {
-    diagnostics.value = error
     createToast(`${error}`,
       {
         type: 'danger',
@@ -94,6 +127,7 @@ function compile(outDir: string, entryFile: string) {
         position: 'bottom-right',
       });
   }
+  loading.value = false
 
 }
 
@@ -101,6 +135,9 @@ function compile(outDir: string, entryFile: string) {
 const loadNodeModulesToWorkspace = async () => {
   const emptyEvent = new Event('emptyEvent')
   const modulesInfo = {}
+
+  diagnostics.value = []
+  loading.value = true
 
   // Add folders
   props.workspace.addFolder('/', 'node_modules')
@@ -118,11 +155,25 @@ const loadNodeModulesToWorkspace = async () => {
   }
   
   // Add Verto Flex lib
+
+  // Update loader
+  loading.value = false
 };
 
 async function loadES2015() {
   const files = [
-    'assets/node-modules-sources/lib.dom.d.ts'
+    'node-modules-sources/es2015/lib.dom.d.ts',
+    'node-modules-sources/es2015/lib.dom.iterable.d.ts',
+    'node-modules-sources/es2015/lib.es2015.collection.d.ts',
+    'node-modules-sources/es2015/lib.es2015.core.d.ts',
+    'node-modules-sources/es2015/lib.es2015.generator.d.ts',
+    'node-modules-sources/es2015/lib.es2015.iterable.d.ts',
+    'node-modules-sources/es2015/lib.es2015.promise.d.ts',
+    'node-modules-sources/es2015/lib.es2015.proxy.d.ts',
+    'node-modules-sources/es2015/lib.es2015.reflect.d.ts',
+    'node-modules-sources/es2015/lib.es2015.symbol.d.ts',
+    'node-modules-sources/es2015/lib.es2015.symbol.wellknown.d.ts',
+    'node-modules-sources/es2015/lib.es5.d.ts',
   ]
   const path = '/node_modules/es2015/'
   const emptyEvent = new Event('empty')
@@ -134,7 +185,19 @@ async function loadES2015() {
     if (props.workspace.findFileIdByName(path, fileName) >= 0) {
       continue
     } else {
-      const src = 'testing'
+      let src = ''
+      try {
+        src = await downloadContent(f)
+      } catch (error) {
+        createToast(`Error downloading source file.`,
+        {
+          type: 'danger',
+          showIcon: true,
+          position: 'bottom-right',
+        });
+        // Skip rest of the code
+        continue
+      }
       props.workspace.addEditor(
         emptyEvent,
         false,
@@ -146,6 +209,14 @@ async function loadES2015() {
     }
   }
 
+}
+
+async function downloadContent(asset: string): string {
+  const c = await fetch(asset)
+  if (c && c.ok) {
+    return c.text()
+  }
+  throw new Error(c.statusText)
 }
 
 
@@ -202,6 +273,11 @@ button:hover {
   padding:  20px;
   font-size:  12px;
   color: red;
+}
+.loader-container {
+  padding:  20px;
+  font-size:  12px;
+  text-align: center;
 }
 
 </style>

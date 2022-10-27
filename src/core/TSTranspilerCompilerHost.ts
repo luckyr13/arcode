@@ -85,7 +85,8 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
     const id = this._workspace.editors.findIndex((ed: EditorMetadata) => ed.id == fileId)
     
     if ( id < 0) {
-      throw Error(`Invalid file id ${id}`)
+      console.error(`Invalid file id ${id} ${fileName}`)
+      return ''
     }
     const src = this._workspace.editors[id].view.state.doc.toString()
     return src
