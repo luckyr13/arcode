@@ -1,5 +1,9 @@
 # ArCode versions
 
+## 1.3.5
+Link (2022-10-27): 
+- ArCode Lab: Added Typescript Transpiler!
+
 ## 1.3.4
 Link (2022-10-24): https://arweave.net/t15fHCq3NOG6G6ihrLmsepAGVvJzmngzXKLrGRWw_0g
 - Support for more languages (typescript, gql, html)!
