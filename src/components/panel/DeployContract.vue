@@ -308,6 +308,13 @@ const deployContract = async (
 		contractSrc = workspace.editors[iContract].view.state.doc.toString()
 		initStateSrc = workspace.editors[iState].view.state.doc.toString()
 
+		// Validate initial state
+		try {
+			JSON.parse(initStateSrc)
+		} catch (error) {
+			throw Error(`Invalid state: ${error} file ${stateName2}`)
+		}
+
 		const transfer = warpContracts.getTransferData(
 			pstBalance.value,
 			vipMinimumBalance.value,
