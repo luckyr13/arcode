@@ -17,11 +17,6 @@
 				</button>
 			</li>
 			<li>
-				<button :disabled="iframe && !isBridgeActive" @click="finnie(chkStayLoggedIn)">
-					<img src="@/assets/img/koi.png"><span>Finnie Wallet</span>
-				</button>
-			</li>
-			<li>
 				<button @click="uploadKeyTrigger()">
 					<DefaultIcon class="icon-menu-btn" icon="codicon-folder-opened" />
 						<span>Upload your keyfile</span>
@@ -43,7 +38,7 @@
 		</div>
 	</div>
 	<div v-else>
-		<h4>Wallet Address</h4>
+		<h2>Wallet Address</h2>
 		<p class="address">
 			<ArweaveAddress
 				:address="mainAddress"
@@ -57,7 +52,7 @@
 		<p class="address">
 			{{ mainAddress }}
 		</p>
-		<h4>Balance</h4>
+		<h2>Balance</h2>
 		<p>
 			<strong>Network: </strong>
 			<span :class="{ mainnet: arweaveWrapper.onMainnet(), other: !arweaveWrapper.onMainnet()}">
