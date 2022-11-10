@@ -77,8 +77,8 @@ function compile(outDir: string, entryFile: string) {
     noEmitOnError: true,
     strict: true,
     noImplicitOverride: true,
-    target: ts.ScriptTarget.ES6,
-    module: ts.ModuleKind.ES6,
+    target: ts.ScriptTarget.ES5,
+    module: ts.ModuleKind.ES2015,
     lib: [
       '/node_modules/es2015/lib.dom.d.ts',
       '/node_modules/es2015/lib.dom.iterable.d.ts',

@@ -64,8 +64,6 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
         path = '/'
       }
 
-    contents = this.addExportsTransform(contents)
-
     this._workspace.addEditor(
       emptyEvent,
       false,
