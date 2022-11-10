@@ -58,8 +58,15 @@
 			{{ mainAddress }}
 		</p>
 		<h4>Balance</h4>
-		<p class="text-center">{{ pstBalance }} $CODE</p>
-		<p class="text-center">{{ balance }} AR</p>
+		<p>
+			<strong>Network: </strong>
+			<span :class="{ mainnet: arweaveWrapper.onMainnet(), other: !arweaveWrapper.onMainnet()}">
+				{{ selNetwork }}
+			</span>
+		</p>
+		<p class="text-center balance">{{ balance }} <span>AR</span></p>
+		<p class="text-center" v-if="arweaveWrapper.onMainnet()">{{ pstBalance }} $CODE</p>
+		<p class="text-center other" v-else>$CODE not needed on localhost! 👌</p>
 		<h4>Method</h4>
 		<p>{{ method }}</p>
 		<br>
@@ -85,16 +92,15 @@ import { createToast } from 'mosha-vue-toastify';
 import { ref, onMounted, watchEffect, computed } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ArweaveWrapper } from '@/core/ArweaveWrapper';
+import { ArweaveWrapper, defaultNetwork } from '@/core/ArweaveWrapper';
 import ArweaveAddress from '@/components/atomic/ArweaveAddress.vue'
 
 const props = defineProps({
 	iframe: Boolean,
 	tokenState: Object,
-	login: Object
+	login: Object,
+	networkParam: String
 });
-const arweaveWrapper = new ArweaveWrapper();
-const arweave = arweaveWrapper.arweave;
 const userSettings = new UserSettings();
 const settings = userSettings.settings;
 const mainAddress = ref('');
@@ -106,16 +112,20 @@ const uploadKeyTrigger = () => {
 		txtFile_uploadKey.click();
 	}
 };
-const isBridgeActive = ref(false);
+const isBridgeActive = ref(false)
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork
+const selNetwork = ref(defaultSelNetwork)
+const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+const arweave = arweaveWrapper.arweave
 
 const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.uploadKeyFile(event.target, stayLoggedIn, arweave);
+		const address = await props.login.uploadKeyFile(event.target, stayLoggedIn, arweave)
 		if (address) {
-			mainAddress.value = address;
-			method.value = props.login.method;
+			mainAddress.value = address
+			method.value = props.login.method
 		} else {
-			throw Error('Error reading wallet address');
+			throw Error('Error reading wallet address')
 		}
 	} catch (err) {
 		createToast(`${err}`,
@@ -131,15 +141,15 @@ const arConnect = async (stayLoggedIn: boolean) => {
 	try {
 		let address = '';
 		if (props.iframe) {
-			address = await props.login.arConnectBridge(stayLoggedIn, arweave);
+			address = await props.login.arConnectBridge(stayLoggedIn, arweave)
 		} else {
-			address = await props.login.arConnect(stayLoggedIn, arweave);
+			address = await props.login.arConnect(stayLoggedIn, arweave)
 		}
 		if (address) {
-			mainAddress.value = address;
-			method.value = props.login.method;
+			mainAddress.value = address
+			method.value = props.login.method
 		} else {
-			throw Error('Error reading wallet address');
+			throw Error('Error reading wallet address')
 		}
 	} catch (err) {
 		createToast(`${err}`,
@@ -155,14 +165,14 @@ const finnie = async (stayLoggedIn: boolean) => {
 	try {
 		let address = '';
 		if (props.iframe) {
-			address = await props.login.finnieBridge(stayLoggedIn, arweave);
+			address = await props.login.finnieBridge(stayLoggedIn, arweave)
 		} else {
-			address = await props.login.finnie(stayLoggedIn, arweave);
+			address = await props.login.finnie(stayLoggedIn, arweave)
 		}
 
 		if (address) {
-			mainAddress.value = address;
-			method.value = props.login.method;
+			mainAddress.value = address
+			method.value = props.login.method
 		} else {
 			throw Error('Error reading wallet address');
 		}
@@ -179,10 +189,10 @@ const finnie = async (stayLoggedIn: boolean) => {
 
 const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.arweaveWebWallet(stayLoggedIn, arweave);
+		const address = await props.login.arweaveWebWallet(stayLoggedIn, arweave)
 		if (address) {
-			mainAddress.value = address;
-			method.value = props.login.method;
+			mainAddress.value = address
+			method.value = props.login.method
 		} else {
 			throw Error('Error reading wallet address');
 		}
@@ -200,9 +210,9 @@ const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 const logout = async () => {
 	try {
 		if (props.iframe) {
-			await props.login.logoutBridge();
+			await props.login.logoutBridge()
 		} else {
-			await props.login.logout();
+			await props.login.logout()
 		}
 		mainAddress.value = '';
 		method.value = '';
@@ -217,8 +227,8 @@ const logout = async () => {
 };
 
 onMounted(async () => {
-	mainAddress.value = props.login.mainAddress;
-	method.value = props.login.method;
+	mainAddress.value = props.login.mainAddress
+	method.value = props.login.method
 	isBridgeActive.value = false;
 
 	// Fix iframe wallet communication
@@ -239,13 +249,13 @@ onMounted(async () => {
 
 });
 watchEffect(async () => {
-	userSettings.setStayLoggedIn(chkStayLoggedIn.value);
+	userSettings.setStayLoggedIn(chkStayLoggedIn.value)
 	if (mainAddress.value) {
 		balance.value = 0;
 		try {
-			const walletBalance = await arweave.wallets.getBalance(mainAddress.value);
+			const walletBalance = await arweave.wallets.getBalance(mainAddress.value)
 			if (walletBalance) {
-				balance.value = arweave.ar.winstonToAr(walletBalance);
+				balance.value = arweave.ar.winstonToAr(walletBalance)
 			}
 			
 		} catch (err) {
@@ -263,9 +273,9 @@ function openLink(url) {
 	window.open(url, '_blank')
 }
 const pstBalance = computed(() => {
-	const balances = props.tokenState && props.tokenState.balances ? props.tokenState.balances : {};
+	const balances = props.tokenState && props.tokenState.balances ? props.tokenState.balances : {}
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
+		parseInt(props.tokenState.balances[mainAddress.value]) : 0
 	return res;
 });
 const balance = ref('0');
@@ -391,5 +401,21 @@ const balance = ref('0');
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: " [..]";
+}
+
+.mainnet {
+	color: var(--color-neon-green);
+}
+
+.other {
+	color: var(--color-neon-pink);
+}
+
+.balance {
+	font-size: 18px;
+}
+
+.balance span {
+	font-size: 12px;
 }
 </style>

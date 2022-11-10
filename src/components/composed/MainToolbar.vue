@@ -77,7 +77,8 @@
 				:login="login"
 				v-if="options['secondary']['accounts'].active"
 				:iframe="iframe"
-				:tokenState="tokenState" />
+				:tokenState="tokenState"
+				:networkParam="networkParam" />
 			<HelpInfo
 				v-if="options['secondary']['help'].active" 
 				:tokenState="tokenState" />
