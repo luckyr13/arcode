@@ -29,4 +29,8 @@ declare class SmartWeaveClass {
 }
 
 declare var SmartWeave: SmartWeaveClass;
-
+declare module '@verto/flex';
+declare interface InputAction {
+  input: any;
+  caller: string;
+}
