@@ -103,7 +103,7 @@ function compile(outDir: string, entryFile: string) {
     exactOptionalPropertyTypes: true,
     noImplicitReturns: true,
     noImplicitThis: true,
-    noImplicitAny: false
+    noImplicitAny: true
   };
   diagnostics.value = []
   const transpiler = new TSTranspiler(compilerOptions, props.workspace)
