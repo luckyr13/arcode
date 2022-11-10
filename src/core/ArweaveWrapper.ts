@@ -75,7 +75,7 @@ export class ArweaveWrapper {
       this.protocol = protocol;
       this.host = host;
     }
-    this._baseURL = `${this.protocol}://${this._host}/`;
+    this._baseURL = `${this.protocol}://${this._host}:${this.port}/`;
   }
 
   public get host(): string {
