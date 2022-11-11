@@ -17,12 +17,11 @@ export class WarpContracts {
   private readonly _warp: Warp;
   private _gateway = 'https://gateway.redstone.finance';
 
-  constructor(_arweave: Arweave, _gw = '') {
+  constructor(_arweave: Arweave, _gw = '', _useArweaveGw = false) {
     const host = _arweave.api.config.host;
     const port = _arweave.api.config.port;
     const protocol = _arweave.api.config.protocol;
     const cacheOptions = undefined;
-    const useArweaveGw = undefined;
 
     if (_gw) {
       this._gateway = _gw;
@@ -30,7 +29,7 @@ export class WarpContracts {
 
     this.setLogLevel();
     if (this.onMainnet(_arweave)) {
-      this._warp = WarpFactory.forMainnet(cacheOptions, useArweaveGw, _arweave);
+      this._warp = WarpFactory.forMainnet(cacheOptions, _useArweaveGw, _arweave);
     } else if (this.onTestnet(_arweave)) {
       this._warp = WarpFactory.forTestnet();
     } else if (this.onLocalnet(_arweave)) {

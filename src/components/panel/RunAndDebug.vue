@@ -118,10 +118,31 @@
 				name="runFilter" value="writeInteraction" v-model.trim="rdFilter">
 			Write Interaction (Create and Post TX)
 		</label>
+		<hr>
+		<label class="">
+      <input  
+        v-model.trim="txtUseArweaveGw" 
+        type="checkbox"> useArweaveGw (Instead of Warp Gw)
+    </label>
+    <label class="">
+      <input  
+        v-model.trim="txtWaitForConfirmation" 
+        type="checkbox"> waitForConfirmation // (the write will wait for the transaction to be confirmed when true)
+    </label>
 		<label class="">
       <input  
         v-model.trim="txtAllowUnsafeClient" 
-        type="checkbox"> allowUnsafeClient, allowBigInt, internalWrites (Insecure)
+        type="checkbox"> allowUnsafeClient (Insecure)
+    </label>
+    <label class="">
+      <input  
+        v-model.trim="txtAllowBigInt" 
+        type="checkbox"> allowBigInt
+    </label>
+    <label class="">
+      <input  
+        v-model.trim="txtInternalWrites" 
+        type="checkbox"> internalWrites
     </label>
 	</div>
 	<h5 class="title-data">Balance</h5>
@@ -159,7 +180,7 @@
 				:class="{primary: (txtContract) && !loadingTX}" 
 				:disabled="(!txtContract) || loadingTX"
 				@click="runInteraction(
-					txtContract, inputList, rdFilter, tagsList, txtAllowUnsafeClient
+					txtContract, inputList, rdFilter, tagsList
 				)">
 				<DefaultIcon class="icon-btn" icon="codicon-debug-alt" /><span>Run Interaction</span>
 			</button>
@@ -222,30 +243,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
-import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper';
-import { createToast } from 'mosha-vue-toastify';
-import { WarpContracts, Tags } from '@/core/WarpContracts';
+import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
+import DefaultIcon from '@/components/atomic/DefaultIcon'
+import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper'
+import { createToast } from 'mosha-vue-toastify'
+import { WarpContracts, Tags } from '@/core/WarpContracts'
+import { EvaluationOptions } from 'warp-contracts'
 const networks = computed(() => {
-	return arweaveNetworks;
+	return arweaveNetworks
 });
-const rdFilter = ref('viewState');
-const rdInputDataType = ref('input');
-const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
-const selNetwork = ref(defaultSelNetwork);
-const prevNetwork = ref(selNetwork.value);
-const txtContract = ref('');
-const response = ref({});
-const contractInteractionTX = ref('');
-const loadingTX = ref(false);
-const txtAllowUnsafeClient = ref(false);
+const rdFilter = ref('viewState')
+const rdInputDataType = ref('input')
+const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork
+const selNetwork = ref(defaultSelNetwork)
+const prevNetwork = ref(selNetwork.value)
+const txtContract = ref('')
+const response = ref({})
+const contractInteractionTX = ref('')
+const loadingTX = ref(false)
+const txtAllowUnsafeClient = ref(false)
+const txtAllowBigInt = ref(false)
+const txtInternalWrites = ref(false)
+const txtUseArweaveGw = ref(false)
+const txtWaitForConfirmation = ref(false)
 // eslint-disable-next-line
-const inputList = reactive<{key: string, value: any}[]>([{ key: 'function', value: '' }]);
+const inputList = reactive<{key: string, value: any}[]>([{ key: 'function', value: '' }])
 const inputListJSON = computed(() => {
-	return JSON.stringify(inputList);
+	return JSON.stringify(inputList)
 });
-const tagsList = reactive<Tags>([]);
+const tagsList = reactive<Tags>([])
 const props = defineProps({
 	workspace: Object,
 	tokenState: Object,
@@ -255,34 +281,34 @@ const props = defineProps({
 	networkParam: String
 });
 
-const mainAddress = ref(props.login.mainAddress);
+const mainAddress = ref(props.login.mainAddress)
 const contractSettings = computed(() => {
-	const settings = props.tokenState.settings ? props.tokenState.settings : [];
-	return new Map(settings);
+	const settings = props.tokenState.settings ? props.tokenState.settings : []
+	return new Map(settings)
 });
 const pstBalance = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
+	const balances = props.tokenState.balances ? props.tokenState.balances : {}
 	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0;
-	return res;
+		parseInt(props.tokenState.balances[mainAddress.value]) : 0
+	return res
 });
-const balance = ref('0');
+const balance = ref('0')
 
 const balances = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {};
-	return balances;
+	const balances = props.tokenState.balances ? props.tokenState.balances : {}
+	return balances
 });
 const appFeeInWinston = computed(() => {
-	return contractSettings.value.get('appFeeInWinston');
+	return contractSettings.value.get('appFeeInWinston')
 });
 const vipMinimumBalance = computed(() => {
-	return parseInt(contractSettings.value.get('vipMinimumBalance'));
+	return parseInt(contractSettings.value.get('vipMinimumBalance'))
 });
-const isBridgeActive = ref(false);
+const isBridgeActive = ref(false)
 
 const inputDataChange = (event) => {
 	try{
-		const data = JSON.parse(event.target.value) || [];
+		const data = JSON.parse(event.target.value) || []
 		if (Array.isArray(data) && data) {
 			inputList.splice(0, inputList.length)
 			for (const e of data) {
@@ -295,7 +321,7 @@ const inputDataChange = (event) => {
       type: 'danger',
       showIcon: true,
       position: 'bottom-right',
-    });
+    })
 	}
 };
 
@@ -304,173 +330,170 @@ const runInteraction = async (
 	// eslint-disable-next-line
 	data: any[],
 	interaction: string,
-	tags: Tags,
-	allowUnsafeClient: boolean) => {
-	loadingTX.value = true;
+	tags: Tags) => {
+	loadingTX.value = true
+	const options: Partial<EvaluationOptions> = {
+		allowUnsafeClient: txtAllowUnsafeClient.value,
+		allowBigInt: txtAllowBigInt.value,
+		internalWrites: txtInternalWrites.value,
+		waitForConfirmation: txtWaitForConfirmation.value
+	}
 	try {
 		// Check balance
 		if (balance.value == 0 && interaction !== 'viewState') {
-			throw Error('Not enough balance!');
+			throw Error('Not enough balance!')
 		}
 
-		const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-		const arweave = arweaveWrapper.arweave;
-		const warp = new WarpContracts(arweave);
+		const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+		const arweave = arweaveWrapper.arweave
+		const customGw = ''
+		const useArweaveGw = txtUseArweaveGw.value
+		const warp = new WarpContracts(arweave, customGw, useArweaveGw)
 		// Iframe fix
-		const loginMethod = props.login.method;
+		const loginMethod = props.login.method
 		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {
-			props.login.hijackArweavePostAPI(arweave);
+			props.login.hijackArweavePostAPI(arweave)
 		}
-		let func = '';
-		const fullPayload = {};
-		response.value = {};
-		contractInteractionTX.value = '';
+		let func = ''
+		const fullPayload = {}
+		response.value = {}
+		contractInteractionTX.value = ''
 		for (const d of data) {
-			let value = d.value;
+			let value = d.value
 			if (!isNaN(value)) {
 				if (Number.isInteger(value)) {
-					value = parseInt(value);
+					value = parseInt(value)
 				} else {
-					value = parseFloat(value);
+					value = parseFloat(value)
 				}
 			}
 			if (d.key === 'function') {
-				func = value;
+				func = value
 			}
-			fullPayload[d.key] = value;
+			fullPayload[d.key] = value
 		}
 		if (!func) {
-			throw Error('Please provide a "function" input.');
+			throw Error('Please provide a "function" input.')
 		}
 		const contract = warp.warp.contract(
 				contractTX
 			).connect(
 				props.login.key
-			).setEvaluationOptions({
-				// with this flag set to true, the write will wait for the transaction to be confirmed
-				waitForConfirmation: false,
-			});
+			).setEvaluationOptions(options)
 
-		if (allowUnsafeClient) {
-			contract.setEvaluationOptions({
-        allowUnsafeClient: true,
-        allowBigInt: true,
-        internalWrites: true
-      });
-		}
-			const transfer = warp.getTransferData(
-				pstBalance.value,
-				vipMinimumBalance.value,
-				selNetwork.value,
-				appFeeInWinston.value,
-				mainAddress.value,
-				balances.value
-			);
+		const transfer = warp.getTransferData(
+			pstBalance.value,
+			vipMinimumBalance.value,
+			selNetwork.value,
+			appFeeInWinston.value,
+			mainAddress.value,
+			balances.value
+		)
 
 		// Dry-run
 		// eslint-disable-next-line
 		const handlerResult = await contract.callContract<any>(
 			fullPayload, undefined, undefined, tags, transfer
-		);
+		)
     if (handlerResult.type !== 'ok') {
-      throw Error(`Cannot create interaction: ${handlerResult.errorMessage}`);
+      throw Error(`Cannot create interaction: ${handlerResult.errorMessage}`)
     }
 
 		// View interaction with user's key 
 		if (interaction === 'viewState') {
 			// eslint-disable-next-line
-			const { result } = await contract.viewState<any, any>(fullPayload);
-			response.value = result;
+			const { result } = await contract.viewState<any, any>(fullPayload)
+			response.value = result
 			createToast('Success on viewState interaction!',
 			{
 				type: 'success',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 		// Write interaction (Dry-run)
 		else if (interaction === 'writeInteractionDryRun') {
 			// eslint-disable-next-line
-      const result = await contract.dryWrite<any>(fullPayload);
-			response.value = result;
+      const result = await contract.dryWrite<any>(fullPayload)
+			response.value = result
 			createToast('Interaction executed successfully!',
 			{
 				type: 'success',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 		// Write interaction
 		else if (interaction === 'writeInteraction') {
-      contractInteractionTX.value = await contract.writeInteraction(fullPayload, tags, transfer);
+      contractInteractionTX.value = await contract.writeInteraction(fullPayload, tags, transfer)
 			createToast('TX created successfully!',
 			{
 				type: 'success',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 		
 	} catch (err) {
-		let error = `${err}`;
+		let error = `${err}`
 		if (typeof(err) === 'object' &&
 				Object.prototype.hasOwnProperty.call(err, 'message')) {
-			error = err.message;
+			error = err.message
 		}
 		createToast(error,
     {
       type: 'danger',
       showIcon: true,
       position: 'bottom-right',
-    });
-		console.error(error);
+    })
+		console.error(error)
 	}
-	loadingTX.value = false;
-};
+	loadingTX.value = false
+}
 const addInputData = (key: string, value: string) => {
-	inputList.push({ key, value });
-};
+	inputList.push({ key, value })
+}
 
 const removeInputAction = (index: number) => {
-	inputList.splice(index, 1);
-};
+	inputList.splice(index, 1)
+}
 
 const addTag = (name: string, value: string) => {
-	tagsList.push({ name, value });
-};
+	tagsList.push({ name, value })
+}
 
 const removeTag = (index: number) => {
-	tagsList.splice(index, 1);
-};
+	tagsList.splice(index, 1)
+}
 
 const testnetMintTokens = async (qty='1000000000000') => {
 	try {
-		const net = networks.value[selNetwork.value];
-		const url = `${net.protocol}://${net.host}:${net.port}/mint/${mainAddress.value}/${qty}`;
-		const res = await fetch(url);
+		const net = networks.value[selNetwork.value]
+		const url = `${net.protocol}://${net.host}:${net.port}/mint/${mainAddress.value}/${qty}`
+		const res = await fetch(url)
 		if (res.status === 200) {
 		createToast('Tokens minted!',
 			{
 				type: 'success',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		} else {
-			console.log('Error:', res);
+			console.log('Error:', res)
 			createToast('Tokens not minted!',
 			{
 				type: 'danger',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 
 		// Update balance after 1 second 
 		window.setTimeout(async () => {
-			const arweave = new ArweaveWrapper(selNetwork.value);
-			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
-		}, 1500);
+			const arweave = new ArweaveWrapper(selNetwork.value)
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value)
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value)
+		}, 1500)
 
 
 	} catch (err) {
@@ -479,34 +502,34 @@ const testnetMintTokens = async (qty='1000000000000') => {
       type: 'danger',
       showIcon: true,
       position: 'bottom-right',
-    });
+    })
 	}
-};
+}
 
 onMounted(async () => {
 	// Get wallet balance
 	if (mainAddress.value) {
-		balance.value = 0;
+		balance.value = 0
 		try {
-			const arweave = new ArweaveWrapper(selNetwork.value);
-			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
-			prevNetwork.value = selNetwork.value;
+			const arweave = new ArweaveWrapper(selNetwork.value)
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value)
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value)
+			prevNetwork.value = selNetwork.value
 		} catch (err) {
 			createToast(`${err}`,
 			{
 				type: 'danger',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 	}
 	// Check iframe conditions
-	isBridgeActive.value = false;
+	isBridgeActive.value = false
 	if (props.iframe) {
 		// Start handshake with parent 
 		try {
-			isBridgeActive.value = await props.login.isBridgeActive();
+			isBridgeActive.value = await props.login.isBridgeActive()
 
 		} catch (err) {
 			createToast(`${err}`,
@@ -514,34 +537,34 @@ onMounted(async () => {
 				type: 'danger',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 	}
-});
+})
 
 watchEffect(async () => {
 	// Balance for Method 1
 	if (mainAddress.value && selNetwork.value != prevNetwork.value) {
-		balance.value = 0;
+		balance.value = 0
 		try {
-			const arweave = new ArweaveWrapper(selNetwork.value);
-			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value);
-			balance.value = arweave.arweave.ar.winstonToAr(balance.value);
-			prevNetwork.value = selNetwork.value;
+			const arweave = new ArweaveWrapper(selNetwork.value)
+			balance.value = await arweave.arweave.wallets.getBalance(mainAddress.value)
+			balance.value = arweave.arweave.ar.winstonToAr(balance.value)
+			prevNetwork.value = selNetwork.value
 		} catch (err) {
 			createToast(`${err}`,
 			{
 				type: 'danger',
 				showIcon: true,
 				position: 'bottom-right',
-			});
+			})
 		}
 	}
-});
+})
 
 const usageFee = computed(() => {
-	const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
-	const warpContracts = new WarpContracts(arweaveWrapper.arweave);
+	const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
+	const warpContracts = new WarpContracts(arweaveWrapper.arweave)
 	const transfer = warpContracts.getTransferData(
 			pstBalance.value,
 			vipMinimumBalance.value,
@@ -549,9 +572,9 @@ const usageFee = computed(() => {
 			appFeeInWinston.value,
 			mainAddress.value,
 			balances.value
-		);
-	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0;
-});
+		)
+	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0
+})
 </script>
 
 <style scoped lang="scss">
