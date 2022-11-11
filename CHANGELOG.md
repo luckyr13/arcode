@@ -1,7 +1,7 @@
 # ArCode versions
 
 ## 1.3.6
-Link (2022-11-10): 
+Link (2022-11-10): https://arweave.net/0BGW9S-hOmuon8jDS0Mc1TgJPTlrXgcseBSE8xnVRz4
 - More flags added to control Warp Sequencer/Arweave gw
 - Tested for localhost with arlocal ?network=arlocal-localhost
 
