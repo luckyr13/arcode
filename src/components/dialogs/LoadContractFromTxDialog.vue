@@ -42,7 +42,17 @@
           <label class="">
             <input  
               v-model.trim="txtAllowUnsafeClient" 
-              type="checkbox"> allowUnsafeClient, allowBigInt, internalWrites (Insecure)
+              type="checkbox"> allowUnsafeClient (Insecure)
+          </label>
+          <label class="">
+            <input  
+              v-model.trim="txtAllowBigInt" 
+              type="checkbox"> allowBigInt
+          </label>
+          <label class="">
+            <input  
+              v-model.trim="txtInternalWrites" 
+              type="checkbox"> internalWrites
           </label>
         </div>
       </template>
@@ -99,6 +109,8 @@ const txtLoadTXTxField = ref('');
 const selLoadTXLocation = ref('');
 const txtLoadTXGetLastState = ref(false);
 const txtAllowUnsafeClient = ref(false);
+const txtAllowBigInt = ref(false);
+const txtInternalWrites = ref(false);
 const loadingContractTX = ref(false);
 const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
 const selNetwork = ref(defaultSelNetwork);
@@ -116,6 +128,8 @@ const initModalFields = () => {
   }
   txtLoadTXGetLastState.value = false;
   txtAllowUnsafeClient.value = false;
+  txtAllowBigInt.value = false;
+  txtInternalWrites.value = false;
   selNetwork.value = defaultSelNetwork;
 };
 
@@ -135,10 +149,12 @@ onMounted(() => {
 
 const loadFromTXModal = async (tx: string, path: string) => {
   const allowUnsafeClient = txtAllowUnsafeClient.value;
+  const allowBigInt = txtAllowBigInt.value;
+  const internalWrites = txtInternalWrites.value;
   const options: Partial<EvaluationOptions> = {
     allowUnsafeClient,
-    allowBigInt: true,
-    internalWrites: true
+    allowBigInt,
+    internalWrites
   };
   
   loadingContractTX.value = true;
