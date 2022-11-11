@@ -30,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+// eslint-disable-next-line
 const props = defineProps({
   modalSize: String
 });

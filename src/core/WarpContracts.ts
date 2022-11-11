@@ -1,10 +1,10 @@
 import { 
-  Warp, Contract, WarpFactory,
+  Warp, WarpFactory,
   EvalStateResult, LoggerFactory, ConsoleLoggerFactory,
   ArWallet, Tags, ArTransfer,
   WriteInteractionResponse, ContractData,
   FromSrcTxContractData, defaultCacheOptions, WarpGatewayInteractionsLoader,
-  ContractDeploy  } from 'warp-contracts'
+  ContractDeploy, EvaluationOptions  } from 'warp-contracts'
 import Arweave from 'arweave';
 import { SortKeyCacheResult } from 'warp-contracts/lib/types/cache/SortKeyCache';
 import { arweaveMainNets, arweaveTestNets, arweaveLocalNets } from './ArweaveWrapper';
@@ -63,21 +63,18 @@ export class WarpContracts {
     return this._warp;
   }
 
-  readState(contractAddress: string, allowUnsafeClient = false): Promise<SortKeyCacheResult<EvalStateResult<unknown>>> {
+  readState(
+    contractAddress: string,
+    evaluationOptions: Partial<EvaluationOptions>): Promise<SortKeyCacheResult<EvalStateResult<unknown>>> {
     const contract = this.warp.contract(contractAddress);
-    if (allowUnsafeClient) {
-      contract.setEvaluationOptions({
-        allowUnsafeClient: true,
-        allowBigInt: true,
-        internalWrites: true
-      });
-    }
+    contract.setEvaluationOptions(evaluationOptions); 
     return contract.readState();
   }
 
   writeInteraction(
     contractAddress: string,
     jwk: ArWallet,
+    // eslint-disable-next-line
     input: any,
     tags?: Tags,
     transfer?: ArTransfer,
@@ -169,14 +166,23 @@ export class WarpContracts {
 
 
   public onMainnet(_arweave: Arweave) {
-    return arweaveMainNets.indexOf(_arweave.api.config.host!) >= 0;
+    if (_arweave.api.config.host) {
+      return arweaveMainNets.indexOf(_arweave.api.config.host) >= 0;
+    }
+    return false;
   }
 
   public onTestnet(_arweave: Arweave) {
-    return arweaveTestNets.indexOf(_arweave.api.config.host!) >= 0;
+    if (_arweave.api.config.host) {
+      return arweaveTestNets.indexOf(_arweave.api.config.host) >= 0;
+    }
+    return false;
   }
 
   public onLocalnet(_arweave: Arweave) {
-    return arweaveLocalNets.indexOf(_arweave.api.config.host!) >= 0;
+    if (_arweave.api.config.host) {
+      return arweaveLocalNets.indexOf(_arweave.api.config.host) >= 0;
+    }
+    return false;
   }
 }

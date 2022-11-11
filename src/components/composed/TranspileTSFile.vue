@@ -48,11 +48,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { DefaultWorkspace } from '@/components/composed/DefaultWorkspace'
+import DefaultWorkspace from '@/components/composed/DefaultWorkspace'
 import { ref } from 'vue'
 import { TSTranspiler } from '@/core/TSTranspiler'
 import * as ts from 'typescript'
-import { createToast } from 'mosha-vue-toastify';
+import { createToast } from 'mosha-vue-toastify'
 
 const props = defineProps({
   workspace: DefaultWorkspace
@@ -135,9 +135,6 @@ function compile(outDir: string, entryFile: string) {
 
 
 const loadNodeModulesToWorkspace = async () => {
-  const emptyEvent = new Event('emptyEvent')
-  const modulesInfo = {}
-
   diagnostics.value = []
   loading.value = true
 

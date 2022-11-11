@@ -52,7 +52,7 @@
         <div class="modal-footer text-right">
           <button
             class="modal-button modal-button-primary" 
-            @click="login.arweaveWebWallet(settings.stayLoggedIn, arweave); showModalArweaveWebWallet = false">
+            @click="login.arweaveWebWallet(settings.stayLoggedIn); showModalArweaveWebWallet = false">
             <span >Resume session</span >
           </button>
           <button 
@@ -96,7 +96,6 @@ import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { WarpContracts } from '@/core/WarpContracts';
 import { IFrameWalletBridge } from '@/core/IFrameWalletBridge';
 import { createToast } from 'mosha-vue-toastify';
-import { useRoute } from 'vue-router'
 import { Login } from '@/core/Login';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import { tokenContract } from '@/core/contracts/ArcodeCommunity';
@@ -126,8 +125,6 @@ const showLoadContractFromTxDialog = ref(false);
 const showLoadWorkspaceFromTxDialog = ref(false);
 
 
-
-const route = useRoute()
 // const tx = ref(route.params.tx);
 // const tx = ref(props.tx);
 const iframe = ref(false);
@@ -152,7 +149,7 @@ onMounted(async () => {
     // Load PST contract state
     loadingAppContract.value = true;
     try {
-      const { sortKey, cachedValue } = await warp.readState(tokenContract);
+      const { cachedValue } = await warp.readState(tokenContract);
       const state = cachedValue &&
         Object.prototype.hasOwnProperty.call(cachedValue, 'state') ?
         cachedValue.state : {};

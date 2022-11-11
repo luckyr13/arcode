@@ -10,7 +10,7 @@ module.exports = {
       return args;
     });
     // Cool fix
-    config.externals({ v8: {}, undici: {}, crypto: {}, constants: {} });
+    config.externals({ v8: {}, undici: {}, crypto: {}, constants: {}, perf_hooks: {} });
   },
   configureWebpack: {
     plugins: [

@@ -197,18 +197,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
 import DefaultIcon from '@/components/atomic/DefaultIcon'
-import { UserSettings } from '@/core/UserSettings'
-import { Login } from '@/core/Login'
 import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper'
 import { 
 	WarpContracts, ContractData, ArWallet, 
-	FromSrcTxContractData, ArTransfer, Tags } from '@/core/WarpContracts'
+	FromSrcTxContractData, Tags } from '@/core/WarpContracts'
 import { createToast } from 'mosha-vue-toastify'
 import { DefaultWorkspace } from '@/components/composed/DefaultWorkspace'
- 
-const userSettings = new UserSettings()
-const settings = userSettings.settings
-const globalArweaveWrapper = new ArweaveWrapper()
 
 const networks = computed(() => {
 	return arweaveNetworks
@@ -238,9 +232,6 @@ const contractSettings = computed(() => {
 })
 const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
-})
-const appFeeInAr = computed(() => {
-	return globalArweaveWrapper.winstonToAr(appFeeInWinston.value)
 })
 const vipMinimumBalance = computed(() => {
 	return parseInt(contractSettings.value.get('vipMinimumBalance'))
@@ -398,7 +389,6 @@ const deployContractFromTX = async (
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
 		const arweave = arweaveWrapper.arweave
 		const warpContracts = new WarpContracts(arweave)
-		const warp = warpContracts.warp
 		// Iframe fix
 		const loginMethod = props.login.method
 		if (isBridgeActive.value && (loginMethod === 'arconnect' || loginMethod === 'finnie')) {

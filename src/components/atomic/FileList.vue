@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const props = defineProps({
 	workspace: Object,

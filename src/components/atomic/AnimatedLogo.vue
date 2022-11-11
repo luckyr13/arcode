@@ -65,7 +65,7 @@ onMounted(() => {
     ],
     easing: 'easeInOutSine',
     // duration: 9000,
-    
+    // eslint-disable-next-line
     delay: function(el, i) { return  3000 },
     direction: 'alternate',
     loop: true
@@ -79,6 +79,7 @@ onMounted(() => {
       easing: 'easeInOutBounce'
     },
     easing: 'linear',
+    // eslint-disable-next-line
     delay: function(el, i) { return  6000 },
     loop: true
   })

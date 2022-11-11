@@ -224,15 +224,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { UserSettings } from '@/core/UserSettings';
 import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper';
 import { createToast } from 'mosha-vue-toastify';
-import { WarpContracts, Tags, ArTransfer } from '@/core/WarpContracts';
-
-const userSettings = new UserSettings();
-const settings = userSettings.settings;
-const globalArweaveWrapper = new ArweaveWrapper();
-
+import { WarpContracts, Tags } from '@/core/WarpContracts';
 const networks = computed(() => {
 	return arweaveNetworks;
 });
@@ -246,7 +240,8 @@ const response = ref({});
 const contractInteractionTX = ref('');
 const loadingTX = ref(false);
 const txtAllowUnsafeClient = ref(false);
-const inputList = reactive<any[]>([{ key: 'function', value: '' }]);
+// eslint-disable-next-line
+const inputList = reactive<{key: string, value: any}[]>([{ key: 'function', value: '' }]);
 const inputListJSON = computed(() => {
 	return JSON.stringify(inputList);
 });
@@ -264,9 +259,6 @@ const mainAddress = ref(props.login.mainAddress);
 const contractSettings = computed(() => {
 	const settings = props.tokenState.settings ? props.tokenState.settings : [];
 	return new Map(settings);
-});
-const appFeeInAr = computed(() => {
-	return globalArweaveWrapper.arweave.ar.winstonToAr(appFeeInWinston.value);
 });
 const pstBalance = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {};
@@ -309,6 +301,7 @@ const inputDataChange = (event) => {
 
 const runInteraction = async (
 	contractTX: string,
+	// eslint-disable-next-line
 	data: any[],
 	interaction: string,
 	tags: Tags,
@@ -375,6 +368,7 @@ const runInteraction = async (
 			);
 
 		// Dry-run
+		// eslint-disable-next-line
 		const handlerResult = await contract.callContract<any>(
 			fullPayload, undefined, undefined, tags, transfer
 		);
@@ -383,7 +377,8 @@ const runInteraction = async (
     }
 
 		// View interaction with user's key 
-		if (interaction === 'viewState') {			
+		if (interaction === 'viewState') {
+			// eslint-disable-next-line
 			const { result } = await contract.viewState<any, any>(fullPayload);
 			response.value = result;
 			createToast('Success on viewState interaction!',
@@ -395,6 +390,7 @@ const runInteraction = async (
 		}
 		// Write interaction (Dry-run)
 		else if (interaction === 'writeInteractionDryRun') {
+			// eslint-disable-next-line
       const result = await contract.dryWrite<any>(fullPayload);
 			response.value = result;
 			createToast('Interaction executed successfully!',

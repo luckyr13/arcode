@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import BasicCard from '@/components/atomic/BasicCard.vue'
 import type { WorkspaceMetadata } from '@/core/interfaces/WorkspaceMetadata.ts'
-
+// eslint-disable-next-line
 const props = defineProps({
   elements: Array<WorkspaceMetadata>
 });

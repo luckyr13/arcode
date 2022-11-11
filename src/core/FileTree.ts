@@ -14,8 +14,9 @@ export class FileTree
 			children: [],
 			type: 'FOLDER'
 		};
-		if (this._storage.getItem('tree') !== null && !tx && !workspaceParam) {
-			this._tree = JSON.parse(this._storage.getItem('tree')!);
+		const tmpTree = this._storage.getItem('tree');
+		if (tmpTree && !tx && !workspaceParam) {
+			this._tree = JSON.parse(tmpTree);
 		}
 		this._tx = tx;
 		this._workspaceParam = workspaceParam;

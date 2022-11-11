@@ -185,7 +185,7 @@
 </transition>
 </template>
 <script setup lang="ts">
-import { ref, watchEffect, computed } from 'vue';
+import { ref, watchEffect } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import DefaultWorkspace from '@/components/composed/DefaultWorkspace.vue';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
@@ -196,7 +196,6 @@ import LoadContractFromTxDialog from '@/components/dialogs/LoadContractFromTxDia
 import FileList from '@/components/atomic/FileList.vue';
 import fileDownload from 'js-file-download';
 import { EditorViewMetadata } from '@/core/interfaces/EditorViewMetadata';
-import { ArweaveWrapper, defaultNetwork } from '@/core/ArweaveWrapper';
 import { createToast } from 'mosha-vue-toastify';
 import { JSZipWrapper } from '@/core/JSZipWrapper';
 
@@ -205,8 +204,6 @@ const showModalAddFolder = ref(false);
 const showModalNewFile = ref(false);
 const showModalOpenFile = ref(false);
 const showModalEditFile = ref(false);
-const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork;
-const selNetwork = ref(defaultSelNetwork);
 const acceptedFileTypes = ref('.json,application/json,.js,text/javascript,.ts,.py,rs,.java,.cpp,.erl,.go,.html,.xml,.graphql,.gql,.sql,.css,.scss');
 
 const props = defineProps({

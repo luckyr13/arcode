@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
-import { ref, watchEffect, computed } from 'vue'
+import { ref } from 'vue'
 import TranspileTSFile from '@/components/composed/TranspileTSFile'
 
 const selOption = ref('transpile-src-file')
-
+// eslint-disable-next-line
 const props = defineProps({
   workspace: Object,
   tx: String,

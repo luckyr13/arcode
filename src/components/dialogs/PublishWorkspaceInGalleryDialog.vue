@@ -85,7 +85,6 @@
 //import {EditorView} from "@codemirror/view";
 import { ref, watchEffect, computed } from 'vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import DefaultWorkspace from '@/components/composed/DefaultWorkspace.vue';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { createToast } from 'mosha-vue-toastify';
@@ -123,9 +122,6 @@ const appFeeInWinston = computed(() => {
   return contractSettings.value.get('appFeeInWinston');
 });
 const globalArweaveWrapper = new ArweaveWrapper();
-const appFeeInAr = computed(() => {
-  return globalArweaveWrapper.winstonToAr(appFeeInWinston.value);
-});
 const vipMinimumBalance = computed(() => {
   return parseInt(contractSettings.value.get('vipMinimumBalance'));
 });
@@ -139,7 +135,6 @@ const balances = computed(() => {
   const balances = props.tokenState.balances ? props.tokenState.balances : {};
   return balances;
 });
-const balance = ref('0');
 const dataSizeLimitDispatch = computed(() => {
   return globalArweaveWrapper.dataSizeLimitDispatch;
 });

@@ -84,7 +84,7 @@ import { WarpContracts, WasmSrc } from '@/core/WarpContracts';
 import { createToast } from 'mosha-vue-toastify';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
-
+import { EvaluationOptions  } from 'warp-contracts'
 const props = defineProps({
   show: Boolean,
   workspace: Object,
@@ -134,12 +134,19 @@ onMounted(() => {
 });
 
 const loadFromTXModal = async (tx: string, path: string) => {
+  const allowUnsafeClient = txtAllowUnsafeClient.value;
+  const options: Partial<EvaluationOptions> = {
+    allowUnsafeClient,
+    allowBigInt: true,
+    internalWrites: true
+  };
+  
   loadingContractTX.value = true;
   try {
     await loadEditorFromTX(tx, path);
 
     if (txtLoadTXGetLastState.value) {
-      await loadLatestContractStateFromTX(tx, path, txtAllowUnsafeClient.value);
+      await loadLatestContractStateFromTX(tx, path, options);
     }
   } catch (err) {
     createToast(`${err}`,
@@ -384,12 +391,12 @@ const loadEditorFromTX = async (tx: string, path: string) => {
 
 
 const loadLatestContractStateFromTX = async (
-  tx: string, path: string, allowUnsafeClient: boolean) => {
+  tx: string, path: string, options: Partial<EvaluationOptions>) => {
   const arweaveWrapper = new ArweaveWrapper(selNetwork.value);
   const arweave = arweaveWrapper.arweave;
   const warpContracts = new WarpContracts(arweave);
-  const { sortKey, cachedValue } = await warpContracts.readState(
-    tx, allowUnsafeClient
+  const { cachedValue } = await warpContracts.readState(
+    tx, options
   );
   const state = cachedValue &&
     Object.prototype.hasOwnProperty.call(cachedValue, 'state') ?

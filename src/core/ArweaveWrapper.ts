@@ -109,10 +109,6 @@ export class ArweaveWrapper {
     return this._arweave;
   }  
 
-  public onMainnet() {
-    return arweaveMainNets.indexOf(this._arweave.api.config.host!) >= 0;
-  }
-
   public async arlocalMine() {
     const endpoint = `${this._arweave.api.config.protocol}://${this._arweave.api.config.host}:${this._arweave.api.config.port}/mine`;
     const res = await fetch(endpoint);
@@ -159,13 +155,26 @@ export class ArweaveWrapper {
   }
 
 
-
-  public onTestnet() {
-    return arweaveTestNets.indexOf(this._arweave.api.config.host!) >= 0;
+  public onMainnet() {
+    if (this._arweave.api.config.host) {
+      return arweaveMainNets.indexOf(this._arweave.api.config.host) >= 0;
+    }
+    return false;
   }
 
-  public onLocalnet(_arweave: Arweave) {
-    return arweaveLocalNets.indexOf(this._arweave.api.config.host!) >= 0;
+
+  public onTestnet() {
+    if (this._arweave.api.config.host) {
+      return arweaveTestNets.indexOf(this._arweave.api.config.host) >= 0;
+    }
+    return false;
+  }
+
+  public onLocalnet() {
+    if (this._arweave.api.config.host) {
+      return arweaveLocalNets.indexOf(this._arweave.api.config.host) >= 0;
+    }
+    return false;
   }
 
   winstonToAr(winston: string) {
@@ -176,12 +185,14 @@ export class ArweaveWrapper {
   * @dev Upload a file to the permaweb
   */
   public async uploadFileToArweave(
+    // eslint-disable-next-line
     fileBin: any,
     contentType: string,
     key: JWKInterface | "use_wallet",
     tags: {name: string, value: string}[],
     loginMethod: string,
     disableDispatch: boolean,
+    // eslint-disable-next-line
     externalProgressObj?: {completed: string, uploaded: string, total: string}|undefined|null): Promise<Transaction|{id: string, type: string}|any> {
     // Check if the login method allows dispatch
     if (!disableDispatch) {
@@ -276,9 +287,11 @@ export class ArweaveWrapper {
   * @dev When a dummy file tx
   */
   public async getDummyFileTx(
+    // eslint-disable-next-line
     fileBin: any,
     contentType: string,
     key: JWKInterface | "use_wallet",
+    // eslint-disable-next-line
     tags: {name: string, value: string}[]): Promise<Transaction|{id: string, type: string}|any> {
     
     // Create transaction
@@ -295,10 +308,9 @@ export class ArweaveWrapper {
   }
 
   async getCurrentHeight(): Promise<number> {
-    let networkInfo: any = {};
     let maxHeight = 0;
     try {
-      networkInfo = await this._arweave.network.getInfo();
+      const networkInfo = await this._arweave.network.getInfo();
       maxHeight = networkInfo.height ? networkInfo.height : 0;
     } catch (error) {
       throw Error(`${error}`);

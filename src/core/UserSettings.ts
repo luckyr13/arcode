@@ -1,12 +1,5 @@
 import { Settings } from './interfaces/Settings';
 
-interface ThemeColor {
-	primary: string,
-	secondary: string,
-	tertiary: string,
-	textColor: string
-}
-
 export class UserSettings {
 	private _settings: Settings;
 	private _storage = window.localStorage;
@@ -31,8 +24,10 @@ export class UserSettings {
 			theme: '',
 			stayLoggedIn: false
 		}
-		if (this._storage.getItem('settings')) {
-			this._settings = JSON.parse(this._storage.getItem('settings')!);
+
+		const settingsString = this._storage.getItem('settings');
+		if (settingsString) {
+			this._settings = JSON.parse(settingsString);
 		}
 	}
 

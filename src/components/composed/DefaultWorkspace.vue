@@ -85,9 +85,6 @@ import { appVersion } from '@/core/AppSettings';
 import { createToast } from 'mosha-vue-toastify';
 import tippy from 'tippy.js';
 import { greeterContract } from '@/core/contract-sources/Greeter';
-import { ArweaveWrapper } from '@/core/ArweaveWrapper';
-import { ArDBWrapper } from '@/core/ArDBWrapper';
-import { WasmSrc } from '@/core/WarpContracts';
 
 const props = defineProps({
   theme: String,

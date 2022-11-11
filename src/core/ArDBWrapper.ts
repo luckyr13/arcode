@@ -62,6 +62,7 @@ export class ArDBWrapper {
   /*
   *  @dev Helper class for searching a key in an array of tags
   */
+  // eslint-disable-next-line
   searchKeyNameInTags(_arr: any[], _key: string) {
     for (const a of _arr) {
       if (a.name === _key) {

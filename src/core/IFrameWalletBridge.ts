@@ -1,4 +1,4 @@
-import Arweave from 'arweave';
+// eslint-disable-next-line
 declare const window: any;
 
 export class IFrameWalletBridge {
@@ -25,6 +25,7 @@ export class IFrameWalletBridge {
     return false;
   }
 
+  // eslint-disable-next-line
   callAPI(payload: Record<string, any>): Promise<string> {
     if ( !(window && window.self !== window.top) ) {
       throw Error('ArCode is not inside an iframe :)');

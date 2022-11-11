@@ -44,7 +44,7 @@
   </DefaultModal>
 </template>
 <script setup lang="ts">
-import { ref, computed, watchEffect, watch } from 'vue';
+import { ref, watchEffect } from 'vue';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 

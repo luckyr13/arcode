@@ -136,7 +136,7 @@ const arConnect = async (stayLoggedIn: boolean) => {
 	try {
 		let address = '';
 		if (props.iframe) {
-			address = await props.login.arConnectBridge(stayLoggedIn, arweave)
+			address = await props.login.arConnectBridge(stayLoggedIn)
 		} else {
 			address = await props.login.arConnect(stayLoggedIn, arweave)
 		}
@@ -156,35 +156,9 @@ const arConnect = async (stayLoggedIn: boolean) => {
 	}
 };
 
-const finnie = async (stayLoggedIn: boolean) => {
-	try {
-		let address = '';
-		if (props.iframe) {
-			address = await props.login.finnieBridge(stayLoggedIn, arweave)
-		} else {
-			address = await props.login.finnie(stayLoggedIn, arweave)
-		}
-
-		if (address) {
-			mainAddress.value = address
-			method.value = props.login.method
-		} else {
-			throw Error('Error reading wallet address');
-		}
-	} catch (err) {
-		createToast(`${err}`,
-      {
-        type: 'danger',
-        showIcon: true,
-        position: 'bottom-right',
-      });
-	}
-};
-
-
 const arweaveWebWallet = async (stayLoggedIn: boolean) => {
 	try {
-		const address = await props.login.arweaveWebWallet(stayLoggedIn, arweave)
+		const address = await props.login.arweaveWebWallet(stayLoggedIn)
 		if (address) {
 			mainAddress.value = address
 			method.value = props.login.method

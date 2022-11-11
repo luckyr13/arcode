@@ -37,7 +37,7 @@
 </template>
 <script setup lang="ts">
 import ArweaveAddress from '@/components/atomic/ArweaveAddress.vue'
-
+// eslint-disable-next-line
 const props = defineProps({
 	id: String,
 	name: String,

@@ -48,7 +48,6 @@ const props = defineProps({
   showHandleOnly: Boolean,
   showLinks: Boolean
 })
-const verified = ref(false)
 const profileImage = ref(blankProfileImg)
 const nickname = ref('')
 

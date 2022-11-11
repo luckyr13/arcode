@@ -13,8 +13,11 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
 
   getSourceFile(
     fileName: string,
+    // eslint-disable-next-line
     languageVersionOrOptions: ts.ScriptTarget | ts.CreateSourceFileOptions,
+    // eslint-disable-next-line
     onError?: ((message: string) => void) | undefined,
+     // eslint-disable-next-line
     shouldCreateNewSourceFile?: boolean | undefined): ts.SourceFile|undefined {
 
     const src = this.readFile(fileName)
@@ -29,7 +32,10 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
     return sourceFile
   }
 
-  getDefaultLibFileName(options: ts.CompilerOptions): string {
+  getDefaultLibFileName(
+    // eslint-disable-next-line
+    options: ts.CompilerOptions
+  ): string {
     const res = ''
     return res
   }
@@ -38,7 +44,6 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
     fileName: string,
     contents: string): void {
     const emptyEvent = new Event('empty')
-    const data = ''
 
     const fnames = fileName.split('/')
     let path = ''

@@ -76,8 +76,9 @@ export class BaseWorkspace implements GenericWorkspace
 			EditorView.lineWrapping,
 		);
 
-    if (this._storage.getItem('cachedEditors') !== null && !tx && !workspaceParam) {
-      this._cachedEditorsContent = JSON.parse(this._storage.getItem('cachedEditors')!);
+		const tmpCachedEditors = this._storage.getItem('cachedEditors');
+    if (tmpCachedEditors && !tx && !workspaceParam) {
+      this._cachedEditorsContent = JSON.parse(tmpCachedEditors);
     }
 
     this._tx = tx;

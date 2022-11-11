@@ -65,9 +65,7 @@
 import { ref, computed, watchEffect } from 'vue';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
-import { 
-  ArweaveWrapper, arweaveNetworks, onMainnetByString,
-  onTestnetByString } from '@/core/ArweaveWrapper';
+import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 import { ArDBWrapper, ArDBTag } from '@/core/ArDBWrapper';
 import { createToast } from 'mosha-vue-toastify';
 
@@ -214,7 +212,7 @@ const formatResultTx = (tx): GalleryItem => {
   res.date = dateFormat(timestamp);
   return res;
 };
-
+// eslint-disable-next-line
 const searchKeyNameInTags = (_arr: any[], _key: string) => {
   for (const a of _arr) {
     if (a.name.toUpperCase() === _key.toUpperCase()) {
