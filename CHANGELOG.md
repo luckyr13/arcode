@@ -1,5 +1,10 @@
 # ArCode versions
 
+## 1.3.6
+Link (2022-11-10): 
+- More flags added to control Warp Sequencer/Arweave gw
+- Tested for localhost with arlocal ?network=arlocal-localhost
+
 ## 1.3.5
 Link (2022-10-27): https://arweave.net/iawXoKDRonTmkgkL_zedV67YyPPoZEZu8zPUTVYo-wE
 - ArCode Lab: Added Typescript Transpiler!
