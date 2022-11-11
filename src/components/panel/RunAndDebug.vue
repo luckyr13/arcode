@@ -127,7 +127,7 @@
     <label class="">
       <input  
         v-model.trim="txtWaitForConfirmation" 
-        type="checkbox"> waitForConfirmation // (the write will wait for the transaction to be confirmed when true)
+        type="checkbox"> waitForConfirmation (the write will wait for the transaction to be confirmed when true)
     </label>
 		<label class="">
       <input  
