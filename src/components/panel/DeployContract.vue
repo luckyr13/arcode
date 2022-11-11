@@ -74,7 +74,7 @@
         <span class="span-balance">{{ balance }}</span> AR
       </li>
       <li class="text-right">
-        <a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
+        <a v-if="onLocalnetByString(selNetwork)"
           class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
       </li>
       <li v-if="usageFee">
@@ -82,14 +82,16 @@
       </li>
       <li>
         <label class="">
-          <input  
+          <input
+            :disabled="onLocalnetByString(selNetwork)"
             v-model.trim="txtUseArweaveGw" 
             type="checkbox"> useArweaveGw (Instead of Warp Gw)
         </label>
       </li>
       <li>
         <label class="">
-          <input  
+          <input
+            :disabled="onLocalnetByString(selNetwork)"
             v-model.trim="txtDisableBundling" 
             type="checkbox"> disableBundling (Disable Warp Sequencer and deploy contract directly to Arweave)
         </label>
@@ -161,7 +163,7 @@
         <span class="span-balance">{{ balance }}</span> AR
       </li>
       <li class="text-right">
-        <a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
+        <a v-if="onLocalnetByString(selNetwork)"
           class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
       </li>
       <li v-if="usageFee">
@@ -169,7 +171,8 @@
       </li>
       <li>
         <label class="">
-          <input  
+          <input
+            :disabled="onLocalnetByString(selNetwork)"
             v-model.trim="txtUseArweaveGw2" 
             type="checkbox"> useArweaveGw (Instead of Warp Gw)
         </label>
@@ -177,6 +180,7 @@
       <li>
         <label class="">
           <input  
+            :disabled="onLocalnetByString(selNetwork)"
             v-model.trim="txtDisableBundling2" 
             type="checkbox"> disableBundling (Disable Warp Sequencer and deploy contract directly to Arweave)
         </label>
@@ -225,7 +229,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
 import DefaultIcon from '@/components/atomic/DefaultIcon'
-import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper'
+import { ArweaveWrapper, arweaveNetworks, defaultNetwork, onLocalnetByString } from '@/core/ArweaveWrapper'
 import { 
   WarpContracts, ContractData, ArWallet, 
   FromSrcTxContractData, Tags } from '@/core/WarpContracts'
@@ -600,6 +604,8 @@ watchEffect(async () => {
       balance.value = await arweaveWrapper.arweave.wallets.getBalance(mainAddress.value)
       balance.value = arweaveWrapper.winstonToAr(balance.value)
       prevNetwork.value = selNetwork.value;
+
+      resetForms();
     } catch (err) {
       createToast(`${err}`,
       {
@@ -622,6 +628,11 @@ const resetForms = () => {
   txtDisableBundling.value = false
   txtUseArweaveGw2.value = false
   txtDisableBundling2.value = false
+
+  if (onLocalnetByString(selNetwork.value)) {
+    txtDisableBundling2.value = true
+    txtDisableBundling.value = true
+  }
 };
 
 const usageFee = computed(() => {
