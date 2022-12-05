@@ -1,5 +1,9 @@
 # ArCode versions
 
+## 1.3.7
+Link (2022-12-05): https://arweave.net/gTECZAXuezPPGzHE_EFJ-2HHNs4bD7KbTE9kbtByAIY
+- Security updates
+
 ## 1.3.6
 Link (2022-11-10): https://arweave.net/0BGW9S-hOmuon8jDS0Mc1TgJPTlrXgcseBSE8xnVRz4
 - More flags added to control Warp Sequencer/Arweave gw
