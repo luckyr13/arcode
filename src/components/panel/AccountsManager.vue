@@ -62,8 +62,6 @@
 			</span>
 		</p>
 		<p class="text-center balance">{{ balance }} <span>AR</span></p>
-		<p class="text-center" v-if="arweaveWrapper.onMainnet()">{{ pstBalance }} $CODE</p>
-		<p class="text-center other" v-else>$CODE not needed on localhost! 👌</p>
 		<h4>Method</h4>
 		<p>{{ method }}</p>
 		<br>
@@ -243,12 +241,6 @@ watchEffect(async () => {
 function openLink(url) {
 	window.open(url, '_blank')
 }
-const pstBalance = computed(() => {
-	const balances = props.tokenState && props.tokenState.balances ? props.tokenState.balances : {}
-	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0
-	return res;
-});
 const balance = ref('0');
 
 </script>
