@@ -18,6 +18,12 @@
 			</router-link>
 		</li>
 		<li>
+			<a tabindex="0" href="https://github.com/luckyr13/arcode#common-arcode-problems" target="_blank">
+				<img class="invert-colors" src="@/assets/img/social-media/github.png">
+				<span>ArCode Known Issues</span>
+			</a>
+		</li>
+		<li>
 			<a tabindex="0" href="https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg" target="_blank">
 				<img src="@/assets/img/social-media/communitySmall.png">
 				<span>ArCode Community</span>
@@ -69,6 +75,7 @@
 			</a>
 		</li>
 	</ul>
+	<!-- Usage fees removed 
 	<template v-if="Object.keys(tokenState).length > 0">
 		<h4>Usage fees</h4>
 		<ul class="instructions sm-text">
@@ -83,24 +90,7 @@
 	<template  v-else>
 		Error loading Community contract!
 	</template>
-	<h4>
-		Common ArCode Problems
-	</h4>
-	<p class="sm-text">
-		<strong style="color: red">Brave Browser and AdBlock users.</strong> Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT).
-	</p>
-	<p class="sm-text">
-		To solve this, please follow the next steps:
-	</p>
-	<ul class="instructions sm-text">
-		<li>Navigate to: brave://adblock/</li>
-		<li>
-			Add the next filter:
-		</li>
-		<li style="list-style: none">
-			@@||localhost^$domain=arcode.studio
-		</li>
-	</ul>
+	-->
 
 	<h4>
 		ArCode Warranty Info
