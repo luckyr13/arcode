@@ -119,10 +119,16 @@
 			Write Interaction (Create and Post TX)
 		</label>
 		<hr>
+		
 		<label class="">
       <input  
         v-model.trim="txtUseArweaveGw" 
         type="checkbox"> useArweaveGw (Instead of Warp Gw)
+    </label>
+		<label class="">
+      <input  
+        v-model.trim="txtDisableBundling" 
+        type="checkbox"> disableBundling (default = false)
     </label>
     <label class="">
       <input  
@@ -155,9 +161,6 @@
 		<li class="text-right-f">
 			<a v-if="selNetwork.indexOf('localhost') >= 0 || selNetwork.indexOf('testnet') >= 0"
 				class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
-		</li>
-		<li v-if="usageFee && rdFilter === 'writeInteraction' ">
-			<strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
 		</li>
 		<li>
 			<button
@@ -265,6 +268,7 @@ const txtAllowUnsafeClient = ref(false)
 const txtAllowBigInt = ref(false)
 const txtInternalWrites = ref(false)
 const txtUseArweaveGw = ref(false)
+const txtDisableBundling = ref(false)
 const txtWaitForConfirmation = ref(false)
 // eslint-disable-next-line
 const inputList = reactive<{key: string, value: any}[]>([{ key: 'function', value: '' }])
@@ -282,27 +286,11 @@ const props = defineProps({
 });
 
 const mainAddress = ref(props.login.mainAddress)
-const contractSettings = computed(() => {
-	const settings = props.tokenState.settings ? props.tokenState.settings : []
-	return new Map(settings)
-});
-const pstBalance = computed(() => {
-	const balances = props.tokenState.balances ? props.tokenState.balances : {}
-	const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-		parseInt(props.tokenState.balances[mainAddress.value]) : 0
-	return res
-});
 const balance = ref('0')
 
 const balances = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {}
 	return balances
-});
-const appFeeInWinston = computed(() => {
-	return contractSettings.value.get('appFeeInWinston')
-});
-const vipMinimumBalance = computed(() => {
-	return parseInt(contractSettings.value.get('vipMinimumBalance'))
 });
 const isBridgeActive = ref(false)
 
@@ -339,15 +327,12 @@ const runInteraction = async (
 		waitForConfirmation: txtWaitForConfirmation.value
 	}
 	try {
-		// Check balance
-		if (balance.value == 0 && interaction !== 'viewState') {
-			throw Error('Not enough balance!')
-		}
 
 		const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
 		const arweave = arweaveWrapper.arweave
 		const customGw = ''
 		const useArweaveGw = txtUseArweaveGw.value
+		const disableBundling = txtDisableBundling.value
 		const warp = new WarpContracts(arweave, customGw, useArweaveGw)
 		// Iframe fix
 		const loginMethod = props.login.method
@@ -375,26 +360,26 @@ const runInteraction = async (
 		if (!func) {
 			throw Error('Please provide a "function" input.')
 		}
+
+		// Check balance
+		if (balance.value == 0 &&
+				interaction !== 'viewState' &&
+				disableBundling == true) {
+			throw Error('Not enough balance!')
+		}
+
 		const contract = warp.warp.contract(
 				contractTX
 			).connect(
 				props.login.key
-			).setEvaluationOptions(options)
-
-		const transfer = warp.getTransferData(
-			pstBalance.value,
-			vipMinimumBalance.value,
-			selNetwork.value,
-			appFeeInWinston.value,
-			mainAddress.value,
-			balances.value
-		)
+			).setEvaluationOptions(options)	
 
 		// Dry-run
 		// eslint-disable-next-line
 		const handlerResult = await contract.callContract<any>(
-			fullPayload, undefined, undefined, tags, transfer
+			fullPayload, undefined, undefined, tags
 		)
+		console.log('handle', handlerResult)
     if (handlerResult.type !== 'ok') {
       throw Error(`Cannot create interaction: ${handlerResult.errorMessage}`)
     }
@@ -425,7 +410,7 @@ const runInteraction = async (
 		}
 		// Write interaction
 		else if (interaction === 'writeInteraction') {
-      contractInteractionTX.value = await contract.writeInteraction(fullPayload, tags, transfer)
+      contractInteractionTX.value = await contract.writeInteraction(fullPayload, { tags: tags, disableBundling: disableBundling } )
 			createToast('TX created successfully!',
 			{
 				type: 'success',
@@ -562,19 +547,6 @@ watchEffect(async () => {
 	}
 })
 
-const usageFee = computed(() => {
-	const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
-	const warpContracts = new WarpContracts(arweaveWrapper.arweave)
-	const transfer = warpContracts.getTransferData(
-			pstBalance.value,
-			vipMinimumBalance.value,
-			selNetwork.value,
-			appFeeInWinston.value,
-			mainAddress.value,
-			balances.value
-		)
-	return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0
-})
 </script>
 
 <style scoped lang="scss">
