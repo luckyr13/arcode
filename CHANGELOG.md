@@ -1,5 +1,9 @@
 # ArCode versions
 
+## 1.3.8
+- Update libs
+- Update Arweave Account (edit profile) link
+
 ## 1.3.7
 Link (2022-12-05): https://arweave.net/gTECZAXuezPPGzHE_EFJ-2HHNs4bD7KbTE9kbtByAIY
 - Security updates

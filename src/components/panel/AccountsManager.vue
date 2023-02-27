@@ -16,6 +16,7 @@
 					<img src="@/assets/img/arconnect.png"><span>ArConnect</span>
 				</button>
 			</li>
+			<!-- Deprecated
 			<li>
 				<button @click="uploadKeyTrigger()">
 					<DefaultIcon class="icon-menu-btn" icon="codicon-folder-opened" />
@@ -28,6 +29,7 @@
 					type="file"
 					@change="uploadKey($event, chkStayLoggedIn)">
 			</li>
+			-->
 		</ul>
 		<div class="text-right form-radio" v-if="!iframe">
 			<label class="">
@@ -67,7 +69,7 @@
 		<br>
 		<ul class="accounts-menu">
 			<li class="text-center">
-				<button class="primary" @click="openLink('https://account.metaweave.xyz/')">
+				<button class="primary" @click="openLink('https://arprofile.org')">
 					<DefaultIcon class="icon-btn" icon="codicon-account" /><span>Edit Profile</span>
 				</button>
 			</li>
