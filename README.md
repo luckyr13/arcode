@@ -2,6 +2,8 @@
   <img src="https://arweave.net/GYuvaTZpyksPQxKGdjfl5jQJynaRmbMQSYXaylFAvRQ" style="max-width: 100%">
 </p>
 
+[ [**WEBSITE**](https://arcode.studio/) | [**ISSUES**](https://github.com/luckyr13/arcode#common-arcode-problems) | [**CHANGELOG**](https://github.com/luckyr13/arcode/blob/master/CHANGELOG.md) ]
+
 # ArCode Studio: Smartweave editor and deployer
 ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the browser all the files are saved in cache memory and removed when the cache is cleared.
 
@@ -46,12 +48,6 @@ ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the 
 - Interact with contracts on the Arweave Mainnet or to a local gateway.
 
 ++ Many themes for customize your IDE.
-
-
-## Usage fees:
-ArCode is a permaweb app that has its own PST token called $CODE.
-- Contract deployment/write interaction: 0.00001 AR
-- VIP users: You can use this dApp for free having a minimum balance of 10000 $CODE tokens.
 
 ## Common ArCode Problems
 Brave Browser and AdBlock users. Some users have reported issues when trying to connect with ArLocal on localhost (net::ERR_BLOCKED_BY_CLIENT). To solve this, please do the next steps:
