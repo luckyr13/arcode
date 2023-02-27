@@ -1,5 +1,9 @@
 # ArCode versions
 
+## 1.3.9
+Link (2023-02-26): 
+- Usage fees removed. Now anyone can use ArCode for free!
+
 ## 1.3.8
 Link (2023-02-26): https://arweave.net/QvEWWEPu-4iDVBLUNt2zYbb3rZOJrBdcDoVNabGIPqk
 - Update libs
