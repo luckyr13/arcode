@@ -1,8 +1,9 @@
 <template>
   <div class="body fadeIn">
     <h3 class="logo">ArCode Gallery</h3>
+    <h3 v-if="disableGallery">Coming soon ...</h3>
     <p
-      v-if="!loading"
+      v-if="!loading && !disableGallery"
       class="more-results text-right">
       <a 
         :disabled="loadingMore"
@@ -11,7 +12,7 @@
         GO BACK TO ArCode
       </a>
     </p>
-    <div v-if="loading" class="loading text-center">Loading ...</div>
+    <div v-if="loading && !disableGallery" class="loading text-center">Loading ...</div>
     <main v-if="elements.length">
       <CardList :elements="elements"></CardList>
     </main>
@@ -45,6 +46,7 @@ const workspaceListClass = new WorkspaceList(arweaveWrapper.arweave)
 const loading = ref(false)
 const loadingMore = ref(false)
 const showLoadMore = ref(false)
+const disableGallery = ref(true)
 
 const loadMore = async () => {
   loadingMore.value = true;

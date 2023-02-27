@@ -60,12 +60,14 @@
 				:networkParam="networkParam"
 				:workspace="workspace" 
 				:tokenState="tokenState" />
+			<!--	
 			<ArCodeGallery 
 					v-if="options['primary']['gallery'].active"
 					:tx="tx"
 					:login="login"
 					:workspace="workspace"
 					:tokenState="tokenState"/>
+			-->
 			<ArCodeLab
 					v-if="options['primary']['lab'].active"
 					:tx="tx"
@@ -140,12 +142,15 @@ const options = reactive<Record<string, Record<string, ToolbarOption>>>({
 			label: 'Run and Debug',
 			active: false
 		},
+		/*
+		// Remove Gallery temporarily
 		'gallery': {
 			id: 'gallery',
 			icon: 'codicon-circuit-board',
 			label: 'ArCode Gallery',
 			active: false
 		},
+		*/
 		'lab': {
 			id: 'lab',
 			icon: 'codicon-beaker',
