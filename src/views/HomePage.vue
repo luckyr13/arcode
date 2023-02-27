@@ -147,6 +147,8 @@ onMounted(async () => {
     }
 
     // Load PST contract state
+    // Disabled to allow Free usage 
+    /*
     loadingAppContract.value = true;
     try {
       const { cachedValue } = await warp.readState(tokenContract);
@@ -157,6 +159,7 @@ onMounted(async () => {
     } catch (err) {
       console.log('PSTError', err)
     }
+    */
     loadingAppContract.value = false;
 
     // Is editor inside an iframe?

@@ -77,9 +77,6 @@
         <a v-if="onLocalnetByString(selNetwork)"
           class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
       </li>
-      <li v-if="usageFee">
-        <strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
-      </li>
       <li>
         <label class="">
           <input
@@ -165,9 +162,6 @@
       <li class="text-right">
         <a v-if="onLocalnetByString(selNetwork)"
           class="link" @click="testnetMintTokens()">+ Mint 1 AR</a>
-      </li>
-      <li v-if="usageFee">
-        <strong class="usage-fee-txt">Usage Fee:</strong> <span class="span-balance">{{ usageFee }}</span> AR
       </li>
       <li>
         <label class="">
@@ -262,27 +256,7 @@ const props = defineProps({
 });
 const tagsList1 = reactive<Tags>([])
 const tagsList2 = reactive<Tags>([])
-const contractSettings = computed(() => {
-  const settings = props.tokenState.settings ? props.tokenState.settings : [];
-  return new Map(settings);
-})
-const appFeeInWinston = computed(() => {
-  return contractSettings.value.get('appFeeInWinston');
-})
-const vipMinimumBalance = computed(() => {
-  return parseInt(contractSettings.value.get('vipMinimumBalance'))
-})
 const mainAddress = ref(props.login.mainAddress)
-const pstBalance = computed(() => {
-  const balances = props.tokenState.balances ? props.tokenState.balances : {}
-  const res = Object.prototype.hasOwnProperty.call(balances, mainAddress.value) ? 
-    parseInt(props.tokenState.balances[mainAddress.value]) : 0
-  return res
-})
-const balances = computed(() => {
-  const balances = props.tokenState.balances ? props.tokenState.balances : {}
-  return balances;
-})
 const balance = ref('0')
 const isBridgeActive = ref(false)
 const arcodePreviewUrl = (tx) => {
@@ -297,12 +271,7 @@ const deployContract = async (
   let contractSrc = ``
   let initStateSrc = ``
   loadingDeployContract.value = true
-
   try {
-    // Check balance
-    if (balance.value == 0) {
-      throw Error('Not enough balance!')
-    }
     const useArweaveGw = txtUseArweaveGw.value
     const customGw = ''
     const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
@@ -344,25 +313,23 @@ const deployContract = async (
       throw Error(`Invalid state: ${error} file ${stateName2}`)
     }
 
-    const transfer = warpContracts.getTransferData(
-      pstBalance.value,
-      vipMinimumBalance.value,
-      selNetwork.value,
-      appFeeInWinston.value,
-      mainAddress.value,
-      balances.value
-    )
-
+    
     const wallet: ArWallet = props.login.key
     
     const contract: ContractData = {
       wallet: wallet,
       initState: initStateSrc,
       src: contractSrc,
-      tags: tags,
-      transfer: transfer
+      tags: tags
     }
     const disableBundling = txtDisableBundling.value
+
+    // Check balance
+    if (balance.value == 0 && disableBundling ||
+        balance.value == 0 && warpContracts.onLocalnet(arweave)) {
+      throw Error('Not enough balance! You need to have at least some AR to use this feature.')
+    }
+
     const tx = await warpContracts.createContract(contract, disableBundling)
 
     if (tx) {
@@ -419,10 +386,7 @@ const deployContractFromTX = async (
   let initStateSrc = ``
   loadingDeployContract.value = true
   try {
-    // Check balance
-    if (balance.value == 0) {
-      throw Error('Not enough balance!')
-    }
+    
     const useArweaveGw = txtUseArweaveGw2.value
     const customGw = ''
     const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
@@ -447,23 +411,22 @@ const deployContractFromTX = async (
     }
     initStateSrc = workspace.editors[iState].view.state.doc.toString()
     
-    const transfer = warpContracts.getTransferData(
-      pstBalance.value,
-      vipMinimumBalance.value,
-      selNetwork.value,
-      appFeeInWinston.value,
-      mainAddress.value,
-      balances.value
-    )
     const contract: FromSrcTxContractData = {
       wallet: wallet,
       initState: initStateSrc,
       srcTxId: contractSrcTX,
-      tags: tags,
-      transfer: transfer
+      tags: tags
     }
     
     const disableBundling = txtDisableBundling2.value
+
+    // Check balance
+    if (balance.value == 0 && disableBundling ||
+        balance.value == 0 && warpContracts.onLocalnet(arweave)) {
+      throw Error('Not enough balance! You need to have at least some AR to use this feature.')
+    }
+
+
     const tx = await warpContracts.createContractFromTX(contract, disableBundling)
     
     if (tx) {
@@ -635,19 +598,6 @@ const resetForms = () => {
   }
 };
 
-const usageFee = computed(() => {
-  const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
-  const warpContracts = new WarpContracts(arweaveWrapper.arweave)
-  const transfer = warpContracts.getTransferData(
-      pstBalance.value,
-      vipMinimumBalance.value,
-      selNetwork.value,
-      appFeeInWinston.value,
-      mainAddress.value,
-      balances.value
-    )
-  return transfer ? parseFloat(arweaveWrapper.winstonToAr(transfer.winstonQty)) : 0
-})
 
 </script>
 
