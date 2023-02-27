@@ -11,7 +11,6 @@ ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the 
 
 ## Links
 - ArCode Studio: https://arcode.studio
-- ArCode Studio Gallery: https://arcode.studio/#/gallery
 - Profit Sharing Community: https://community.xyz/#XFZxNNpgb043Doa7-4sra5dnbBB5RkOHRyQJ_YOzLAg
 - Discord channel: https://discord.gg/KMjZkkWrSS
 - Changelog: https://github.com/luckyr13/arcode/blob/master/CHANGELOG.md
@@ -24,7 +23,6 @@ ArCode Studio is an online IDE for smartweave contracts. As ArCode works on the 
 - Load contracts sources and state into the workspace directly from their Arweave TXs.
 - Import/Export your workspace to .zip file.
 - Publish your workspace to Arweave.
-- ArCode Gallery: The public list of all the workspaces published in ArCode (using Arcode Protocol).
 - ArCode Lab: Amazing features, like our Typescript Transpiler!
 
 ++ Arweave explorer
