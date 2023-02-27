@@ -4,12 +4,12 @@
     <p
       v-if="!loading"
       class="more-results text-right">
-      <router-link 
+      <a 
         :disabled="loadingMore"
         :class="{ btn: true, btnDisabled: loadingMore }"
-        to="/">
+        href="/">
         GO BACK TO ArCode
-      </router-link>
+      </a>
     </p>
     <div v-if="loading" class="loading text-center">Loading ...</div>
     <main v-if="elements.length">
