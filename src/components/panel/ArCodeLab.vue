@@ -23,7 +23,7 @@
 <script setup lang="ts">
 //import {EditorView} from "@codemirror/view";
 import { ref } from 'vue'
-import TranspileTSFile from '@/components/composed/TranspileTSFile'
+import TranspileTSFile from '@/components/atomic/TranspileTSFile'
 
 const selOption = ref('transpile-src-file')
 // eslint-disable-next-line
