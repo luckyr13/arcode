@@ -36,7 +36,7 @@ export class WarpContracts {
     } else if (this.onTestnet(_arweave)) {
       this._warp = WarpFactory.forTestnet().use(new DeployPlugin());
     } else if (this.onLocalnet(_arweave)) {
-      this._warp = WarpFactory.forLocal();
+      this._warp = WarpFactory.forLocal().use(new DeployPlugin());
     } else if (host && port && protocol) {
       const loader = new WarpGatewayInteractionsLoader(this._gateway);
       // TODO: Check options
