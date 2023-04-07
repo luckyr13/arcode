@@ -12,6 +12,7 @@ export {
   WasmSrc, ContractData, ArWallet, 
   FromSrcTxContractData, ArTransfer,
   Tags } from 'warp-contracts';
+import { DeployPlugin, ArweaveSigner } from 'warp-contracts-plugin-deploy';
 
 export class WarpContracts {
   private readonly _warp: Warp;
@@ -29,9 +30,11 @@ export class WarpContracts {
 
     this.setLogLevel();
     if (this.onMainnet(_arweave)) {
-      this._warp = WarpFactory.forMainnet(cacheOptions, _useArweaveGw, _arweave);
+      this._warp = WarpFactory.forMainnet(
+        cacheOptions, _useArweaveGw, _arweave
+      ).use(new DeployPlugin());
     } else if (this.onTestnet(_arweave)) {
-      this._warp = WarpFactory.forTestnet();
+      this._warp = WarpFactory.forTestnet().use(new DeployPlugin());
     } else if (this.onLocalnet(_arweave)) {
       this._warp = WarpFactory.forLocal();
     } else if (host && port && protocol) {
@@ -47,7 +50,7 @@ export class WarpContracts {
       )
         .useArweaveGateway()
         .setInteractionsLoader(loader)
-        .build();
+        .build().use(new DeployPlugin());
     } else {
       throw new Error(`Warp: Invalid Options ${host} ${port} ${protocol}`)
     }
@@ -152,15 +155,16 @@ export class WarpContracts {
   }
 
   public async createContract(
-      contract: ContractData, disableBundling?: boolean
+      contract: ContractData,
+      disableBundling?: boolean
     ): Promise<ContractDeploy> {
-    return await this.warp.createContract.deploy(contract, disableBundling);
+    return await this.warp.deploy(contract, disableBundling);
   }
 
   public async createContractFromTX(
       contract: FromSrcTxContractData, disableBundling?: boolean
     ): Promise<ContractDeploy> {
-    return await this.warp.createContract.deployFromSourceTx(contract, disableBundling);
+    return await this.warp.deployFromSourceTx(contract, disableBundling);
   }
 
 

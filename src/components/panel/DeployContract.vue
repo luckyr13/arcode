@@ -313,7 +313,6 @@ const deployContract = async (
       throw Error(`Invalid state: ${error} file ${stateName2}`)
     }
 
-    
     const wallet: ArWallet = props.login.key
     
     const contract: ContractData = {
@@ -328,6 +327,11 @@ const deployContract = async (
     if (balance.value == 0 && disableBundling ||
         balance.value == 0 && warpContracts.onLocalnet(arweave)) {
       throw Error('Not enough balance! You need to have at least some AR to use this feature.')
+    }
+
+    // Use signer?
+    if (!disableBundling) {
+      contract.wallet = await props.login.getUserSigner()
     }
 
     const tx = await warpContracts.createContract(contract, disableBundling)
@@ -370,6 +374,7 @@ const deployContract = async (
       showIcon: true,
       position: 'bottom-right',
     })
+    console.error('deployContract', err)
   }
   
 
@@ -426,6 +431,10 @@ const deployContractFromTX = async (
       throw Error('Not enough balance! You need to have at least some AR to use this feature.')
     }
 
+    // Use signer?
+    if (!disableBundling) {
+      contract.wallet = await props.login.getUserSigner()
+    }
 
     const tx = await warpContracts.createContractFromTX(contract, disableBundling)
     

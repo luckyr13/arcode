@@ -8,6 +8,8 @@ import Arweave from 'arweave'
 import { ArweaveWebWallet } from 'arweave-wallet-connector'
 import { ref } from 'vue'
 import { IFrameWalletBridge } from './IFrameWalletBridge'
+import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
+import { PermissionType, AppInfo, GatewayConfig, DispatchResult } from 'arconnect';
 
 export class Login {
   // User's private key
@@ -17,10 +19,11 @@ export class Login {
   private _mainAddress = ref('')
   private _cachedProperties = ['MAINADDRESS', 'KEY', 'METHOD']
   // ArweaveApp
-  private _arweaveWebWallet = new ArweaveWebWallet({
+  private _appInfo = {
     name: 'Arcode Studio',
     logo: 'https://arweave.net/wJGdli6nMQKCyCdtCewn84ba9-WsJ80-GS-KtKdkCLg'
-  })
+  }
+  private _arweaveWebWallet = new ArweaveWebWallet(this._appInfo)
   private _method = ''
 
   constructor() {
@@ -106,22 +109,81 @@ export class Login {
     if (!window.arweaveWallet) {
       throw Error('ArConnect not found!')
     }
-    await window.arweaveWallet.connect([
+    // Custom permissions
+    const customPermissions: PermissionType[] = [
       'ACCESS_ADDRESS', 'ACCESS_ALL_ADDRESSES',
-      'SIGN_TRANSACTION', 'DISPATCH'
-    ])
-    const address = await arweave.wallets.getAddress()
-    this.setAccount(address, null, stayLoggedIn)
-    this.method = 'arconnect'
+      'SIGN_TRANSACTION', 'DISPATCH',
+      'ACCESS_PUBLIC_KEY', 'SIGNATURE' 
+    ];
+
+    let address = '';
+    // Get permissions
+    let permissions: PermissionType[] = []
+    try {
+      permissions = await window.arweaveWallet.getPermissions()
+    } catch (err) {
+      console.error('arconnect', err)
+      throw new Error('ArConnect: Error loading permissions ')
+    }
+
+    // Filter permissions
+    const finalPermissions: PermissionType[] = [];
+    for (let i = 0; i < customPermissions.length; i++) {
+      if (permissions.indexOf(customPermissions[i]) < 0) {
+        finalPermissions.push(customPermissions[i]);
+      }
+    }
+
+    try {
+      if (finalPermissions.length) {
+        await window.arweaveWallet.connect(
+          finalPermissions,
+          this._appInfo,
+          { 
+            host: arweave.api.config.host!,
+            port: +arweave.api.config.port!,
+            protocol: arweave.api.config.protocol! as 'http'|'https'
+          }
+        )
+      }
+      address = await arweave.wallets.getAddress()
+      
+    } catch (error) {
+      console.error('arconnect', error)
+      throw new Error('ArConnect error address')
+    }
+    if (address) {
+      this.setAccount(address, null, stayLoggedIn)
+      this.method = 'arconnect'  
+    }
     return address
   }
 
   async arweaveWebWallet(stayLoggedIn: boolean): Promise<string> {
     this._arweaveWebWallet.setUrl('arweave.app')
-    const address = await this._arweaveWebWallet.connect()
-    this.setAccount(address, null, stayLoggedIn)
-    this.method = 'webwallet'
+    let address = '';
+    // If wallet is already connected
+    if (this._arweaveWebWallet.connected &&
+      this._arweaveWebWallet.address) {
+      address = this._arweaveWebWallet.address;
+      this.setAccount(address, null, stayLoggedIn)
+      this.method = 'webwallet'
+      return address;
+    }
+    // Else
+    this._arweaveWebWallet.keepPopup = true
+    try {
+      address = await this._arweaveWebWallet.connect()
+      this._arweaveWebWallet.keepPopup = false
+      this.setAccount(address, null, stayLoggedIn)
+      this.method = 'webwallet'
+    } catch (error) {
+      this._arweaveWebWallet.keepPopup = false
+      console.error('arweavewallet', error)
+      throw new Error('error arweavewallet')
+    }
     return address
+
   }
 
   async finnie(stayLoggedIn: boolean, arweave: Arweave): Promise<string> {
@@ -210,9 +272,21 @@ export class Login {
     this.mainAddress = ''
     this.key = null
   
-    if ((this.method === 'arconnect' || this.method === 'finnie' || this.method === 'webwallet') &&
+    if ((this.method === 'arconnect' || this.method === 'finnie') &&
         window.arweaveWallet) {
-      window.arweaveWallet.disconnect()
+      try {
+        await window.arweaveWallet.disconnect();
+        console.log(this._method, 'Wallet disconnected');
+      } catch (error) {
+        console.error('wallet', error);
+      }
+    } else if (this.method === 'webwallet') {
+      try {
+        await this._arweaveWebWallet.disconnect();
+        console.log(this.method, 'ArweaveWallet disconnected');
+      } catch (error) {
+        console.error('wallet', error);
+      }
     }
     
     this.method = ''
@@ -292,5 +366,22 @@ export class Login {
         method: 'startHandshake'
       }) === 'bridgeActive'
     )
+  }
+
+  public async getUserSigner(): Promise<InjectedArweaveSigner|null> {
+    if (this.method === 'webwallet') {
+      const userSigner = new InjectedArweaveSigner(
+        this._arweaveWebWallet.namespaces.arweaveWallet
+      );
+      await userSigner.setPublicKey();
+      return userSigner;
+    } else if (this.method === 'arconnect') {
+      const userSigner = new InjectedArweaveSigner(
+        window.arweaveWallet
+      );
+      await userSigner.setPublicKey();
+      return userSigner;
+    }
+    return null;
   }
 }
