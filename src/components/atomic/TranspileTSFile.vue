@@ -77,22 +77,26 @@ function compile(outDir: string, entryFile: string) {
     noEmitOnError: true,
     strict: true,
     noImplicitOverride: true,
-    target: ts.ScriptTarget.ES5,
+    target: ts.ScriptTarget.ES2015,
     module: ts.ModuleKind.ES2015,
     lib: [
-      '/node_modules/es2015/lib.dom.d.ts',
-      '/node_modules/es2015/lib.dom.iterable.d.ts',
-      '/node_modules/es2015/lib.es2015.collection.d.ts',
-      '/node_modules/es2015/lib.es2015.core.d.ts',
-      '/node_modules/es2015/lib.es2015.generator.d.ts',
-      '/node_modules/es2015/lib.es2015.iterable.d.ts',
-      '/node_modules/es2015/lib.es2015.promise.d.ts',
-      '/node_modules/es2015/lib.es2015.proxy.d.ts',
-      '/node_modules/es2015/lib.es2015.reflect.d.ts',
-      '/node_modules/es2015/lib.es2015.symbol.d.ts',
-      '/node_modules/es2015/lib.es2015.symbol.wellknown.d.ts',
-      '/node_modules/es2015/lib.es5.d.ts',
-      '/node_modules/smartweave/contract-executor.d.ts',
+      '/node_modules/typescript/lib.es2015.collection.d.ts',
+      '/node_modules/typescript/lib.es2015.core.d.ts',
+      '/node_modules/typescript/lib.es2015.generator.d.ts',
+      '/node_modules/typescript/lib.es2015.iterable.d.ts',
+      '/node_modules/typescript/lib.es2015.promise.d.ts',
+      '/node_modules/typescript/lib.es2015.proxy.d.ts',
+      '/node_modules/typescript/lib.es2015.reflect.d.ts',
+      '/node_modules/typescript/lib.es2015.symbol.d.ts',
+      '/node_modules/typescript/lib.es2015.symbol.wellknown.d.ts',
+      '/node_modules/typescript/lib.es5.d.ts',
+      '/node_modules/typescript/lib.es2016.array.include.d.ts',
+      '/node_modules/typescript/lib.es2017.intl.d.ts',
+      '/node_modules/typescript/lib.es2017.object.d.ts',
+      '/node_modules/typescript/lib.es2017.sharedmemory.d.ts',
+      '/node_modules/typescript/lib.es2017.string.d.ts',
+      '/node_modules/typescript/lib.es2017.typedarrays.d.ts',
+      '/node_modules/smartweave/contract-format.d.ts',
     ],
     outDir: outDir,
     esModuleInterop: true,
@@ -141,9 +145,9 @@ const loadNodeModulesToWorkspace = async () => {
   // Add folders
   props.workspace.addFolder('/', 'node_modules')
 
-  // Add es2015 types
+  // Add typescript types
   try {
-    await loadES2015()
+    await loadTypescriptLibs()
   } catch (error) {
     createToast(`${error}`,
       {
@@ -171,24 +175,28 @@ const loadNodeModulesToWorkspace = async () => {
   loading.value = false
 };
 
-async function loadES2015() {
+async function loadTypescriptLibs() {
   const files = [
-    'node-modules-sources/es2015/lib.dom.d.ts',
-    'node-modules-sources/es2015/lib.dom.iterable.d.ts',
-    'node-modules-sources/es2015/lib.es2015.collection.d.ts',
-    'node-modules-sources/es2015/lib.es2015.core.d.ts',
-    'node-modules-sources/es2015/lib.es2015.generator.d.ts',
-    'node-modules-sources/es2015/lib.es2015.iterable.d.ts',
-    'node-modules-sources/es2015/lib.es2015.promise.d.ts',
-    'node-modules-sources/es2015/lib.es2015.proxy.d.ts',
-    'node-modules-sources/es2015/lib.es2015.reflect.d.ts',
-    'node-modules-sources/es2015/lib.es2015.symbol.d.ts',
-    'node-modules-sources/es2015/lib.es2015.symbol.wellknown.d.ts',
-    'node-modules-sources/es2015/lib.es5.d.ts',
+    'node-modules-sources/typescript/lib.es2015.collection.d.ts',
+    'node-modules-sources/typescript/lib.es2015.core.d.ts',
+    'node-modules-sources/typescript/lib.es2015.generator.d.ts',
+    'node-modules-sources/typescript/lib.es2015.iterable.d.ts',
+    'node-modules-sources/typescript/lib.es2015.promise.d.ts',
+    'node-modules-sources/typescript/lib.es2015.proxy.d.ts',
+    'node-modules-sources/typescript/lib.es2015.reflect.d.ts',
+    'node-modules-sources/typescript/lib.es2015.symbol.d.ts',
+    'node-modules-sources/typescript/lib.es2015.symbol.wellknown.d.ts',
+    'node-modules-sources/typescript/lib.es5.d.ts',
+    'node-modules-sources/typescript/lib.es2016.array.include.d.ts',
+    'node-modules-sources/typescript/lib.es2017.intl.d.ts',
+    'node-modules-sources/typescript/lib.es2017.object.d.ts',
+    'node-modules-sources/typescript/lib.es2017.sharedmemory.d.ts',
+    'node-modules-sources/typescript/lib.es2017.string.d.ts',
+    'node-modules-sources/typescript/lib.es2017.typedarrays.d.ts',
   ]
-  const path = '/node_modules/es2015/'
+  const path = '/node_modules/typescript/'
   const emptyEvent = new Event('empty')
-  props.workspace.addFolder('/node_modules', 'es2015')
+  props.workspace.addFolder('/node_modules', 'typescript')
 
   for (const f of files) {
     const fileNameFragments = f.split('/')
@@ -214,7 +222,7 @@ async function loadES2015() {
         false,
         src,
         fileName,
-        '/node_modules/es2015',
+        '/node_modules/typescript',
         false)
 
     }
@@ -225,7 +233,7 @@ async function loadES2015() {
 
 async function loadSmartweave() {
   const files = [
-    'node-modules-sources/smartweave/contract-executor.d.ts',
+    'node-modules-sources/smartweave/contract-format.d.ts',
   ]
   const path = '/node_modules/smartweave/'
   const emptyEvent = new Event('empty')
