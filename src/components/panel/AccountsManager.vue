@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { createToast } from 'mosha-vue-toastify';
-import { ref, onMounted, watchEffect, computed } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import { UserSettings } from '@/core/UserSettings';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import { ArweaveWrapper, defaultNetwork } from '@/core/ArweaveWrapper';
@@ -101,18 +101,21 @@ const settings = userSettings.settings;
 const mainAddress = ref('');
 const method = ref('');
 const chkStayLoggedIn = ref(settings.stayLoggedIn);
+/*
 const uploadKeyTrigger = () => {
 	const txtFile_uploadKey = document.getElementById('txtFile_uploadKey');
 	if (txtFile_uploadKey) {
 		txtFile_uploadKey.click();
 	}
 };
+*/
 const isBridgeActive = ref(false)
 const defaultSelNetwork = props.networkParam ? props.networkParam : defaultNetwork
 const selNetwork = ref(defaultSelNetwork)
 const arweaveWrapper = new ArweaveWrapper(selNetwork.value)
 const arweave = arweaveWrapper.arweave
 
+/*
 const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
 	try {
 		const address = await props.login.uploadKeyFile(event.target, stayLoggedIn, arweave)
@@ -131,6 +134,7 @@ const uploadKey = async (event: Event, stayLoggedIn: boolean) => {
       });
 	}
 };
+*/
 
 const arConnect = async (stayLoggedIn: boolean) => {
 	try {

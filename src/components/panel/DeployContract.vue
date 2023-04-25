@@ -224,9 +224,9 @@
 import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
 import DefaultIcon from '@/components/atomic/DefaultIcon'
 import { ArweaveWrapper, arweaveNetworks, defaultNetwork, onLocalnetByString } from '@/core/ArweaveWrapper'
-import { 
-  WarpContracts, ContractData, ArWallet, 
-  FromSrcTxContractData, Tags } from '@/core/WarpContracts'
+import { WarpContracts} from '@/core/WarpContracts'
+import { ContractData, ArWallet, 
+  FromSrcTxContractData, Tags } from 'warp-contracts';
 import { createToast } from 'mosha-vue-toastify'
 import { DefaultWorkspace } from '@/components/composed/DefaultWorkspace'
 

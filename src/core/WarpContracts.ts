@@ -1,18 +1,15 @@
 import { 
   Warp, WarpFactory,
   EvalStateResult, LoggerFactory, ConsoleLoggerFactory,
-  ArWallet, Tags, ArTransfer,
-  WriteInteractionResponse, ContractData,
-  FromSrcTxContractData, defaultCacheOptions, WarpGatewayInteractionsLoader,
-  ContractDeploy, EvaluationOptions  } from 'warp-contracts'
+  WriteInteractionResponse, defaultCacheOptions, WarpGatewayInteractionsLoader,
+  ContractDeploy, EvaluationOptions, SourceType,
+  ContractData, ArWallet, 
+  FromSrcTxContractData, ArTransfer,
+  Tags } from 'warp-contracts'
 import Arweave from 'arweave';
 import { SortKeyCacheResult } from 'warp-contracts/lib/types/cache/SortKeyCache';
 import { arweaveMainNets, arweaveTestNets, arweaveLocalNets } from './ArweaveWrapper';
-export { 
-  WasmSrc, ContractData, ArWallet, 
-  FromSrcTxContractData, ArTransfer,
-  Tags } from 'warp-contracts';
-import { DeployPlugin, ArweaveSigner } from 'warp-contracts-plugin-deploy';
+import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 
 export class WarpContracts {
   private readonly _warp: Warp;
@@ -23,9 +20,11 @@ export class WarpContracts {
     const port = _arweave.api.config.port;
     const protocol = _arweave.api.config.protocol;
     const cacheOptions = undefined;
+    let gateway = SourceType.WARP_SEQUENCER;
 
     if (_gw) {
       this._gateway = _gw;
+      gateway = SourceType.ARWEAVE;
     }
 
     this.setLogLevel();
@@ -38,7 +37,7 @@ export class WarpContracts {
     } else if (this.onLocalnet(_arweave)) {
       this._warp = WarpFactory.forLocal().use(new DeployPlugin());
     } else if (host && port && protocol) {
-      const loader = new WarpGatewayInteractionsLoader(this._gateway);
+      const loader = new WarpGatewayInteractionsLoader(undefined, gateway);
       // TODO: Check options
       this._warp = WarpFactory.custom(
         _arweave,

@@ -90,7 +90,8 @@
 import { ref, watchEffect, onMounted } from 'vue';
 import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper';
 import { ArDBWrapper } from '@/core/ArDBWrapper';
-import { WarpContracts, WasmSrc } from '@/core/WarpContracts';
+import { WarpContracts } from '@/core/WarpContracts';
+import { WasmSrc } from 'warp-contracts';
 import { createToast } from 'mosha-vue-toastify';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import DefaultModal from '@/components/atomic/DefaultModal.vue';

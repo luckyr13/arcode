@@ -9,7 +9,7 @@ import { ArweaveWebWallet } from 'arweave-wallet-connector'
 import { ref } from 'vue'
 import { IFrameWalletBridge } from './IFrameWalletBridge'
 import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
-import { PermissionType, AppInfo, GatewayConfig, DispatchResult } from 'arconnect';
+import { PermissionType } from 'arconnect';
 
 export class Login {
   // User's private key
@@ -136,13 +136,17 @@ export class Login {
 
     try {
       if (finalPermissions.length) {
+        const host = arweave.api.config.host ? arweave.api.config.host : '';
+        const port = arweave.api.config.port ? +arweave.api.config.port : 0;
+        const protocol = arweave.api.config.protocol ? arweave.api.config.protocol : 'https';
+
         await window.arweaveWallet.connect(
           finalPermissions,
           this._appInfo,
           { 
-            host: arweave.api.config.host!,
-            port: +arweave.api.config.port!,
-            protocol: arweave.api.config.protocol! as 'http'|'https'
+            host: host,
+            port: port,
+            protocol: protocol as 'http'|'https'
           }
         )
       }
@@ -371,9 +375,8 @@ export class Login {
   public async getUserSigner(): Promise<InjectedArweaveSigner|null> {
     if (this.method === 'webwallet') {
       const userSigner = new InjectedArweaveSigner(
-        this._arweaveWebWallet.namespaces.arweaveWallet
+        this._arweaveWebWallet
       );
-      await userSigner.setPublicKey();
       return userSigner;
     } else if (this.method === 'arconnect') {
       const userSigner = new InjectedArweaveSigner(

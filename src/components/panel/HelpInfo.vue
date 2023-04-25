@@ -121,29 +121,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { ArweaveWrapper } from '@/core/ArweaveWrapper';
+// import { computed } from 'vue';
+// import { ArweaveWrapper } from '@/core/ArweaveWrapper';
 
-const arweaveWrapper = new ArweaveWrapper();
-const arweave = arweaveWrapper.arweave;
-
+// const arweaveWrapper = new ArweaveWrapper();
+// const arweave = arweaveWrapper.arweave;
+/*
 const props = defineProps({
 	tokenState: Object,
 	mainAddress: String
 });
+*/
+/*
 const contractSettings = computed(() => {
 	const settings = props.tokenState.settings ? props.tokenState.settings : [];
 	return new Map(settings);
 });
+*/
+/*
 const appFeeInWinston = computed(() => {
 	return contractSettings.value.get('appFeeInWinston');
 });
+*/
+/*
 const appFeeInAr = computed(() => {
 	return parseFloat(arweave.ar.winstonToAr(appFeeInWinston.value));
 });
+*/
+/*
 const vipMinimumBalance = computed(() => {
 	return contractSettings.value.get('vipMinimumBalance');
 });
+*/
 </script>
 
 <style scoped lang="scss">

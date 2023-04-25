@@ -102,7 +102,7 @@ import HelpInfo from '@/components/panel/HelpInfo.vue';
 import SearchArweave from '@/components/panel/SearchArweave.vue';
 import DefaultIcon from '@/components/atomic/DefaultIcon';
 import tippy from 'tippy.js';
-import ArCodeGallery from '@/components/panel/ArCodeGallery.vue';
+// import ArCodeGallery from '@/components/panel/ArCodeGallery.vue';
 import ArCodeLab from '@/components/panel/ArCodeLab.vue';
 
 const props = defineProps({

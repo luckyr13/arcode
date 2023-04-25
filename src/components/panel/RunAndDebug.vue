@@ -250,7 +250,8 @@ import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
 import DefaultIcon from '@/components/atomic/DefaultIcon'
 import { ArweaveWrapper, arweaveNetworks, defaultNetwork } from '@/core/ArweaveWrapper'
 import { createToast } from 'mosha-vue-toastify'
-import { WarpContracts, Tags } from '@/core/WarpContracts'
+import { WarpContracts } from '@/core/WarpContracts'
+import { Tags } from 'warp-contracts';
 import { EvaluationOptions } from 'warp-contracts'
 const networks = computed(() => {
 	return arweaveNetworks
@@ -287,11 +288,12 @@ const props = defineProps({
 
 const mainAddress = ref(props.login.mainAddress)
 const balance = ref('0')
-
+/*
 const balances = computed(() => {
 	const balances = props.tokenState.balances ? props.tokenState.balances : {}
 	return balances
 });
+*/
 const isBridgeActive = ref(false)
 
 const inputDataChange = (event) => {
