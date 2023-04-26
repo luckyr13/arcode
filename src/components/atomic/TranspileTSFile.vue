@@ -53,6 +53,7 @@ import { ref } from 'vue'
 import { TSTranspiler } from '@/core/TSTranspiler'
 import * as ts from 'typescript'
 import { createToast } from 'mosha-vue-toastify'
+import * as rollup from 'rollup'
 
 const props = defineProps({
   workspace: DefaultWorkspace
@@ -63,7 +64,7 @@ const selEntryFileLocation = ref('')
 const selOutputLocation = ref('/')
 const diagnostics = ref([])
 
-function compile(outDir: string, entryFile: string) {
+async function compile(outDir: string, entryFile: string) {
   if (!entryFile) {
     createToast(`Please select a file!`,
       {
@@ -98,7 +99,7 @@ function compile(outDir: string, entryFile: string) {
       '/node_modules/typescript/lib.es2017.typedarrays.d.ts',
       '/node_modules/smartweave/contract-format.d.ts',
     ],
-    outDir: outDir,
+    outDir: '/',
     esModuleInterop: true,
     removeComments: true,
     checkJs: true,
@@ -135,6 +136,15 @@ function compile(outDir: string, entryFile: string) {
   }
   loading.value = false
 
+  if (!diagnostics.value.length) {
+    // Rollup
+    const modules = transpiler.getModules()
+
+    await this.roll(modules, entryFile, outDir)
+    
+  }
+    //.then(bundle => bundle.generate({ format: 'es' }))
+    //.then(({ output }) => console.log(output[0].code));
 }
 
 
@@ -174,6 +184,64 @@ const loadNodeModulesToWorkspace = async () => {
   // Update loader
   loading.value = false
 };
+
+
+async function roll(
+  modules: Record<string, string>,
+  entryFile: string,
+  outDir: string) {
+  const myPlugin = () => {
+    return {
+      name: 'loader',
+      resolveId: (source, importer, options) => {
+        // TODO
+        // Resolve ./, ../, ./../, etc
+        if (Object.prototype.hasOwnProperty.call(modules, source)) {
+          return source;
+        }
+      },
+      load: (id) => {
+        if (Object.prototype.hasOwnProperty.call(modules, id)) {
+          return modules[id];
+        }
+      }
+    }
+  }
+  // Start
+  try {
+    console.log('modules', modules)
+    const fragments = entryFile.split('/')
+    const fileName = fragments.splice(-1)[0]
+    const inputEntryFile = fileName.replace('.ts', '')
+
+    const bundle = await rollup.rollup({
+        input: `./${inputEntryFile}`,
+        plugins: [
+          myPlugin()
+        ]
+      })
+
+    const { output } = await bundle.generate({ format: 'es' })
+    const finalBundle = output[0].code
+
+    const date = new Date()
+    const dateF = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${date.getHours()}_${date.getMinutes()}_${date.getSeconds()}`
+    const finalBundleName = `bundle_${dateF}.js`
+
+    const emptyEvent = new Event('empty')
+    props.workspace.addEditor(
+      emptyEvent,
+      false,
+      finalBundle,
+      finalBundleName,
+      outDir,
+      false
+    )
+
+  } catch (error) {
+    alert(error)
+  }
+}
 
 async function loadTypescriptLibs() {
   const files = [

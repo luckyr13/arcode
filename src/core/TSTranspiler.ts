@@ -6,7 +6,7 @@ import type DefaultWorkspace from '@/components/composed/DefaultWorspace.vue'
 
 export class TSTranspiler {
   private _compilerOptions: ts.CompilerOptions
-  private _host: ts.CompilerHost
+  private _host: TSTranspilerCompilerHost
 
   constructor(options: ts.CompilerOptions, workspace: typeof DefaultWorkspace) {
     // Create a Program with an in-memory emit
@@ -45,6 +45,10 @@ export class TSTranspiler {
     });
 
     return diagnostics
+  }
+
+  public getModules() {
+    return this._host.modules;
   }
 
 

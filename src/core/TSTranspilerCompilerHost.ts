@@ -4,8 +4,10 @@ import { EditorMetadata } from '@/core/interfaces/EditorMetadata'
 // import * as Babel from '@babel/standalone';
 // https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API
 
+
 export class TSTranspilerCompilerHost implements ts.CompilerHost {
   private _workspace: typeof DefaultWorkspace
+  public modules: Record<string, string> = {}
 
   constructor(workspace: typeof DefaultWorkspace) {
     this._workspace = workspace
@@ -57,18 +59,23 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
       if (fileNameFrgm.length > 1) {
         const n = fileNameFrgm.slice(0, fileNameFrgm.length - 1).join('')
         const ext = fileNameFrgm[fileNameFrgm.length - 1]
-        fileName = `${n}_${dateF}.${ext}`
+        // fileName = `${n}_${dateF}.${ext}`
+        fileName = `${n}`
       } else {
-        fileName = `${fnames[fnames.length - 1]}_${dateF}`
+        // fileName = `${fnames[fnames.length - 1]}_${dateF}`
+        fileName = `${fnames[fnames.length - 1]}`
       }
 
-      if (!path) {
-        path = '/'
-      }
+      if (!path || path === '/') {
+        path = './'
       } else {
-        path = '/'
+        path = `.${path}/`
       }
+    }
 
+    this.modules[`${path}${fileName}`] = contents;
+
+    /*
     this._workspace.addEditor(
       emptyEvent,
       false,
@@ -76,6 +83,7 @@ export class TSTranspilerCompilerHost implements ts.CompilerHost {
       fileName,
       path,
       false)
+    */
   }
 
   readFile(
