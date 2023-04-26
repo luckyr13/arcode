@@ -1,8 +1,10 @@
 # ArCode versions
 
 ## 1.4.1
+Link (2023-04-26): https://arweave.net/lbeiwcY4IQz3qfyzcyQQ-EkzJo8KXogGQIZAXUKkIjs
 - Update warp and arweave libraries
 - Update login, logout and contract deployment methods
+- Add basic Typescript bundling with Rollup
 
 ## 1.4.0
 Link (2023-02-27): https://arweave.net/tMWRyqa-SGiK4TL0F9kwhYzsS_uKNKUa5IU9H4ptV08
