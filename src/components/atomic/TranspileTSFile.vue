@@ -140,7 +140,7 @@ async function compile(outDir: string, entryFile: string) {
     // Rollup
     const modules = transpiler.getModules()
 
-    await this.roll(modules, entryFile, outDir)
+    await roll(modules, entryFile, outDir)
     
   }
     //.then(bundle => bundle.generate({ format: 'es' }))
